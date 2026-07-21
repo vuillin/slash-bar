@@ -51,6 +51,8 @@ public partial class MainWindow : Window
                 e.Handled = true;
             }
         };
+
+        SearchBox.TextChanged += (_, _) => UpdateSuggestions();
     }
 
     private void SubmitCommand()
@@ -71,10 +73,51 @@ public partial class MainWindow : Window
         }
     }
 
+    private void UpdateSuggestions()
+    {
+        var matches = _modules.Suggest(SearchBox.Text, max: 5);
+        var wasVisible = SuggestionsPanel.Visibility == Visibility.Visible;
+
+        SuggestionsList.ItemsSource = matches;
+
+        if (matches.Count == 0)
+        {
+            SuggestionsPanel.BeginAnimation(OpacityProperty, null);
+            SuggestionsSlide.BeginAnimation(TranslateTransform.YProperty, null);
+            SuggestionsPanel.Visibility = Visibility.Collapsed;
+            SuggestionsPanel.Opacity = 0;
+            SuggestionsSlide.Y = -6;
+            return;
+        }
+
+        SuggestionsPanel.Visibility = Visibility.Visible;
+
+        if (!wasVisible)
+            AnimateSuggestionsIn();
+    }
+
+    private void AnimateSuggestionsIn()
+    {
+        var ease = new QuadraticEase { EasingMode = EasingMode.EaseOut };
+
+        SuggestionsPanel.BeginAnimation(
+            OpacityProperty,
+            new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(160))
+            {
+                EasingFunction = ease
+            });
+
+        SuggestionsSlide.BeginAnimation(
+            TranslateTransform.YProperty,
+            new DoubleAnimation(-6, 0, TimeSpan.FromMilliseconds(180))
+            {
+                EasingFunction = ease
+            });
+    }
+
     private void PositionAtTop()
     {
         Width = SystemParameters.PrimaryScreenWidth * 0.5;
-        Height = 56;
         Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
         Top = 0;
     }
@@ -171,6 +214,7 @@ public partial class MainWindow : Window
         _isAnimating = true;
         PositionAtTop();
         SearchBox.Text = "";
+        UpdateSuggestions();
 
         Opacity = 0;
         SlideTransform.Y = -20;

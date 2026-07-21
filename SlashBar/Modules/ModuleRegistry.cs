@@ -22,6 +22,24 @@ public sealed class ModuleRegistry
 
     public IReadOnlyList<IModule> Modules => _modules;
 
+    public IReadOnlyList<IModule> Suggest(string input, int max = 5)
+    {
+        if (max <= 0)
+            return Array.Empty<IModule>();
+
+        input = input.Trim();
+        if (input.Length == 0)
+            return Array.Empty<IModule>();
+
+        // "f chat" → on matche sur "f"
+        var token = input.Split(' ', 2)[0];
+
+        return _modules
+            .Where(m => m.Prefix.StartsWith(token, StringComparison.OrdinalIgnoreCase))
+            .Take(max)
+            .ToList();
+    }
+
     public bool TryExecute(string input)
     {
         if (!TryResolve(input, out var module, out var argument))
