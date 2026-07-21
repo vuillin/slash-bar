@@ -1,0 +1,268 @@
+﻿using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using SlashBar.Modules;
+
+namespace SlashBar;
+
+public partial class MainWindow : Window
+{
+    private const int HotkeyId = 9000;
+    private const int QuitHotkeyId = 9001;
+
+    private const uint MOD_CONTROL = 0x0002;
+    private const uint MOD_SHIFT = 0x0004;
+
+    private const uint VK_SPACE = 0x20;
+    private const uint VK_Q = 0x51;
+    private const int WM_HOTKEY = 0x0312;
+
+    private readonly ModuleRegistry _modules = new();
+
+    private bool _ignoreDeactivate; // évite de fermer pendant l'anim d'ouverture
+    private bool _hotkeysRegistered;
+    private bool _isAnimating;
+    private bool _isOpen;
+
+    public MainWindow()
+    {
+        InitializeComponent();
+        PositionAtTop();
+
+        Loaded += OnLoaded;
+
+        PreviewKeyDown += (_, e) =>
+        {
+            if (e.Key == Key.Escape)
+            {
+                AnimateClose();
+                e.Handled = true;
+            }
+        };
+
+        SearchBox.KeyDown += (_, e) =>
+        {
+            if (e.Key == Key.Enter)
+            {
+                SubmitCommand();
+                e.Handled = true;
+            }
+        };
+    }
+
+    private void SubmitCommand()
+    {
+        try
+        {
+            if (_modules.TryExecute(SearchBox.Text))
+            {
+                AnimateClose();
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(
+                this,
+                "Erreur dans le module :\n" + ex.Message,
+                "SlashBar");
+        }
+    }
+
+    private void PositionAtTop()
+    {
+        Width = SystemParameters.PrimaryScreenWidth * 0.5;
+        Height = 56;
+        Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
+        Top = 0;
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        if (_hotkeysRegistered)
+            return;
+
+        try
+        {
+            PositionAtTop();
+            RegisterGlobalHotkeys();
+            _hotkeysRegistered = true;
+            Hide(); // Ctrl+Espace pour ouvrir
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, "Erreur au démarrage :\n" + ex.Message, "SlashBar");
+        }
+    }
+
+    private void RegisterGlobalHotkeys()
+    {
+        var helper = new WindowInteropHelper(this);
+        helper.EnsureHandle();
+
+        bool okSearch = RegisterHotKey(
+            helper.Handle,
+            HotkeyId,
+            MOD_CONTROL,
+            VK_SPACE);
+
+        bool okQuit = RegisterHotKey(
+            helper.Handle,
+            QuitHotkeyId,
+            MOD_CONTROL | MOD_SHIFT,
+            VK_Q);
+
+        if (!okSearch || !okQuit)
+        {
+            MessageBox.Show(
+                this,
+                "Impossible d'enregistrer Ctrl+Espace ou Ctrl+Shift+Q.\n" +
+                "Un autre logiciel utilise peut-être déjà ce raccourci.",
+                "SlashBar");
+            return;
+        }
+
+        var source = HwndSource.FromHwnd(helper.Handle);
+        source?.AddHook(HwndHook);
+    }
+
+    private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    {
+        if (msg != WM_HOTKEY)
+            return IntPtr.Zero;
+
+        int id = wParam.ToInt32();
+
+        if (id == HotkeyId)
+        {
+            ToggleBar();
+            handled = true;
+        }
+        else if (id == QuitHotkeyId)
+        {
+            Application.Current.Shutdown();
+            handled = true;
+        }
+
+        return IntPtr.Zero;
+    }
+
+    private void ToggleBar()
+    {
+        if (_isAnimating)
+            return;
+
+        if (_isOpen || IsVisible)
+        {
+            AnimateClose();
+            return;
+        }
+
+        AnimateOpen();
+    }
+
+    private void AnimateOpen()
+    {
+        if (_isAnimating)
+            return;
+
+        _isAnimating = true;
+        PositionAtTop();
+        SearchBox.Text = "";
+
+        Opacity = 0;
+        SlideTransform.Y = -20;
+
+        _ignoreDeactivate = true;
+        Show();
+        Activate();
+        SearchBox.Focus();
+
+        var ease = new QuadraticEase { EasingMode = EasingMode.EaseOut };
+
+        var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(180))
+        {
+            EasingFunction = ease
+        };
+
+        var slideIn = new DoubleAnimation(-20, 0, TimeSpan.FromMilliseconds(220))
+        {
+            EasingFunction = ease
+        };
+
+        fadeIn.Completed += (_, _) =>
+        {
+            _isOpen = true;
+            _isAnimating = false;
+            _ignoreDeactivate = false;
+        };
+
+        BeginAnimation(OpacityProperty, fadeIn);
+        SlideTransform.BeginAnimation(TranslateTransform.YProperty, slideIn);
+    }
+
+    private void AnimateClose()
+    {
+        if (_isAnimating || !IsVisible)
+            return;
+
+        _isAnimating = true;
+        _ignoreDeactivate = true;
+
+        var ease = new QuadraticEase { EasingMode = EasingMode.EaseIn };
+
+        var fadeOut = new DoubleAnimation(Opacity, 0, TimeSpan.FromMilliseconds(140))
+        {
+            EasingFunction = ease
+        };
+
+        var slideOut = new DoubleAnimation(SlideTransform.Y, -16, TimeSpan.FromMilliseconds(160))
+        {
+            EasingFunction = ease
+        };
+
+        fadeOut.Completed += (_, _) =>
+        {
+            BeginAnimation(OpacityProperty, null);
+            SlideTransform.BeginAnimation(TranslateTransform.YProperty, null);
+            Opacity = 0;
+            SlideTransform.Y = -20;
+            Hide();
+            _isOpen = false;
+            _isAnimating = false;
+            _ignoreDeactivate = false;
+        };
+
+        BeginAnimation(OpacityProperty, fadeOut);
+        SlideTransform.BeginAnimation(TranslateTransform.YProperty, slideOut);
+    }
+
+    private void Window_Deactivated(object? sender, EventArgs e)
+    {
+        if (_ignoreDeactivate || _isAnimating)
+            return;
+
+        AnimateClose();
+    }
+
+    protected override void OnClosed(EventArgs e)
+    {
+        var helper = new WindowInteropHelper(this);
+        if (helper.Handle != IntPtr.Zero)
+        {
+            UnregisterHotKey(helper.Handle, HotkeyId);
+            UnregisterHotKey(helper.Handle, QuitHotkeyId);
+        }
+
+        Application.Current.Shutdown();
+        base.OnClosed(e);
+    }
+
+    [DllImport("user32.dll")]
+    private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
+
+    [DllImport("user32.dll")]
+    private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+}

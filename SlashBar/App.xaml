@@ -1,0 +1,11 @@
+﻿<Application x:Class="SlashBar.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:SlashBar"
+             StartupUri="MainWindow.xaml"
+             ShutdownMode="OnExplicitShutdown">
+    <!-- OnExplicitShutdown : Hide() ne doit pas tuer le process -->
+    <Application.Resources>
+         
+    </Application.Resources>
+</Application>

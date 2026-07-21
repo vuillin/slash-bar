@@ -1,0 +1,12 @@
+# SDK .NET local
+/dotnet/
+
+# Build
+**/bin/
+**/obj/
+
+# User / IDE
+*.user
+*.suo
+.vs/
+*.DotSettings.user
