@@ -1,11 +1,11 @@
-# SDK .NET local
+# sdk local
 /dotnet/
 
-# Build
+# build
 **/bin/
 **/obj/
 
-# User / IDE
+# ide
 *.user
 *.suo
 .vs/

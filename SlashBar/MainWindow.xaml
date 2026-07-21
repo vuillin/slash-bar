@@ -47,6 +47,15 @@
                            Margin="0,0,14,0"/>
 
                 <Grid Grid.Column="1">
+                    <TextBlock x:Name="GhostText"
+                               FontFamily="Segoe UI Variable Text, Segoe UI"
+                               FontSize="15"
+                               FontWeight="Medium"
+                               Foreground="#55FFFFFF"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               IsHitTestVisible="False"/>
+
                     <TextBox x:Name="SearchBox"
                              FontFamily="Segoe UI Variable Text, Segoe UI"
                              FontSize="15"

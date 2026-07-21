@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:SlashBar"
              StartupUri="MainWindow.xaml"
              ShutdownMode="OnExplicitShutdown">
-    <!-- OnExplicitShutdown : Hide() ne doit pas tuer le process -->
+    <!-- sinon Hide() kill l'app -->
     <Application.Resources>
          
     </Application.Resources>

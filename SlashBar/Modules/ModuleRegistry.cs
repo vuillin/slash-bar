@@ -14,7 +14,7 @@ public sealed class ModuleRegistry
                         && typeof(IModule).IsAssignableFrom(t)
                         && t.GetConstructor(Type.EmptyTypes) != null)
             .Select(t => (IModule)Activator.CreateInstance(t)!)
-            // préfixes longs d'abord : "gh" avant "g"
+            // "gh" avant "g"
             .OrderByDescending(m => m.Prefix.Length)
             .ThenBy(m => m.Prefix, StringComparer.OrdinalIgnoreCase)
             .ToList();
@@ -31,13 +31,73 @@ public sealed class ModuleRegistry
         if (input.Length == 0)
             return Array.Empty<IModule>();
 
-        // "f chat" → on matche sur "f"
         var token = input.Split(' ', 2)[0];
 
         return _modules
             .Where(m => m.Prefix.StartsWith(token, StringComparison.OrdinalIgnoreCase))
             .Take(max)
             .ToList();
+    }
+
+    public IReadOnlyList<string> SuggestArgumentCompletions(string input)
+    {
+        if (!TryResolveArgument(input, out var module, out var argument))
+            return Array.Empty<string>();
+
+        return module.SuggestCompletions(argument);
+    }
+
+    // "f pr" + "private" → "f private "
+    public bool TryApplyCompletion(string input, string completion, out string newInput)
+    {
+        newInput = input;
+
+        var raw = input.TrimStart();
+        var leadingWs = input[..(input.Length - raw.Length)];
+
+        foreach (var candidate in _modules)
+        {
+            var prefix = candidate.Prefix.Trim();
+            if (prefix.Length == 0)
+                continue;
+
+            var withSpace = prefix + " ";
+            if (!raw.StartsWith(withSpace, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            newInput = leadingWs + withSpace + completion + " ";
+            return true;
+        }
+
+        return false;
+    }
+
+    // comme TryResolve mais sans trim l'argument
+    private bool TryResolveArgument(string input, out IModule module, out string argument)
+    {
+        module = null!;
+        argument = "";
+
+        var raw = input.TrimStart();
+        if (raw.Length == 0)
+            return false;
+
+        foreach (var candidate in _modules)
+        {
+            var prefix = candidate.Prefix.Trim();
+            if (prefix.Length == 0)
+                continue;
+
+            var withSpace = prefix + " ";
+            if (!raw.StartsWith(withSpace, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            module = candidate;
+            argument = raw[withSpace.Length..];
+            return true;
+        }
+
+        return false;
     }
 
     public bool TryExecute(string input)

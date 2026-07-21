@@ -22,10 +22,15 @@ public partial class MainWindow : Window
 
     private readonly ModuleRegistry _modules = new();
 
-    private bool _ignoreDeactivate; // évite de fermer pendant l'anim d'ouverture
+    private bool _ignoreDeactivate; // sinon l'anim ferme la barre
     private bool _hotkeysRegistered;
     private bool _isAnimating;
     private bool _isOpen;
+    private bool _applyingCompletion;
+
+    private IReadOnlyList<string> _argCompletions = Array.Empty<string>();
+    private int _completionIndex;
+    private string _ghostSuffix = "";
 
     public MainWindow()
     {
@@ -41,6 +46,11 @@ public partial class MainWindow : Window
                 AnimateClose();
                 e.Handled = true;
             }
+            else if (e.Key == Key.Tab)
+            {
+                if (AcceptArgumentCompletion())
+                    e.Handled = true;
+            }
         };
 
         SearchBox.KeyDown += (_, e) =>
@@ -52,7 +62,15 @@ public partial class MainWindow : Window
             }
         };
 
-        SearchBox.TextChanged += (_, _) => UpdateSuggestions();
+        SearchBox.TextChanged += (_, _) =>
+        {
+            if (_applyingCompletion)
+                return;
+
+            _completionIndex = 0;
+            UpdateSuggestions();
+            UpdateInlineCompletion();
+        };
     }
 
     private void SubmitCommand()
@@ -96,6 +114,79 @@ public partial class MainWindow : Window
             AnimateSuggestionsIn();
     }
 
+    private void UpdateInlineCompletion()
+    {
+        _argCompletions = _modules.SuggestArgumentCompletions(SearchBox.Text);
+
+        if (_argCompletions.Count == 0)
+        {
+            ClearGhost();
+            return;
+        }
+
+        if (_completionIndex >= _argCompletions.Count)
+            _completionIndex = 0;
+
+        var chosen = _argCompletions[_completionIndex];
+        var argument = GetCurrentArgument(SearchBox.Text);
+
+        _ghostSuffix = chosen.StartsWith(argument, StringComparison.OrdinalIgnoreCase)
+            ? chosen[argument.Length..]
+            : chosen;
+
+        if (_ghostSuffix.Length == 0)
+        {
+            ClearGhost();
+            return;
+        }
+
+        // que le suffixe, calé après le texte
+        GhostText.Text = _ghostSuffix;
+        SearchBox.UpdateLayout();
+
+        var rect = SearchBox.GetRectFromCharacterIndex(SearchBox.Text.Length);
+        GhostText.Margin = rect.IsEmpty
+            ? new Thickness(0)
+            : new Thickness(rect.X, 0, 0, 0);
+    }
+
+    private void ClearGhost()
+    {
+        _ghostSuffix = "";
+        GhostText.Text = "";
+        GhostText.Margin = new Thickness(0);
+    }
+
+    private bool AcceptArgumentCompletion()
+    {
+        if (_argCompletions.Count == 0)
+            return false;
+
+        var chosen = _argCompletions[_completionIndex];
+        if (!_modules.TryApplyCompletion(SearchBox.Text, chosen, out var newInput))
+            return false;
+
+        _applyingCompletion = true;
+        SearchBox.Text = newInput;
+        SearchBox.CaretIndex = SearchBox.Text.Length;
+        _applyingCompletion = false;
+
+        _completionIndex = 0;
+        UpdateSuggestions();
+        UpdateInlineCompletion();
+        return true;
+    }
+
+    private static string GetCurrentArgument(string input)
+    {
+        var raw = input.TrimStart();
+        var space = raw.IndexOf(' ');
+        if (space < 0)
+            return "";
+
+        return raw[(space + 1)..];
+    }
+
     private void AnimateSuggestionsIn()
     {
         var ease = new QuadraticEase { EasingMode = EasingMode.EaseOut };
@@ -132,7 +223,7 @@ public partial class MainWindow : Window
             PositionAtTop();
             RegisterGlobalHotkeys();
             _hotkeysRegistered = true;
-            Hide(); // Ctrl+Espace pour ouvrir
+            Hide(); // ctrl+espace pour rouvrir
         }
         catch (Exception ex)
         {
@@ -215,6 +306,7 @@ public partial class MainWindow : Window
         PositionAtTop();
         SearchBox.Text = "";
         UpdateSuggestions();
+        UpdateInlineCompletion();
 
         Opacity = 0;
         SlideTransform.Y = -20;

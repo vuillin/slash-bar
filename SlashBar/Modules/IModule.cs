@@ -1,12 +1,15 @@
 ﻿namespace SlashBar.Modules;
 
-// Préfixe + Execute. Toute classe concrète dans ce dossier est chargée automatiquement.
+// classes IModule du dossier = chargées auto
 public interface IModule
 {
     string Prefix { get; }
     string Name { get; }
     string Description { get; }
 
-    // argument = tout ce qui suit le préfixe ("f chatgpt" → "chatgpt")
+    // "f chatgpt" → argument = "chatgpt"
     void Execute(string argument);
+
+    // tab / ghost text
+    IReadOnlyList<string> SuggestCompletions(string argument) => Array.Empty<string>();
 }

@@ -1,4 +1,4 @@
-﻿# SDK local (dossier ../dotnet), pas celui du système
+﻿# sdk local (../dotnet)
 $sdk = "C:\Users\STAGE 2025\Documents\temp\slash-bar\dotnet"
 $env:DOTNET_ROOT = $sdk
 $env:PATH = "$sdk;$env:PATH"
