@@ -6,12 +6,22 @@ public sealed class GenModule : IModule {
 
 
     private static readonly ArgCompletion[] Flags = [
-        new("b64", "Base64")
+        new("b64", "Base64 encodage/décodage"),
+        new("hex", "Hexadécimal encodage/décodage"),
+
+        new("date", "Date du jour (jj-mm-aaaa)"),
+        new("time", "Heure actuelle (hh:mm:ss)"),
+        new("timestamp", "Timestamp Unix (secondes)")
     ];
 
     private static readonly ArgCompletion[] B64Flags = [
         new("encode", "Encoder en Base64"),
         new("decode", "Décoder depuis Base64")
+    ];
+
+    private static readonly ArgCompletion[] HexFlags = [
+        new("encode", "Encoder en hexadécimal"),
+        new("decode", "Décoder depuis l'hexadécimal")
     ];
 
     public string Prefix => "gen";
@@ -33,6 +43,24 @@ public sealed class GenModule : IModule {
             RunB64(rest);
             return;
         }
+
+        if (cmd.Equals("hex", StringComparison.OrdinalIgnoreCase)) {
+            RunHex(rest);
+            return;
+        }
+
+        if (cmd.Equals("date", StringComparison.OrdinalIgnoreCase)) {
+            ClipboardHelper.SetText(DateTime.Now.ToString("dd-MM-yyyy"));
+            return;
+        }
+        if (cmd.Equals("time", StringComparison.OrdinalIgnoreCase)) {
+            ClipboardHelper.SetText(DateTime.Now.ToString("HH:mm:ss"));
+            return;
+        }
+        if (cmd.Equals("timestamp", StringComparison.OrdinalIgnoreCase)) {
+            ClipboardHelper.SetText(DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
+            return;
+        }
     }
 
 
@@ -47,6 +75,9 @@ public sealed class GenModule : IModule {
         // niveau 2
         if (before.Equals("b64 ", StringComparison.OrdinalIgnoreCase))
             return ModuleArgs.SuggestFlags(token, B64Flags);
+
+        if (before.Equals("hex ", StringComparison.OrdinalIgnoreCase))
+            return ModuleArgs.SuggestFlags(token, HexFlags);
 
         return Array.Empty<ArgCompletion>();
     }
@@ -76,6 +107,36 @@ public sealed class GenModule : IModule {
             }
             catch {
                 // base64 invalide → ignore
+            }
+        }
+    }
+
+
+    private static void RunHex(string rest) {
+
+        var space = rest.IndexOf(' ');
+        var mode = space < 0 ? rest : rest[..space];
+        var text = space < 0 ? "" : rest[(space + 1)..].Trim();
+
+        if (text.Length == 0)
+            return;
+
+        if (mode.Equals("encode", StringComparison.OrdinalIgnoreCase)) {
+            
+            var bytes = Encoding.UTF8.GetBytes(text);
+            ClipboardHelper.SetText(Convert.ToHexString(bytes).ToLowerInvariant());
+            return;
+        }
+
+        if (mode.Equals("decode", StringComparison.OrdinalIgnoreCase)) {
+
+            try {
+                var clean = text.Replace(" ", "", StringComparison.Ordinal);
+                var bytes = Convert.FromHexString(clean);
+                ClipboardHelper.SetText(Encoding.UTF8.GetString(bytes));
+            }
+            catch {
+                // hex invalide → ignore
             }
         }
     }

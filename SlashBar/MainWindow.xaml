@@ -124,9 +124,20 @@
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
                                 <TextBlock FontFamily="Segoe UI Variable Text, Segoe UI"
                                            FontSize="13"
-                                           FontWeight="Bold"
-                                           Foreground="#E8E8EC"
-                                           Text="{Binding Prefix}"/>
+                                           Text="{Binding Prefix}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="#B4B4BC"/>
+                                            <Setter Property="FontWeight" Value="Medium"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter Property="Foreground" Value="#E8E8EC"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
                                 <TextBlock FontFamily="Segoe UI Variable Text, Segoe UI"
                                            FontSize="13"
                                            Foreground="#40FFFFFF"

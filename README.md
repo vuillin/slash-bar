@@ -9,7 +9,7 @@ Barre de raccourcis pour Windows. Saisie d'une commande, puis exécution.
 | `Ctrl+Espace` | Ouvrir / fermer |
 | `Ctrl+Shift+Q` | Quitter |
 | `Esc` | Fermer |
-| `Tab` | Compléter le paramètre sélectionné |
+| `Tab` | Compléter la commande ou le paramètre sélectionné |
 | `↑` / `↓` | Parcourir les paramètres |
 | `Entrée` | Exécuter |
 

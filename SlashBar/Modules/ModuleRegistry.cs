@@ -50,7 +50,7 @@ public sealed class ModuleRegistry
     public bool IsInArgumentMode(string input) =>
         TryResolveArgument(input, out _, out _);
 
-    // "f pr" + "private" → "f private "
+    // "f pr" + "private" → "f private"
     public bool TryApplyCompletion(string input, string completion, out string newInput)
     {
         newInput = input;
@@ -71,7 +71,7 @@ public sealed class ModuleRegistry
             var argument = raw[withSpace.Length..];
             ModuleArgs.SplitCurrentToken(argument, out var before, out _);
 
-            newInput = leadingWs + withSpace + before + completion + " ";
+            newInput = leadingWs + withSpace + before + completion;
             return true;
         }
 

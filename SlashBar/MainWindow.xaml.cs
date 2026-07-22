@@ -11,6 +11,7 @@ namespace SlashBar;
 public partial class MainWindow : Window
 {
     private sealed record ArgSuggestion(string Value, string Description, bool IsSelected);
+    private sealed record ModuleSuggestion(string Prefix, string Name, string Description, bool IsSelected);
 
     private const int HotkeyId = 9000;
     private const int QuitHotkeyId = 9001;
@@ -31,6 +32,7 @@ public partial class MainWindow : Window
     private bool _applyingCompletion;
 
     private IReadOnlyList<ArgCompletion> _argCompletions = Array.Empty<ArgCompletion>();
+    private IReadOnlyList<IModule> _moduleCompletions = Array.Empty<IModule>();
     private int _completionIndex;
     private string _ghostSuffix = "";
 
@@ -50,7 +52,17 @@ public partial class MainWindow : Window
             }
             else if (e.Key == Key.Tab)
             {
-                if (AcceptArgumentCompletion())
+                if (AcceptCompletion())
+                    e.Handled = true;
+            }
+            else if (e.Key == Key.Down)
+            {
+                if (CycleCompletion(reverse: false))
+                    e.Handled = true;
+            }
+            else if (e.Key == Key.Up)
+            {
+                if (CycleCompletion(reverse: true))
                     e.Handled = true;
             }
         };
@@ -61,16 +73,6 @@ public partial class MainWindow : Window
             {
                 SubmitCommand();
                 e.Handled = true;
-            }
-            else if (e.Key == Key.Down)
-            {
-                if (CycleArgumentCompletion(reverse: false))
-                    e.Handled = true;
-            }
-            else if (e.Key == Key.Up)
-            {
-                if (CycleArgumentCompletion(reverse: true))
-                    e.Handled = true;
             }
         };
 
@@ -109,6 +111,7 @@ public partial class MainWindow : Window
 
         if (inArgMode)
         {
+            _moduleCompletions = Array.Empty<IModule>();
             _argCompletions = _modules.SuggestArgumentCompletions(SearchBox.Text);
 
             if (_completionIndex >= _argCompletions.Count)
@@ -116,11 +119,8 @@ public partial class MainWindow : Window
 
             ModuleSuggestionsList.Visibility = Visibility.Collapsed;
             ArgSuggestionsList.Visibility = Visibility.Visible;
-            ArgSuggestionsList.ItemsSource = _argCompletions
-                .Select((c, i) => new ArgSuggestion(c.Value, c.Description, i == _completionIndex))
-                .ToList();
-
-            UpdateInlineCompletion();
+            RefreshArgSuggestionsList();
+            UpdateArgGhost();
 
             if (_argCompletions.Count == 0)
             {
@@ -132,23 +132,38 @@ public partial class MainWindow : Window
             return;
         }
 
-        ClearGhost();
         _argCompletions = Array.Empty<ArgCompletion>();
-        _completionIndex = 0;
+        _moduleCompletions = _modules.Suggest(SearchBox.Text, max: 5);
+
+        if (_completionIndex >= _moduleCompletions.Count)
+            _completionIndex = 0;
 
         ArgSuggestionsList.Visibility = Visibility.Collapsed;
         ModuleSuggestionsList.Visibility = Visibility.Visible;
+        RefreshModuleSuggestionsList();
+        UpdateModuleGhost();
 
-        var matches = _modules.Suggest(SearchBox.Text, max: 5);
-        ModuleSuggestionsList.ItemsSource = matches;
-
-        if (matches.Count == 0)
+        if (_moduleCompletions.Count == 0)
         {
             HideSuggestionsPanel();
             return;
         }
 
         ShowSuggestionsPanel(wasVisible);
+    }
+
+    private void RefreshArgSuggestionsList()
+    {
+        ArgSuggestionsList.ItemsSource = _argCompletions
+            .Select((c, i) => new ArgSuggestion(c.Value, c.Description, i == _completionIndex))
+            .ToList();
+    }
+
+    private void RefreshModuleSuggestionsList()
+    {
+        ModuleSuggestionsList.ItemsSource = _moduleCompletions
+            .Select((m, i) => new ModuleSuggestion(m.Prefix, m.Name, m.Description, i == _completionIndex))
+            .ToList();
     }
 
     private void ShowSuggestionsPanel(bool wasVisible)
@@ -169,10 +184,8 @@ public partial class MainWindow : Window
         ClearGhost();
     }
 
-    private void UpdateInlineCompletion()
+    private void UpdateArgGhost()
     {
-        _argCompletions = _modules.SuggestArgumentCompletions(SearchBox.Text);
-
         if (_argCompletions.Count == 0)
         {
             ClearGhost();
@@ -186,9 +199,34 @@ public partial class MainWindow : Window
         var argument = GetCurrentArgument(SearchBox.Text);
         ModuleArgs.SplitCurrentToken(argument, out _, out var token);
 
-        _ghostSuffix = chosen.Value.StartsWith(token, StringComparison.OrdinalIgnoreCase)
-            ? chosen.Value[token.Length..]
-            : chosen.Value;
+        SetGhostSuffix(chosen.Value, token);
+    }
+
+    private void UpdateModuleGhost()
+    {
+        if (_moduleCompletions.Count == 0)
+        {
+            ClearGhost();
+            return;
+        }
+
+        if (_completionIndex >= _moduleCompletions.Count)
+            _completionIndex = 0;
+
+        var chosen = _moduleCompletions[_completionIndex];
+        var token = SearchBox.Text.TrimStart();
+        // pas encore d'espace : tout le champ = préfixe en cours
+        if (token.Contains(' '))
+            token = token.Split(' ', 2)[0];
+
+        SetGhostSuffix(chosen.Prefix, token);
+    }
+
+    private void SetGhostSuffix(string completion, string token)
+    {
+        _ghostSuffix = completion.StartsWith(token, StringComparison.OrdinalIgnoreCase)
+            ? completion[token.Length..]
+            : completion;
 
         if (_ghostSuffix.Length == 0)
         {
@@ -196,7 +234,6 @@ public partial class MainWindow : Window
             return;
         }
 
-        // que le suffixe, calé après le texte
         GhostText.Text = _ghostSuffix;
         SearchBox.UpdateLayout();
 
@@ -213,40 +250,70 @@ public partial class MainWindow : Window
         GhostText.Margin = new Thickness(0);
     }
 
-    private bool CycleArgumentCompletion(bool reverse)
+    private bool CycleCompletion(bool reverse)
     {
-        if (!_modules.IsInArgumentMode(SearchBox.Text) || _argCompletions.Count <= 1)
+        if (_modules.IsInArgumentMode(SearchBox.Text))
+        {
+            if (_argCompletions.Count <= 1)
+                return false;
+
+            _completionIndex = reverse
+                ? (_completionIndex - 1 + _argCompletions.Count) % _argCompletions.Count
+                : (_completionIndex + 1) % _argCompletions.Count;
+
+            RefreshArgSuggestionsList();
+            UpdateArgGhost();
+            return true;
+        }
+
+        if (_moduleCompletions.Count <= 1)
             return false;
 
         _completionIndex = reverse
-            ? (_completionIndex - 1 + _argCompletions.Count) % _argCompletions.Count
-            : (_completionIndex + 1) % _argCompletions.Count;
+            ? (_completionIndex - 1 + _moduleCompletions.Count) % _moduleCompletions.Count
+            : (_completionIndex + 1) % _moduleCompletions.Count;
 
-        ArgSuggestionsList.ItemsSource = _argCompletions
-            .Select((c, i) => new ArgSuggestion(c.Value, c.Description, i == _completionIndex))
-            .ToList();
-
-        UpdateInlineCompletion();
+        RefreshModuleSuggestionsList();
+        UpdateModuleGhost();
         return true;
     }
 
-    private bool AcceptArgumentCompletion()
+    private bool AcceptCompletion()
     {
-        if (_argCompletions.Count == 0)
+        if (_modules.IsInArgumentMode(SearchBox.Text))
+        {
+            if (_argCompletions.Count == 0)
+                return false;
+
+            var chosen = _argCompletions[_completionIndex];
+            if (!_modules.TryApplyCompletion(SearchBox.Text, chosen.Value, out var newInput))
+                return false;
+
+            ApplyText(newInput);
+            return true;
+        }
+
+        if (_moduleCompletions.Count == 0)
             return false;
 
-        var chosen = _argCompletions[_completionIndex];
-        if (!_modules.TryApplyCompletion(SearchBox.Text, chosen.Value, out var newInput))
-            return false;
+        var module = _moduleCompletions[_completionIndex];
+        var raw = SearchBox.Text.TrimStart();
+        var leadingWs = SearchBox.Text[..(SearchBox.Text.Length - raw.Length)];
 
+        // "ge" → "gen" (pas d'espace)
+        ApplyText(leadingWs + module.Prefix);
+        return true;
+    }
+
+    private void ApplyText(string text)
+    {
         _applyingCompletion = true;
-        SearchBox.Text = newInput;
+        SearchBox.Text = text;
         SearchBox.CaretIndex = SearchBox.Text.Length;
         _applyingCompletion = false;
 
         _completionIndex = 0;
         UpdateSuggestions();
-        return true;
     }
 
     private static string GetCurrentArgument(string input)
