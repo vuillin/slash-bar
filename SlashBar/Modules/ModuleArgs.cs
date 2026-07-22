@@ -28,6 +28,24 @@ public static class ModuleArgs {
 
 
     /// <summary>
+    /// découpe l'argument : tout sauf le dernier mot + le mot en cours
+    /// "b64 encode" → ("b64 ", "encode")
+    /// </summary>
+    public static void SplitCurrentToken(string argument, out string before, out string token) {
+
+        var lastSpace = argument.LastIndexOf(' ');
+        if (lastSpace < 0) {
+            before = "";
+            token = argument;
+            return;
+        }
+
+        before = argument[..(lastSpace + 1)];
+        token = argument[(lastSpace + 1)..];
+    }
+
+
+    /// <summary>
     /// Suggestions pour le 1er mot
     /// </summary>
     public static IReadOnlyList<ArgCompletion> SuggestFlags(

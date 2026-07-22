@@ -50,11 +50,6 @@ public partial class MainWindow : Window
             }
             else if (e.Key == Key.Tab)
             {
-                if (CycleArgumentCompletion(e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Shift)))
-                    e.Handled = true;
-            }
-            else if (e.Key == Key.Right && Keyboard.Modifiers == ModifierKeys.None)
-            {
                 if (AcceptArgumentCompletion())
                     e.Handled = true;
             }
@@ -189,9 +184,10 @@ public partial class MainWindow : Window
 
         var chosen = _argCompletions[_completionIndex];
         var argument = GetCurrentArgument(SearchBox.Text);
+        ModuleArgs.SplitCurrentToken(argument, out _, out var token);
 
-        _ghostSuffix = chosen.Value.StartsWith(argument, StringComparison.OrdinalIgnoreCase)
-            ? chosen.Value[argument.Length..]
+        _ghostSuffix = chosen.Value.StartsWith(token, StringComparison.OrdinalIgnoreCase)
+            ? chosen.Value[token.Length..]
             : chosen.Value;
 
         if (_ghostSuffix.Length == 0)
@@ -219,11 +215,8 @@ public partial class MainWindow : Window
 
     private bool CycleArgumentCompletion(bool reverse)
     {
-        if (!_modules.IsInArgumentMode(SearchBox.Text) || _argCompletions.Count == 0)
+        if (!_modules.IsInArgumentMode(SearchBox.Text) || _argCompletions.Count <= 1)
             return false;
-
-        if (_argCompletions.Count == 1)
-            return AcceptArgumentCompletion();
 
         _completionIndex = reverse
             ? (_completionIndex - 1 + _argCompletions.Count) % _argCompletions.Count

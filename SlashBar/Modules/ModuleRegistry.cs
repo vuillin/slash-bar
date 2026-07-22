@@ -68,7 +68,10 @@ public sealed class ModuleRegistry
             if (!raw.StartsWith(withSpace, StringComparison.OrdinalIgnoreCase))
                 continue;
 
-            newInput = leadingWs + withSpace + completion + " ";
+            var argument = raw[withSpace.Length..];
+            ModuleArgs.SplitCurrentToken(argument, out var before, out _);
+
+            newInput = leadingWs + withSpace + before + completion + " ";
             return true;
         }
 
