@@ -10,6 +10,8 @@ namespace SlashBar;
 
 public partial class MainWindow : Window
 {
+    private sealed record ArgSuggestion(string Value, string Description, bool IsSelected);
+
     private const int HotkeyId = 9000;
     private const int QuitHotkeyId = 9001;
 
@@ -28,7 +30,7 @@ public partial class MainWindow : Window
     private bool _isOpen;
     private bool _applyingCompletion;
 
-    private IReadOnlyList<string> _argCompletions = Array.Empty<string>();
+    private IReadOnlyList<ArgCompletion> _argCompletions = Array.Empty<ArgCompletion>();
     private int _completionIndex;
     private string _ghostSuffix = "";
 
@@ -48,6 +50,11 @@ public partial class MainWindow : Window
             }
             else if (e.Key == Key.Tab)
             {
+                if (CycleArgumentCompletion(e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Shift)))
+                    e.Handled = true;
+            }
+            else if (e.Key == Key.Right && Keyboard.Modifiers == ModifierKeys.None)
+            {
                 if (AcceptArgumentCompletion())
                     e.Handled = true;
             }
@@ -60,6 +67,16 @@ public partial class MainWindow : Window
                 SubmitCommand();
                 e.Handled = true;
             }
+            else if (e.Key == Key.Down)
+            {
+                if (CycleArgumentCompletion(reverse: false))
+                    e.Handled = true;
+            }
+            else if (e.Key == Key.Up)
+            {
+                if (CycleArgumentCompletion(reverse: true))
+                    e.Handled = true;
+            }
         };
 
         SearchBox.TextChanged += (_, _) =>
@@ -69,7 +86,6 @@ public partial class MainWindow : Window
 
             _completionIndex = 0;
             UpdateSuggestions();
-            UpdateInlineCompletion();
         };
     }
 
@@ -93,25 +109,69 @@ public partial class MainWindow : Window
 
     private void UpdateSuggestions()
     {
-        var matches = _modules.Suggest(SearchBox.Text, max: 5);
         var wasVisible = SuggestionsPanel.Visibility == Visibility.Visible;
+        var inArgMode = _modules.IsInArgumentMode(SearchBox.Text);
 
-        SuggestionsList.ItemsSource = matches;
-
-        if (matches.Count == 0)
+        if (inArgMode)
         {
-            SuggestionsPanel.BeginAnimation(OpacityProperty, null);
-            SuggestionsSlide.BeginAnimation(TranslateTransform.YProperty, null);
-            SuggestionsPanel.Visibility = Visibility.Collapsed;
-            SuggestionsPanel.Opacity = 0;
-            SuggestionsSlide.Y = -6;
+            _argCompletions = _modules.SuggestArgumentCompletions(SearchBox.Text);
+
+            if (_completionIndex >= _argCompletions.Count)
+                _completionIndex = 0;
+
+            ModuleSuggestionsList.Visibility = Visibility.Collapsed;
+            ArgSuggestionsList.Visibility = Visibility.Visible;
+            ArgSuggestionsList.ItemsSource = _argCompletions
+                .Select((c, i) => new ArgSuggestion(c.Value, c.Description, i == _completionIndex))
+                .ToList();
+
+            UpdateInlineCompletion();
+
+            if (_argCompletions.Count == 0)
+            {
+                HideSuggestionsPanel();
+                return;
+            }
+
+            ShowSuggestionsPanel(wasVisible);
             return;
         }
 
+        ClearGhost();
+        _argCompletions = Array.Empty<ArgCompletion>();
+        _completionIndex = 0;
+
+        ArgSuggestionsList.Visibility = Visibility.Collapsed;
+        ModuleSuggestionsList.Visibility = Visibility.Visible;
+
+        var matches = _modules.Suggest(SearchBox.Text, max: 5);
+        ModuleSuggestionsList.ItemsSource = matches;
+
+        if (matches.Count == 0)
+        {
+            HideSuggestionsPanel();
+            return;
+        }
+
+        ShowSuggestionsPanel(wasVisible);
+    }
+
+    private void ShowSuggestionsPanel(bool wasVisible)
+    {
         SuggestionsPanel.Visibility = Visibility.Visible;
 
         if (!wasVisible)
             AnimateSuggestionsIn();
+    }
+
+    private void HideSuggestionsPanel()
+    {
+        SuggestionsPanel.BeginAnimation(OpacityProperty, null);
+        SuggestionsSlide.BeginAnimation(TranslateTransform.YProperty, null);
+        SuggestionsPanel.Visibility = Visibility.Collapsed;
+        SuggestionsPanel.Opacity = 0;
+        SuggestionsSlide.Y = -6;
+        ClearGhost();
     }
 
     private void UpdateInlineCompletion()
@@ -130,9 +190,9 @@ public partial class MainWindow : Window
         var chosen = _argCompletions[_completionIndex];
         var argument = GetCurrentArgument(SearchBox.Text);
 
-        _ghostSuffix = chosen.StartsWith(argument, StringComparison.OrdinalIgnoreCase)
-            ? chosen[argument.Length..]
-            : chosen;
+        _ghostSuffix = chosen.Value.StartsWith(argument, StringComparison.OrdinalIgnoreCase)
+            ? chosen.Value[argument.Length..]
+            : chosen.Value;
 
         if (_ghostSuffix.Length == 0)
         {
@@ -157,13 +217,33 @@ public partial class MainWindow : Window
         GhostText.Margin = new Thickness(0);
     }
 
+    private bool CycleArgumentCompletion(bool reverse)
+    {
+        if (!_modules.IsInArgumentMode(SearchBox.Text) || _argCompletions.Count == 0)
+            return false;
+
+        if (_argCompletions.Count == 1)
+            return AcceptArgumentCompletion();
+
+        _completionIndex = reverse
+            ? (_completionIndex - 1 + _argCompletions.Count) % _argCompletions.Count
+            : (_completionIndex + 1) % _argCompletions.Count;
+
+        ArgSuggestionsList.ItemsSource = _argCompletions
+            .Select((c, i) => new ArgSuggestion(c.Value, c.Description, i == _completionIndex))
+            .ToList();
+
+        UpdateInlineCompletion();
+        return true;
+    }
+
     private bool AcceptArgumentCompletion()
     {
         if (_argCompletions.Count == 0)
             return false;
 
         var chosen = _argCompletions[_completionIndex];
-        if (!_modules.TryApplyCompletion(SearchBox.Text, chosen, out var newInput))
+        if (!_modules.TryApplyCompletion(SearchBox.Text, chosen.Value, out var newInput))
             return false;
 
         _applyingCompletion = true;
@@ -173,7 +253,6 @@ public partial class MainWindow : Window
 
         _completionIndex = 0;
         UpdateSuggestions();
-        UpdateInlineCompletion();
         return true;
     }
 
@@ -305,8 +384,8 @@ public partial class MainWindow : Window
         _isAnimating = true;
         PositionAtTop();
         SearchBox.Text = "";
+        _completionIndex = 0;
         UpdateSuggestions();
-        UpdateInlineCompletion();
 
         Opacity = 0;
         SlideTransform.Y = -20;

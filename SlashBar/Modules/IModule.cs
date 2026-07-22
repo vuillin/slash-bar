@@ -11,5 +11,5 @@ public interface IModule
     void Execute(string argument);
 
     // tab / ghost text
-    IReadOnlyList<string> SuggestCompletions(string argument) => Array.Empty<string>();
+    IReadOnlyList<ArgCompletion> SuggestCompletions(string argument) => Array.Empty<ArgCompletion>();
 }

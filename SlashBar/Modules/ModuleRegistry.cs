@@ -39,13 +39,16 @@ public sealed class ModuleRegistry
             .ToList();
     }
 
-    public IReadOnlyList<string> SuggestArgumentCompletions(string input)
+    public IReadOnlyList<ArgCompletion> SuggestArgumentCompletions(string input)
     {
         if (!TryResolveArgument(input, out var module, out var argument))
-            return Array.Empty<string>();
+            return Array.Empty<ArgCompletion>();
 
         return module.SuggestCompletions(argument);
     }
+
+    public bool IsInArgumentMode(string input) =>
+        TryResolveArgument(input, out _, out _);
 
     // "f pr" + "private" → "f private "
     public bool TryApplyCompletion(string input, string completion, out string newInput)

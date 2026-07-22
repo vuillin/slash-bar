@@ -116,7 +116,7 @@
                         Background="#1FFFFFFF"
                         Margin="20,0"/>
 
-                <ItemsControl x:Name="SuggestionsList"
+                <ItemsControl x:Name="ModuleSuggestionsList"
                               Margin="20,10,20,14"
                               Focusable="False">
                     <ItemsControl.ItemTemplate>
@@ -136,6 +136,43 @@
                                            FontWeight="Medium"
                                            Foreground="#B4B4BC"
                                            Text="{Binding Name}"/>
+                                <TextBlock FontFamily="Segoe UI Variable Text, Segoe UI"
+                                           FontSize="13"
+                                           Foreground="#40FFFFFF"
+                                           Text="  ·  "/>
+                                <TextBlock FontFamily="Segoe UI Variable Text, Segoe UI"
+                                           FontSize="12"
+                                           Foreground="#66FFFFFF"
+                                           VerticalAlignment="Center"
+                                           Text="{Binding Description}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <ItemsControl x:Name="ArgSuggestionsList"
+                              Margin="20,10,20,14"
+                              Visibility="Collapsed"
+                              Focusable="False">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <TextBlock FontFamily="Segoe UI Variable Text, Segoe UI"
+                                           FontSize="13"
+                                           Text="{Binding Value}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="#B4B4BC"/>
+                                            <Setter Property="FontWeight" Value="Medium"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter Property="Foreground" Value="#E8E8EC"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
                                 <TextBlock FontFamily="Segoe UI Variable Text, Segoe UI"
                                            FontSize="13"
                                            Foreground="#40FFFFFF"
