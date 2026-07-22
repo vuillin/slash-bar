@@ -20,8 +20,10 @@ public sealed class FirefoxSearchModule : IModule
     public void Execute(string argument) {
 
         argument = argument.Trim();
-        if (argument.Length == 0)
+        if (argument.Length == 0) {
+            StartFirefox("");
             return;
+        }
         
         var isPrivate = ModuleArgs.ConsumeFlag(ref argument, "private");
 
