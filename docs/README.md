@@ -6,3 +6,4 @@
 | `gen` | Générateur | [gen.md](modules/gen.md) |
 | `doc` | Documentation | [doc.md](modules/doc.md) |
 | `setup` | Profils d'applications | [setup.md](modules/setup.md) |
+| `ip` | Adresse IP | [ip.md](modules/ip.md) |
