@@ -5,6 +5,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using SlashBar.Modules;
+using SlashBar.Modules.Clipboard;
 
 namespace SlashBar;
 
@@ -362,6 +363,9 @@ public partial class MainWindow : Window
             PositionAtTop();
             RegisterGlobalHotkeys();
             _hotkeysRegistered = true;
+
+            ClipboardHistory.Watcher.Start();
+
             Hide(); // ctrl+espace pour rouvrir
         }
         catch (Exception ex)
