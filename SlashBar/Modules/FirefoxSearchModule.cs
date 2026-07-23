@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace SlashBar.Modules;
 
 /// <summary>
@@ -21,57 +19,31 @@ public sealed class FirefoxSearchModule : IModule
 
         argument = argument.Trim();
         if (argument.Length == 0) {
-            StartFirefox("");
+            FirefoxHelper.Start();
             return;
         }
-        
+
         var isPrivate = ModuleArgs.ConsumeFlag(ref argument, "private");
 
         if (argument.Length == 0) {
 
             // "f private" seul -> fenêtre privée
             if (isPrivate)
-                StartFirefox("-private-window");
+                FirefoxHelper.Start("-private-window");
             return;
         }
 
         if (UrlHelper.TryNormalize(argument, out var url)) {
-            OpenUrl(url, isPrivate);
+            FirefoxHelper.OpenUrl(url, isPrivate);
             return;
         }
 
-        if (isPrivate) {
-
-            var searchUrl = "https://duckduckgo.com/?q=" + Uri.EscapeDataString(argument);
-            StartFirefox($"-private-window \"{searchUrl}\"");
-
-        } else {
-
-            var query = argument.Replace("\"", "\\\"");
-            StartFirefox($"-search \"{query}\"");
-        }
+        if (isPrivate)
+            FirefoxHelper.SearchPrivate(argument);
+        else
+            FirefoxHelper.Search(argument);
     }
 
     public IReadOnlyList<ArgCompletion> SuggestCompletions(string argument) =>
         ModuleArgs.SuggestFlags(argument, Flags);
-
-
-    private static void StartFirefox(string args) {
-        
-        Process.Start(new ProcessStartInfo {
-            FileName = "firefox",
-            Arguments = args,
-            UseShellExecute = true
-        });
-    }
-
-
-    private static void OpenUrl(string url, bool isPrivate) {
-
-        var args = isPrivate
-            ? $"-private-window \"{url}\""
-            : $"\"{url}\"";
-
-        StartFirefox(args);
-    }
 }

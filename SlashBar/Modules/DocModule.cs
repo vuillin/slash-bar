@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace SlashBar.Modules;
 
 /// <summary>
@@ -164,7 +162,7 @@ public sealed class DocModule : IModule {
             ? string.Format(source.SearchUrl, Uri.EscapeDataString(query))
             : source.HomeUrl;
 
-        OpenTab(url);
+        FirefoxHelper.OpenNewTab(url);
     }
 
 
@@ -176,15 +174,5 @@ public sealed class DocModule : IModule {
             return ModuleArgs.SuggestFlags(token, Flags);
 
         return Array.Empty<ArgCompletion>();
-    }
-
-
-    private static void OpenTab(string url) {
-
-        Process.Start(new ProcessStartInfo {
-            FileName = "firefox",
-            Arguments = $"-new-tab \"{url}\"",
-            UseShellExecute = true
-        });
     }
 }
