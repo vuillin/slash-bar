@@ -51,7 +51,8 @@ public static class ModuleArgs {
     public static IReadOnlyList<ArgCompletion> SuggestFlags(
 
         string argument,
-        IReadOnlyList<ArgCompletion> flags) {
+        IReadOnlyList<ArgCompletion> flags,
+        int max = 10) {
 
         if (argument.Contains(' '))
             return Array.Empty<ArgCompletion>();
@@ -59,6 +60,7 @@ public static class ModuleArgs {
         return flags
             .Where(f => f.Value.StartsWith(argument, StringComparison.OrdinalIgnoreCase)
                         && !f.Value.Equals(argument, StringComparison.OrdinalIgnoreCase))
+            .Take(max)
             .ToList();
     }
 }
