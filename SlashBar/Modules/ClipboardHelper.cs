@@ -9,6 +9,6 @@ namespace SlashBar.Modules;
 public static class ClipboardHelper {
 
     public static void SetText(string text) {
-        Clipboard.SetText(text);
+        System.Windows.Clipboard.SetText(text);
     }
 }

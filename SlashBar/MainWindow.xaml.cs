@@ -97,7 +97,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show(
+            System.Windows.MessageBox.Show(
                 this,
                 "Erreur dans le module :\n" + ex.Message,
                 "SlashBar");
@@ -366,7 +366,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, "Erreur au démarrage :\n" + ex.Message, "SlashBar");
+            System.Windows.MessageBox.Show(this, "Erreur au démarrage :\n" + ex.Message, "SlashBar");
         }
     }
 
@@ -389,7 +389,7 @@ public partial class MainWindow : Window
 
         if (!okSearch || !okQuit)
         {
-            MessageBox.Show(
+            System.Windows.MessageBox.Show(
                 this,
                 "Impossible d'enregistrer Ctrl+Espace ou Ctrl+Shift+Q.\n" +
                 "Un autre logiciel utilise peut-être déjà ce raccourci.",
@@ -415,7 +415,7 @@ public partial class MainWindow : Window
         }
         else if (id == QuitHotkeyId)
         {
-            Application.Current.Shutdown();
+            System.Windows.Application.Current.Shutdown();
             handled = true;
         }
 
@@ -531,7 +531,7 @@ public partial class MainWindow : Window
             UnregisterHotKey(helper.Handle, QuitHotkeyId);
         }
 
-        Application.Current.Shutdown();
+        System.Windows.Application.Current.Shutdown();
         base.OnClosed(e);
     }
 
