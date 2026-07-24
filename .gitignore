@@ -12,6 +12,3 @@
 .vs/
 *.DotSettings.user
 
-# setup
-SlashBar/Modules/Setup/SetupProfiles.cs
-
