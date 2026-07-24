@@ -110,6 +110,21 @@ public sealed class ClipboardHistoryStore {
     }
 
 
+    public void ClearAll() {
+
+        lock (_lock) {
+
+            if (_entries.Count == 0)
+                return;
+
+            _entries.Clear();
+            Save();
+        }
+
+        Changed?.Invoke();
+    }
+
+
     private sealed class FileModel {
         public List<ClipboardHistoryEntry> Entries { get; set; } = [];
     }

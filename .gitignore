@@ -4,6 +4,7 @@
 # build
 **/bin/
 **/obj/
+/publish/
 
 # ide
 *.user
