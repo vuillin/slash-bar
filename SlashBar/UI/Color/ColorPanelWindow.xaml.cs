@@ -14,20 +14,43 @@ public partial class ColorPanelWindow : Window {
     private static ColorPanelWindow? _instance;
     private Window? _overlay;
 
-    private const int SampleSize = 15;
-    private const int Zoom = 10;
+    private const int SampleSize = 11;
+    private const int Zoom = 15;
 
     private Window? _magnifier;
     private System.Windows.Controls.Image? _magnifierImage;
+
+    private bool _colorLocked;
+    private System.Windows.Media.Color _hoveredColor;
 
 
     private ColorPanelWindow() {
 
         InitializeComponent();
 
+        MouseEnter += (_, _) => _magnifier?.Hide();
+
+        MouseLeave += (_, _) => {
+            if (!IsVisible)
+                return;
+
+            UpdateMagnifier(System.Windows.Forms.Cursor.Position);
+            _magnifier?.Show();
+        };
+
         PreviewKeyDown += (_, e) => {
-            if (e.Key == Key.Escape)
+            if (e.Key == Key.Escape) {
                 ClosePanel();
+                e.Handled = true;
+                return;
+            }
+
+            switch (e.Key) {
+                case Key.Left:  NudgeCursor(-1, 0); e.Handled = true; break;
+                case Key.Right: NudgeCursor(1,  0); e.Handled = true; break;
+                case Key.Up:    NudgeCursor(0, -1); e.Handled = true; break;
+                case Key.Down:  NudgeCursor(0,  1); e.Handled = true; break;
+            }
         };
     }
 
@@ -42,9 +65,26 @@ public partial class ColorPanelWindow : Window {
         _magnifierImage = new System.Windows.Controls.Image {
             // pas de flou entre les pixels
             SnapsToDevicePixels = true,
+            Stretch = Stretch.Fill,
         };
-
         RenderOptions.SetBitmapScalingMode(_magnifierImage, BitmapScalingMode.NearestNeighbor);
+
+        int half = SampleSize / 2;
+
+        var grid = new Grid();
+        grid.Children.Add(_magnifierImage);
+
+        grid.Children.Add(new Border {
+            Width = Zoom,
+            Height = Zoom,
+            BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 255, 255)),
+            BorderThickness = new Thickness(2),
+            Background = System.Windows.Media.Brushes.Transparent,
+            HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+            VerticalAlignment = System.Windows.VerticalAlignment.Top,
+            Margin = new Thickness(half * Zoom, half * Zoom, 0, 0),
+            IsHitTestVisible = false,   
+        });
 
         _magnifier = new Window {
             WindowStyle = WindowStyle.None,
@@ -59,7 +99,7 @@ public partial class ColorPanelWindow : Window {
             ShowActivated = false,
             ResizeMode = ResizeMode.NoResize,
             IsHitTestVisible = false,
-            Content = _magnifierImage,
+            Content = grid,
             Owner = _overlay,
             Cursor = System.Windows.Input.Cursors.Cross,
         };
@@ -80,6 +120,13 @@ public partial class ColorPanelWindow : Window {
         using var bmp = new Bitmap(SampleSize, SampleSize);
         using (var g = Graphics.FromImage(bmp)) {
             g.CopyFromScreen(srcX, srcY, 0, 0, new DrawingSize(SampleSize, SampleSize));
+
+            var pixel = bmp.GetPixel(half, half);
+            _hoveredColor = System.Windows.Media.Color.FromRgb(pixel.R, pixel.G, pixel.B);
+
+            // tant qu'on a pas cliqué
+            if (!_colorLocked)
+                ApplyColorToUi(_hoveredColor);
         }
 
         // Bitmap GDI → image WPF
@@ -106,6 +153,9 @@ public partial class ColorPanelWindow : Window {
     [System.Runtime.InteropServices.DllImport("gdi32.dll")]
     private static extern bool DeleteObject(IntPtr hObject);
 
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern bool SetCursorPos(int x, int y);
+
 
     public static void Toggle() {
 
@@ -119,6 +169,7 @@ public partial class ColorPanelWindow : Window {
 
 
     private void OpenPanel() {
+        _colorLocked = false;
         ShowOverlay();
         ShowMagnifier();
         // toujours au-dessus de son owner
@@ -143,21 +194,46 @@ public partial class ColorPanelWindow : Window {
 
 
     private void ShowOverlay() {
-        _overlay ??= new Window {
-            WindowStyle = WindowStyle.None,
-            AllowsTransparency = true,
-            Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(1, 0, 0, 0)),
-            Topmost = true,
-            ShowInTaskbar = false,
-            ResizeMode = ResizeMode.NoResize,
-            ShowActivated = false,
-            Cursor = System.Windows.Input.Cursors.Cross,
-            Left = SystemParameters.VirtualScreenLeft,
-            Top = SystemParameters.VirtualScreenTop,
-            Width = SystemParameters.VirtualScreenWidth,
-            Height = SystemParameters.VirtualScreenHeight,
-        };
-        _overlay.MouseMove += Overlay_MouseMove;
+
+        if (_overlay == null) {
+
+            _overlay ??= new Window {
+                WindowStyle = WindowStyle.None,
+                AllowsTransparency = true,
+                Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(1, 0, 0, 0)),
+                Topmost = true,
+                ShowInTaskbar = false,
+                ResizeMode = ResizeMode.NoResize,
+                ShowActivated = false,
+                Cursor = System.Windows.Input.Cursors.Cross,
+                Left = SystemParameters.VirtualScreenLeft,
+                Top = SystemParameters.VirtualScreenTop,
+                Width = SystemParameters.VirtualScreenWidth,
+                Height = SystemParameters.VirtualScreenHeight,
+            };
+
+            _overlay.MouseMove += Overlay_MouseMove;
+
+            _overlay.PreviewKeyDown += (_, e) => {
+                switch (e.Key) {
+                    case Key.Left:  NudgeCursor(-1,  0); e.Handled = true; break;
+                    case Key.Right: NudgeCursor( 1,  0); e.Handled = true; break;
+                    case Key.Up:    NudgeCursor( 0, -1); e.Handled = true; break;
+                    case Key.Down:  NudgeCursor( 0,  1); e.Handled = true; break;
+                    case Key.Escape:
+                        ClosePanel();
+                        e.Handled = true;
+                        break;
+                }
+            };
+
+            _overlay.MouseLeftButtonDown += (_, e) => {
+                _colorLocked = true;
+                ApplyColorToUi(_hoveredColor);
+                e.Handled = true;
+            };
+
+        }
         _overlay.Show();
     }
 
@@ -165,6 +241,19 @@ public partial class ColorPanelWindow : Window {
     private void HideOverlay() {
         _overlay?.Hide();
         _magnifier?.Hide();
+    }
+
+
+    // déplace le curseur de dx/dy pixels écran, puis met à jour la loupe
+    private void NudgeCursor(int dx, int dy) {
+
+        var p = System.Windows.Forms.Cursor.Position;
+        SetCursorPos(p.X + dx, p.Y + dy);
+
+        UpdateMagnifier(System.Windows.Forms.Cursor.Position);
+
+        if (!IsMouseOver)
+            _magnifier?.Show();
     }
 
 
