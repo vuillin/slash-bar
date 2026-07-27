@@ -121,7 +121,6 @@ public partial class ColorPanelWindow : Window {
         ShowMagnifier();
         Owner = _overlay;
 
-        // Clic languette : la souris est déjà sur le panneau → MouseEnter ne se rejoue pas
         if (IsMouseOver)
             _magnifier?.Hide();
     }
@@ -131,7 +130,7 @@ public partial class ColorPanelWindow : Window {
         _pickModeActive = false;
         Owner = null;
         HideOverlay();
-    }
+    } 
 
 
     private void ShowMagnifier() {
