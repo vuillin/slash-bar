@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace SlashBar;
 
@@ -42,12 +43,13 @@ public partial class ColorPanelWindow {
         PreviewSwatch.Background = brush;
 
         var hex = $"#{_selectedColor.R:X2}{_selectedColor.G:X2}{_selectedColor.B:X2}".ToLowerInvariant();
-        var rgb = $"rgb({_selectedColor.R}, {_selectedColor.G}, {_selectedColor.B})";
+        var rgbDisplay = $"{_selectedColor.R}, {_selectedColor.G}, {_selectedColor.B}";
+        var rgbCopy = $"rgb({_selectedColor.R}, {_selectedColor.G}, {_selectedColor.B})";
 
         PreviewHexText.Text = hex;
-        PreviewRgbText.Text = rgb;
         HexCardValue.Text = hex;
-        RgbCardValue.Text = rgb;
+        RgbCardValue.Text = rgbDisplay;
+        RgbCardValue.Tag = rgbCopy; // format copié
 
         SatValHueLayer.Background = new SolidColorBrush(HsvToRgb(_hue, 1, 1));
         PlaceSatValMarker();
@@ -76,8 +78,9 @@ public partial class ColorPanelWindow {
         if (w <= 0)
             return;
 
-        var x = _hue / 360.0 * w;
-        HueThumb.Margin = new Thickness(x - HueThumb.Width / 2, 0, 0, 0);
+        // Le curseur est frère de HueBar (pas clipé) → positionné sur la même largeur
+        var x = _hue / 360.0 * w - HueThumb.Width / 2;
+        HueThumb.Margin = new Thickness(x, 0, 0, 0);
     }
 
 
@@ -153,12 +156,47 @@ public partial class ColorPanelWindow {
     private void CopyHex_Click(object sender, RoutedEventArgs e) {
         var hex = $"#{_selectedColor.R:X2}{_selectedColor.G:X2}{_selectedColor.B:X2}".ToLowerInvariant();
         System.Windows.Clipboard.SetText(hex);
+        ShowCopiedToast();
     }
 
 
     private void CopyRgb_Click(object sender, RoutedEventArgs e) {
-        var rgb = $"rgb({_selectedColor.R}, {_selectedColor.G}, {_selectedColor.B})";
+        var rgb = RgbCardValue.Tag as string
+            ?? $"rgb({_selectedColor.R}, {_selectedColor.G}, {_selectedColor.B})";
         System.Windows.Clipboard.SetText(rgb);
+        ShowCopiedToast();
+    }
+
+
+    private void ShowCopiedToast() {
+        CopiedToast.BeginAnimation(OpacityProperty, null);
+        CopiedToastSlide.BeginAnimation(TranslateTransform.YProperty, null);
+
+        var easeOut = new QuadraticEase { EasingMode = EasingMode.EaseOut };
+        var easeIn = new QuadraticEase { EasingMode = EasingMode.EaseIn };
+
+        var opacity = new DoubleAnimationUsingKeyFrames();
+        opacity.KeyFrames.Add(new EasingDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.Zero)));
+        opacity.KeyFrames.Add(new EasingDoubleKeyFrame(1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(160))) {
+            EasingFunction = easeOut
+        });
+        opacity.KeyFrames.Add(new DiscreteDoubleKeyFrame(1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(1000))));
+        opacity.KeyFrames.Add(new EasingDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(1220))) {
+            EasingFunction = easeIn
+        });
+
+        var slide = new DoubleAnimationUsingKeyFrames();
+        slide.KeyFrames.Add(new EasingDoubleKeyFrame(8, KeyTime.FromTimeSpan(TimeSpan.Zero)));
+        slide.KeyFrames.Add(new EasingDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(180))) {
+            EasingFunction = easeOut
+        });
+        slide.KeyFrames.Add(new DiscreteDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(1000))));
+        slide.KeyFrames.Add(new EasingDoubleKeyFrame(6, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(1220))) {
+            EasingFunction = easeIn
+        });
+
+        CopiedToast.BeginAnimation(OpacityProperty, opacity);
+        CopiedToastSlide.BeginAnimation(TranslateTransform.YProperty, slide);
     }
 
 
