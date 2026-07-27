@@ -178,74 +178,66 @@
                                     BorderThickness="1"
                                     ClipToBounds="True">
 
-                                <StackPanel VerticalAlignment="Bottom"
-                                            Margin="8,0,8,10">
-                                    <Border Background="#CC000000"
-                                            CornerRadius="8"
-                                            Padding="8,5"
-                                            Margin="0,0,0,6">
-                                        <TextBlock x:Name="PreviewHexText"
-                                                   Text="#808080"
-                                                   FontFamily="Consolas, Cascadia Mono, Segoe UI"
-                                                   FontSize="11"
-                                                   Foreground="White"
-                                                   TextAlignment="Center"/>
-                                    </Border>
-                                    <Border Background="#CC000000"
-                                            CornerRadius="8"
-                                            Padding="8,5">
-                                        <TextBlock x:Name="PreviewRgbText"
-                                                   Text="rgb(128, 128, 128)"
-                                                   FontFamily="Consolas, Cascadia Mono, Segoe UI"
-                                                   FontSize="10"
-                                                   Foreground="White"
-                                                   TextAlignment="Center"
-                                                   TextWrapping="Wrap"/>
-                                    </Border>
-                                </StackPanel>
+                                <Border VerticalAlignment="Bottom"
+                                        Margin="10,0,10,12"
+                                        Background="#99000000"
+                                        CornerRadius="9"
+                                        Padding="8,6">
+                                    <TextBlock x:Name="PreviewHexText"
+                                               Text="#808080"
+                                               FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
+                                               FontSize="12"
+                                               FontWeight="SemiBold"
+                                               Foreground="White"
+                                               TextAlignment="Center"/>
+                                </Border>
                             </Border>
                         </Grid>
 
-                        <!-- Teinte -->
-                        <Border x:Name="HueBar"
-                                Height="14"
-                                CornerRadius="7"
-                                Margin="0,0,0,14"
-                                BorderBrush="#1A000000"
-                                BorderThickness="1"
-                                ClipToBounds="True"
-                                Cursor="Hand"
-                                MouseLeftButtonDown="HueBar_MouseLeftButtonDown"
-                                MouseMove="HueBar_MouseMove"
-                                MouseLeftButtonUp="HueBar_MouseLeftButtonUp">
+                        <Grid Height="22" Margin="0,0,0,16">
+                            <Border x:Name="HueBar"
+                                    Height="12"
+                                    CornerRadius="6"
+                                    VerticalAlignment="Center"
+                                    BorderBrush="#1A000000"
+                                    BorderThickness="1"
+                                    ClipToBounds="True"
+                                    Cursor="Hand"
+                                    MouseLeftButtonDown="HueBar_MouseLeftButtonDown"
+                                    MouseMove="HueBar_MouseMove"
+                                    MouseLeftButtonUp="HueBar_MouseLeftButtonUp">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                        <GradientStop Color="#FFFF0000" Offset="0"/>
+                                        <GradientStop Color="#FFFFFF00" Offset="0.17"/>
+                                        <GradientStop Color="#FF00FF00" Offset="0.33"/>
+                                        <GradientStop Color="#FF00FFFF" Offset="0.5"/>
+                                        <GradientStop Color="#FF0000FF" Offset="0.67"/>
+                                        <GradientStop Color="#FFFF00FF" Offset="0.83"/>
+                                        <GradientStop Color="#FFFF0000" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                            </Border>
 
-                            <Grid>
-                                <Border CornerRadius="7">
-                                    <Border.Background>
-                                        <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
-                                            <GradientStop Color="#FFFF0000" Offset="0"/>
-                                            <GradientStop Color="#FFFFFF00" Offset="0.17"/>
-                                            <GradientStop Color="#FF00FF00" Offset="0.33"/>
-                                            <GradientStop Color="#FF00FFFF" Offset="0.5"/>
-                                            <GradientStop Color="#FF0000FF" Offset="0.67"/>
-                                            <GradientStop Color="#FFFF00FF" Offset="0.83"/>
-                                            <GradientStop Color="#FFFF0000" Offset="1"/>
-                                        </LinearGradientBrush>
-                                    </Border.Background>
-                                </Border>
-
-                                <Ellipse x:Name="HueThumb"
-                                         Width="18"
-                                         Height="18"
-                                         Stroke="White"
-                                         StrokeThickness="2.5"
-                                         Fill="Transparent"
-                                         IsHitTestVisible="False"
-                                         HorizontalAlignment="Left"
-                                         VerticalAlignment="Center"
-                                         Margin="-9,0,0,0"/>
-                            </Grid>
-                        </Border>
+                            <Ellipse x:Name="HueThumb"
+                                     Width="20"
+                                     Height="20"
+                                     Fill="White"
+                                     Stroke="#26000000"
+                                     StrokeThickness="0.5"
+                                     IsHitTestVisible="False"
+                                     HorizontalAlignment="Left"
+                                     VerticalAlignment="Center"
+                                     Margin="0">
+                                <Ellipse.Effect>
+                                    <DropShadowEffect BlurRadius="6"
+                                                      ShadowDepth="1"
+                                                      Direction="270"
+                                                      Opacity="0.22"
+                                                      Color="#000000"/>
+                                </Ellipse.Effect>
+                            </Ellipse>
+                        </Grid>
 
                         <!-- Cartes HEX / RGB -->
                         <Grid>
@@ -256,34 +248,44 @@
                             </Grid.ColumnDefinitions>
 
                             <Border Grid.Column="0"
-                                    Background="White"
-                                    CornerRadius="14"
-                                    BorderBrush="#14000000"
+                                    Background="#FFFFFF"
+                                    CornerRadius="16"
+                                    BorderBrush="#0F000000"
                                     BorderThickness="1"
-                                    Padding="12,12,12,10">
+                                    Padding="14,14,14,12">
                                 <StackPanel>
-                                    <TextBlock Text="HEX"
-                                               FontFamily="Segoe UI Variable Text, Segoe UI"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
+                                    <TextBlock Text="Hex"
+                                               FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
+                                               FontSize="12"
+                                               FontWeight="Medium"
                                                Foreground="#8E8E93"
-                                               Margin="0,0,0,6"/>
-                                    <TextBlock x:Name="HexCardValue"
-                                               Text="#808080"
-                                               FontFamily="Consolas, Cascadia Mono, Segoe UI"
-                                               FontSize="15"
-                                               FontWeight="SemiBold"
-                                               Foreground="#1C1C1E"
-                                               Margin="0,0,0,12"/>
-                                    <Button Content="COPY HEX"
+                                               Margin="0,0,0,8"/>
+
+                                    <DockPanel LastChildFill="True" Margin="0,0,0,14">
+                                        <Ellipse DockPanel.Dock="Left"
+                                                 Width="10"
+                                                 Height="10"
+                                                 Fill="{Binding Background, ElementName=PreviewSwatch}"
+                                                 VerticalAlignment="Center"
+                                                 Margin="0,0,8,0"/>
+                                        <TextBlock x:Name="HexCardValue"
+                                                   Text="#808080"
+                                                   FontFamily="SF Mono, Cascadia Mono, Consolas, Segoe UI"
+                                                   FontSize="16"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#1C1C1E"
+                                                   VerticalAlignment="Center"/>
+                                    </DockPanel>
+
+                                    <Button Content="Copier"
                                             Click="CopyHex_Click"
-                                            Height="36"
+                                            Height="34"
                                             Cursor="Hand"
-                                            FontFamily="Segoe UI Variable Text, Segoe UI"
-                                            FontSize="11"
-                                            FontWeight="SemiBold"
-                                            Foreground="White"
-                                            Background="#1C1C1E"
+                                            FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
+                                            FontSize="13"
+                                            FontWeight="Medium"
+                                            Foreground="#007AFF"
+                                            Background="#EFEFF4"
                                             BorderThickness="0">
                                         <Button.Template>
                                             <ControlTemplate TargetType="Button">
@@ -295,7 +297,10 @@
                                                 </Border>
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter TargetName="Bg" Property="Background" Value="#3A3A3C"/>
+                                                        <Setter TargetName="Bg" Property="Background" Value="#E5E5EA"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter TargetName="Bg" Property="Background" Value="#D1D1D6"/>
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -305,35 +310,45 @@
                             </Border>
 
                             <Border Grid.Column="2"
-                                    Background="White"
-                                    CornerRadius="14"
-                                    BorderBrush="#14000000"
+                                    Background="#FFFFFF"
+                                    CornerRadius="16"
+                                    BorderBrush="#0F000000"
                                     BorderThickness="1"
-                                    Padding="12,12,12,10">
+                                    Padding="14,14,14,12">
                                 <StackPanel>
-                                    <TextBlock Text="RGB"
-                                               FontFamily="Segoe UI Variable Text, Segoe UI"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
+                                    <TextBlock Text="RVB"
+                                               FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
+                                               FontSize="12"
+                                               FontWeight="Medium"
                                                Foreground="#8E8E93"
-                                               Margin="0,0,0,6"/>
-                                    <TextBlock x:Name="RgbCardValue"
-                                               Text="rgb(128, 128, 128)"
-                                               FontFamily="Consolas, Cascadia Mono, Segoe UI"
-                                               FontSize="13"
-                                               FontWeight="SemiBold"
-                                               Foreground="#1C1C1E"
-                                               TextWrapping="Wrap"
-                                               Margin="0,0,0,12"/>
-                                    <Button Content="COPY RGB"
+                                               Margin="0,0,0,8"/>
+
+                                    <DockPanel LastChildFill="True" Margin="0,0,0,14">
+                                        <Ellipse DockPanel.Dock="Left"
+                                                 Width="10"
+                                                 Height="10"
+                                                 Fill="{Binding Background, ElementName=PreviewSwatch}"
+                                                 VerticalAlignment="Center"
+                                                 Margin="0,0,8,0"/>
+                                        <TextBlock x:Name="RgbCardValue"
+                                                   Text="128, 128, 128"
+                                                   FontFamily="SF Mono, Cascadia Mono, Consolas, Segoe UI"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#1C1C1E"
+                                                   VerticalAlignment="Center"
+                                                   TextWrapping="Wrap"/>
+                                    </DockPanel>
+
+                                    <Button Content="Copier"
                                             Click="CopyRgb_Click"
-                                            Height="36"
+                                            Height="34"
                                             Cursor="Hand"
-                                            FontFamily="Segoe UI Variable Text, Segoe UI"
-                                            FontSize="11"
-                                            FontWeight="SemiBold"
-                                            Foreground="White"
-                                            Background="#007AFF"
+                                            FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
+                                            FontSize="13"
+                                            FontWeight="Medium"
+                                            Foreground="#007AFF"
+                                            Background="#EFEFF4"
                                             BorderThickness="0">
                                         <Button.Template>
                                             <ControlTemplate TargetType="Button">
@@ -345,7 +360,10 @@
                                                 </Border>
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter TargetName="Bg" Property="Background" Value="#0066D6"/>
+                                                        <Setter TargetName="Bg" Property="Background" Value="#E5E5EA"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter TargetName="Bg" Property="Background" Value="#D1D1D6"/>
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -354,6 +372,46 @@
                                 </StackPanel>
                             </Border>
                         </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- toast "Copié" -->
+                <Border x:Name="CopiedToast"
+                        Grid.RowSpan="2"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Center"
+                        Margin="0,0,0,24"
+                        Padding="16,10"
+                        CornerRadius="20"
+                        Background="#F2FFFFFF"
+                        BorderBrush="#1A000000"
+                        BorderThickness="1"
+                        Opacity="0"
+                        IsHitTestVisible="False"
+                        RenderTransformOrigin="0.5,1">
+                    <Border.RenderTransform>
+                        <TranslateTransform x:Name="CopiedToastSlide" Y="8"/>
+                    </Border.RenderTransform>
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="20"
+                                          ShadowDepth="4"
+                                          Direction="270"
+                                          Opacity="0.22"
+                                          Color="#000000"/>
+                    </Border.Effect>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="✓"
+                                   FontSize="13"
+                                   FontWeight="SemiBold"
+                                   Foreground="#34C759"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,8,0"/>
+                        <TextBlock Text="Copié"
+                                   FontFamily="Segoe UI Variable Text, Segoe UI"
+                                   FontSize="13"
+                                   FontWeight="Medium"
+                                   Foreground="#3C3C43"
+                                   VerticalAlignment="Center"/>
                     </StackPanel>
                 </Border>
             </Grid>
