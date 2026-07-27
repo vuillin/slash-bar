@@ -1,8 +1,9 @@
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
+using SlashBar.Modules;
+using SlashBar.Modules.Color;
+using SlashBar.UI.Shell;
 
 namespace SlashBar;
 
@@ -28,30 +29,40 @@ public partial class ColorPanelWindow {
         SetSelectedColor(color, fromPicker: false);
 
 
+    /// <summary>Preview rapide pendant le hover eyedropper (sans repositionner les curseurs HSV).</summary>
+    private void ApplyColorPreview(System.Windows.Media.Color color) {
+        _selectedColor = color;
+        HsvColorConverter.RgbToHsv(color.R, color.G, color.B, out _hue, out _saturation, out _value);
+
+        PreviewSwatch.Background = new SolidColorBrush(color);
+        var hex = ColorFormats.ToHex(color);
+        PreviewHexText.Text = hex;
+        HexCardValue.Text = hex;
+        RgbCardValue.Text = ColorFormats.ToRgbDisplay(color);
+        RgbCardValue.Tag = ColorFormats.ToRgbClipboard(color);
+    }
+
+
     private void SetSelectedColor(System.Windows.Media.Color color, bool fromPicker) {
         _selectedColor = color;
 
         if (!fromPicker)
-            RgbToHsv(color.R, color.G, color.B, out _hue, out _saturation, out _value);
+            HsvColorConverter.RgbToHsv(color.R, color.G, color.B, out _hue, out _saturation, out _value);
 
         RefreshPickerUi();
     }
 
 
     private void RefreshPickerUi() {
-        var brush = new SolidColorBrush(_selectedColor);
-        PreviewSwatch.Background = brush;
+        PreviewSwatch.Background = new SolidColorBrush(_selectedColor);
 
-        var hex = $"#{_selectedColor.R:X2}{_selectedColor.G:X2}{_selectedColor.B:X2}".ToLowerInvariant();
-        var rgbDisplay = $"{_selectedColor.R}, {_selectedColor.G}, {_selectedColor.B}";
-        var rgbCopy = $"rgb({_selectedColor.R}, {_selectedColor.G}, {_selectedColor.B})";
-
+        var hex = ColorFormats.ToHex(_selectedColor);
         PreviewHexText.Text = hex;
         HexCardValue.Text = hex;
-        RgbCardValue.Text = rgbDisplay;
-        RgbCardValue.Tag = rgbCopy; // format copié
+        RgbCardValue.Text = ColorFormats.ToRgbDisplay(_selectedColor);
+        RgbCardValue.Tag = ColorFormats.ToRgbClipboard(_selectedColor);
 
-        SatValHueLayer.Background = new SolidColorBrush(HsvToRgb(_hue, 1, 1));
+        SatValHueLayer.Background = new SolidColorBrush(HsvColorConverter.HsvToRgb(_hue, 1, 1));
         PlaceSatValMarker();
         PlaceHueThumb();
     }
@@ -113,7 +124,7 @@ public partial class ColorPanelWindow {
         _value = Math.Clamp(1 - pos.Y / h, 0, 1);
 
         _colorLocked = true;
-        CommitHsvToColor(fromPicker: true);
+        CommitHsvToColor();
     }
 
 
@@ -143,105 +154,26 @@ public partial class ColorPanelWindow {
 
         _hue = Math.Clamp(pos.X / w * 360.0, 0, 360);
         _colorLocked = true;
-        CommitHsvToColor(fromPicker: true);
+        CommitHsvToColor();
     }
 
 
-    private void CommitHsvToColor(bool fromPicker) {
-        _selectedColor = HsvToRgb(_hue, _saturation, _value);
+    private void CommitHsvToColor() {
+        _selectedColor = HsvColorConverter.HsvToRgb(_hue, _saturation, _value);
         RefreshPickerUi();
     }
 
 
     private void CopyHex_Click(object sender, RoutedEventArgs e) {
-        var hex = $"#{_selectedColor.R:X2}{_selectedColor.G:X2}{_selectedColor.B:X2}".ToLowerInvariant();
-        System.Windows.Clipboard.SetText(hex);
-        ShowCopiedToast();
+        ClipboardHelper.SetText(ColorFormats.ToHex(_selectedColor));
+        CopiedToastAnimator.Show(CopiedToast, CopiedToastSlide);
     }
 
 
     private void CopyRgb_Click(object sender, RoutedEventArgs e) {
         var rgb = RgbCardValue.Tag as string
-            ?? $"rgb({_selectedColor.R}, {_selectedColor.G}, {_selectedColor.B})";
-        System.Windows.Clipboard.SetText(rgb);
-        ShowCopiedToast();
-    }
-
-
-    private void ShowCopiedToast() {
-        CopiedToast.BeginAnimation(OpacityProperty, null);
-        CopiedToastSlide.BeginAnimation(TranslateTransform.YProperty, null);
-
-        var easeOut = new QuadraticEase { EasingMode = EasingMode.EaseOut };
-        var easeIn = new QuadraticEase { EasingMode = EasingMode.EaseIn };
-
-        var opacity = new DoubleAnimationUsingKeyFrames();
-        opacity.KeyFrames.Add(new EasingDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.Zero)));
-        opacity.KeyFrames.Add(new EasingDoubleKeyFrame(1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(160))) {
-            EasingFunction = easeOut
-        });
-        opacity.KeyFrames.Add(new DiscreteDoubleKeyFrame(1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(1000))));
-        opacity.KeyFrames.Add(new EasingDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(1220))) {
-            EasingFunction = easeIn
-        });
-
-        var slide = new DoubleAnimationUsingKeyFrames();
-        slide.KeyFrames.Add(new EasingDoubleKeyFrame(8, KeyTime.FromTimeSpan(TimeSpan.Zero)));
-        slide.KeyFrames.Add(new EasingDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(180))) {
-            EasingFunction = easeOut
-        });
-        slide.KeyFrames.Add(new DiscreteDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(1000))));
-        slide.KeyFrames.Add(new EasingDoubleKeyFrame(6, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(1220))) {
-            EasingFunction = easeIn
-        });
-
-        CopiedToast.BeginAnimation(OpacityProperty, opacity);
-        CopiedToastSlide.BeginAnimation(TranslateTransform.YProperty, slide);
-    }
-
-
-    private static System.Windows.Media.Color HsvToRgb(double h, double s, double v) {
-        var c = v * s;
-        var x = c * (1 - Math.Abs(h / 60.0 % 2 - 1));
-        var m = v - c;
-
-        double r, g, b;
-        if (h < 60) { r = c; g = x; b = 0; }
-        else if (h < 120) { r = x; g = c; b = 0; }
-        else if (h < 180) { r = 0; g = c; b = x; }
-        else if (h < 240) { r = 0; g = x; b = c; }
-        else if (h < 300) { r = x; g = 0; b = c; }
-        else { r = c; g = 0; b = x; }
-
-        return System.Windows.Media.Color.FromRgb(
-            (byte)Math.Round((r + m) * 255),
-            (byte)Math.Round((g + m) * 255),
-            (byte)Math.Round((b + m) * 255));
-    }
-
-
-    private static void RgbToHsv(byte r, byte g, byte b, out double h, out double s, out double v) {
-        var rf = r / 255.0;
-        var gf = g / 255.0;
-        var bf = b / 255.0;
-
-        var max = Math.Max(rf, Math.Max(gf, bf));
-        var min = Math.Min(rf, Math.Min(gf, bf));
-        var delta = max - min;
-
-        v = max;
-        s = max == 0 ? 0 : delta / max;
-
-        if (delta == 0)
-            h = 0;
-        else if (max == rf)
-            h = 60 * (((gf - bf) / delta) % 6);
-        else if (max == gf)
-            h = 60 * (((bf - rf) / delta) + 2);
-        else
-            h = 60 * (((rf - gf) / delta) + 4);
-
-        if (h < 0)
-            h += 360;
+            ?? ColorFormats.ToRgbClipboard(_selectedColor);
+        ClipboardHelper.SetText(rgb);
+        CopiedToastAnimator.Show(CopiedToast, CopiedToastSlide);
     }
 }
