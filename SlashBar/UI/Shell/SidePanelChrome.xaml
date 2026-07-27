@@ -1,0 +1,102 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ControlTemplate x:Key="SidePanelResetButtonTemplate" TargetType="Button">
+        <Border x:Name="Bg"
+                Background="#FEBC2E"
+                CornerRadius="9.5"
+                Width="19"
+                Height="19">
+            <Viewbox Width="8" Height="8"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center">
+                <Canvas Width="10" Height="10">
+                    <Path Stroke="#985712"
+                          StrokeThickness="2.2"
+                          StrokeStartLineCap="Round"
+                          StrokeEndLineCap="Round"
+                          Data="M 1,5 L 9,5"/>
+                </Canvas>
+            </Viewbox>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Bg" Property="Background" Value="#E5A927"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="Bg" Property="Background" Value="#CC9520"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="SidePanelCloseButtonTemplate" TargetType="Button">
+        <Border x:Name="Bg"
+                Background="#FF5D5B"
+                CornerRadius="9.5"
+                Width="19"
+                Height="19">
+            <Viewbox Width="7" Height="7"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center">
+                <Canvas Width="10" Height="10">
+                    <Path Stroke="#9B1C16"
+                          StrokeThickness="2.4"
+                          StrokeStartLineCap="Round"
+                          StrokeEndLineCap="Round"
+                          Data="M 1,1 L 9,9 M 9,1 L 1,9"/>
+                </Canvas>
+            </Viewbox>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Bg" Property="Background" Value="#E0443E"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="Bg" Property="Background" Value="#C93A35"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="SidePanelDockButtonTemplate" TargetType="Button">
+        <Border x:Name="TabBg"
+                Background="#E8E8ED"
+                BorderBrush="#1A000000"
+                BorderThickness="0,1,1,1"
+                CornerRadius="0,14,14,0">
+            <ContentPresenter HorizontalAlignment="Center"
+                              VerticalAlignment="Center"/>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="TabBg" Property="Background" Value="#DEDEE3"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="TabBg" Property="Background" Value="#D1D1D6"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <Style x:Key="SidePanelCopiedToastStyle" TargetType="Border">
+        <Setter Property="VerticalAlignment" Value="Bottom"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="0,0,0,24"/>
+        <Setter Property="Padding" Value="16,10"/>
+        <Setter Property="CornerRadius" Value="20"/>
+        <Setter Property="Background" Value="#F2FFFFFF"/>
+        <Setter Property="BorderBrush" Value="#1A000000"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Opacity" Value="0"/>
+        <Setter Property="IsHitTestVisible" Value="False"/>
+        <Setter Property="RenderTransformOrigin" Value="0.5,1"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect BlurRadius="20"
+                                  ShadowDepth="4"
+                                  Direction="270"
+                                  Opacity="0.22"
+                                  Color="#000000"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

@@ -1,6 +1,7 @@
-<Window x:Class="SlashBar.ClipPanelWindow"
+<shell:DockedSidePanelWindow x:Class="SlashBar.ClipPanelWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:SlashBar.UI.Shell"
         Title="SlashBar Clip"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -106,35 +107,8 @@
                                         Cursor="Hand"
                                         ToolTip="Position d'origine"
                                         Margin="0,0,8,0"
-                                        Visibility="Collapsed">
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border x:Name="Bg"
-                                                    Background="#FEBC2E"
-                                                    CornerRadius="9.5"
-                                                    Width="19"
-                                                    Height="19">
-                                                <Viewbox Width="8" Height="8" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                    <Canvas Width="10" Height="10">
-                                                        <Path Stroke="#985712"
-                                                              StrokeThickness="2.2"
-                                                              StrokeStartLineCap="Round"
-                                                              StrokeEndLineCap="Round"
-                                                              Data="M 1,5 L 9,5"/>
-                                                    </Canvas>
-                                                </Viewbox>
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="Bg" Property="Background" Value="#E5A927"/>
-                                                </Trigger>
-                                                <Trigger Property="IsPressed" Value="True">
-                                                    <Setter TargetName="Bg" Property="Background" Value="#CC9520"/>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
+                                        Visibility="Collapsed"
+                                        Template="{StaticResource SidePanelResetButtonTemplate}"/>
 
                                 <!-- feu rouge : fermer -->
                                 <Button Click="CloseButton_Click"
@@ -142,35 +116,8 @@
                                         Height="19"
                                         Cursor="Hand"
                                         ToolTip="Fermer"
-                                        VerticalAlignment="Center">
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border x:Name="Bg"
-                                                    Background="#FF5D5B"
-                                                    CornerRadius="9.5"
-                                                    Width="19"
-                                                    Height="19">
-                                                <Viewbox Width="7" Height="7" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                    <Canvas Width="10" Height="10">
-                                                        <Path Stroke="#9B1C16"
-                                                              StrokeThickness="2.4"
-                                                              StrokeStartLineCap="Round"
-                                                              StrokeEndLineCap="Round"
-                                                              Data="M 1,1 L 9,9 M 9,1 L 1,9"/>
-                                                    </Canvas>
-                                                </Viewbox>
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="Bg" Property="Background" Value="#E0443E"/>
-                                                </Trigger>
-                                                <Trigger Property="IsPressed" Value="True">
-                                                    <Setter TargetName="Bg" Property="Background" Value="#C93A35"/>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
+                                        VerticalAlignment="Center"
+                                        Template="{StaticResource SidePanelCloseButtonTemplate}"/>
                             </StackPanel>
                         </Grid>
                     </Border>
@@ -307,27 +254,10 @@
                     <!-- toast "Copié" -->
                     <Border x:Name="CopiedToast"
                             Grid.RowSpan="2"
-                            VerticalAlignment="Bottom"
-                            HorizontalAlignment="Center"
-                            Margin="0,0,0,24"
-                            Padding="16,10"
-                            CornerRadius="20"
-                            Background="#F2FFFFFF"
-                            BorderBrush="#1A000000"
-                            BorderThickness="1"
-                            Opacity="0"
-                            IsHitTestVisible="False"
-                            RenderTransformOrigin="0.5,1">
+                            Style="{StaticResource SidePanelCopiedToastStyle}">
                         <Border.RenderTransform>
                             <TranslateTransform x:Name="CopiedToastSlide" Y="8"/>
                         </Border.RenderTransform>
-                        <Border.Effect>
-                            <DropShadowEffect BlurRadius="20"
-                                              ShadowDepth="4"
-                                              Direction="270"
-                                              Opacity="0.22"
-                                              Color="#000000"/>
-                        </Border.Effect>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="✓"
                                        FontSize="13"
@@ -355,27 +285,8 @@
                     Margin="-2,0,0,0"
                     Cursor="Hand"
                     VerticalAlignment="Center"
-                    ToolTip="Replier / Déplier">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="TabBg"
-                                Background="#E8E8ED"
-                                BorderBrush="#1A000000"
-                                BorderThickness="0,1,1,1"
-                                CornerRadius="0,14,14,0">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="TabBg" Property="Background" Value="#DEDEE3"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="TabBg" Property="Background" Value="#D1D1D6"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Button.Template>
+                    ToolTip="Replier / Déplier"
+                    Template="{StaticResource SidePanelDockButtonTemplate}">
                 <Path x:Name="Chevron"
                       Stroke="#8E8E93"
                       StrokeThickness="2.2"
@@ -389,4 +300,4 @@
             </Button>
         </Grid>
     </Border>
-</Window>
+</shell:DockedSidePanelWindow>

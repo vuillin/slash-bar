@@ -6,6 +6,10 @@
              ShutdownMode="OnExplicitShutdown">
     <!-- sinon Hide() kill l'app -->
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="UI/Shell/SidePanelChrome.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
