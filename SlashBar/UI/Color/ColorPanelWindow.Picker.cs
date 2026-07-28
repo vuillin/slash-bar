@@ -166,6 +166,7 @@ public partial class ColorPanelWindow {
 
     private void CopyHex_Click(object sender, RoutedEventArgs e) {
         ClipboardHelper.SetText(ColorFormats.ToHex(_selectedColor));
+        ColorHistory.Store.Add(_selectedColor);
         CopiedToastAnimator.Show(CopiedToast, CopiedToastSlide);
     }
 
@@ -174,6 +175,7 @@ public partial class ColorPanelWindow {
         var rgb = RgbCardValue.Tag as string
             ?? ColorFormats.ToRgbClipboard(_selectedColor);
         ClipboardHelper.SetText(rgb);
+        ColorHistory.Store.Add(_selectedColor);
         CopiedToastAnimator.Show(CopiedToast, CopiedToastSlide);
     }
 }

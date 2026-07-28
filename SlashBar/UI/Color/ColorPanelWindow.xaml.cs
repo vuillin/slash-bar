@@ -65,6 +65,8 @@ public partial class ColorPanelWindow : DockedSidePanelWindow {
     protected override void OnPanelOpening() {
         _colorLocked = false;
         EnablePickMode();
+        SubscribeHistory();
+        RefreshHistory();
     }
 
     protected override void OnPanelOpened() =>
