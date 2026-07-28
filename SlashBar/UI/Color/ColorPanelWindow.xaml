@@ -365,6 +365,50 @@
                                     </StackPanel>
                                 </Border>
                             </Grid>
+
+                            <StackPanel x:Name="HistorySection"
+                                        Margin="0,18,0,0"
+                                        Visibility="Collapsed">
+
+                                <TextBlock Text="HISTORIQUE"
+                                        FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
+                                        FontSize="11"
+                                        FontWeight="SemiBold"
+                                        Foreground="#8E8E93"
+                                        Margin="4,0,0,10"/>
+
+                                <ItemsControl x:Name="HistoryList">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Columns="5"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Height="40"
+                                                    Margin="3,0"
+                                                    CornerRadius="10"
+                                                    Background="{Binding Brush}"
+                                                    BorderBrush="#1A000000"
+                                                    BorderThickness="1"
+                                                    Cursor="Hand"
+                                                    Tag="{Binding Entry}"
+                                                    MouseLeftButtonDown="HistorySwatch_Click"
+                                                    ToolTip="{Binding Hex}">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="Opacity" Value="0.85"/>
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
 
