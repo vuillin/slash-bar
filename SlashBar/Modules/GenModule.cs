@@ -9,7 +9,8 @@ public sealed class GenModule : IModule {
         new("hex", "Hexadécimal encodage/décodage"),
         new("date", "Date du jour (jj-mm-aaaa)"),
         new("time", "Heure actuelle (hh:mm:ss)"),
-        new("timestamp", "Timestamp Unix (secondes)")
+        new("timestamp", "Timestamp Unix (secondes)"),
+        new("lorem", "Paragraphe Lorem Ipsum")
     ];
 
     private static readonly ArgCompletion[] B64Flags = [
@@ -54,6 +55,12 @@ public sealed class GenModule : IModule {
 
         if (cmd.Equals("timestamp", StringComparison.OrdinalIgnoreCase)) {
             ClipboardHelper.SetText(DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
+            return ModuleResult.Ok("Copié");
+        }
+
+        if (cmd.Equals("lorem", StringComparison.OrdinalIgnoreCase)) {
+            ClipboardHelper.SetText(
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
             return ModuleResult.Ok("Copié");
         }
 
