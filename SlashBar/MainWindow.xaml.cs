@@ -91,17 +91,20 @@ public partial class MainWindow : Window
     {
         try
         {
-            if (_modules.TryExecute(SearchBox.Text))
+            if (_modules.TryExecute(SearchBox.Text, out var result))
             {
+                if (result.Kind == ModuleResultKind.Success)
+                    AppToast.ShowSuccess(result.Message);
+                else if (result.Kind == ModuleResultKind.Fail)
+                    AppToast.ShowError(result.Message);
+
                 AnimateClose();
             }
         }
         catch (Exception ex)
         {
-            System.Windows.MessageBox.Show(
-                this,
-                "Erreur dans le module :\n" + ex.Message,
-                "SlashBar");
+            AppToast.ShowError(ex.Message);
+            AnimateClose();
         }
     }
 

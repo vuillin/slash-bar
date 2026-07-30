@@ -1,25 +1,32 @@
 # memo — Memo
 
-Ouvre le panneau de raccourcis texte.
+Raccourcis texte (nom → valeur).
 
 ## Syntaxe
 
 ```
-memo
+memo              → ouvre / ferme le panneau
+memo <nom>        → copie la valeur
 ```
 
-## Comportement
+Noms en minuscules. Suggestions dynamiques (max 5).
+
+## Panneau
 
 | Action | Effet |
 |--------|--------|
-| `memo` | Ouvre / ferme le panneau latéral |
-| Esc | Ferme le panneau |
-| Onglet flèche | Replie / déplie |
+| Nom + Valeur + `+` | Ajoute |
+| Stylo | Édite |
+| Corbeille | Supprime |
+| Clic carte | Copie la valeur |
+| Recherche | Filtre nom / valeur |
 
-Le contenu (liste de memos + `memo mail`, etc.) sera ajouté ensuite.
+Persistance : `%LocalAppData%/SlashBar/memos.json`.
 
 ## Exemples
 
 ```
 memo
+memo mail
+memo tel
 ```

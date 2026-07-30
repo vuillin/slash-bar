@@ -106,12 +106,13 @@ public sealed class ModuleRegistry
         return false;
     }
 
-    public bool TryExecute(string input)
-    {
+    public bool TryExecute(string input, out ModuleResult result) {
+        result = ModuleResult.None;
+
         if (!TryResolve(input, out var module, out var argument))
             return false;
 
-        module.Execute(argument);
+        result = module.Execute(argument);
         return true;
     }
 

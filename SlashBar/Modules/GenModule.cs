@@ -4,11 +4,9 @@ namespace SlashBar.Modules;
 
 public sealed class GenModule : IModule {
 
-
     private static readonly ArgCompletion[] Flags = [
         new("b64", "Base64 encodage/décodage"),
         new("hex", "Hexadécimal encodage/décodage"),
-
         new("date", "Date du jour (jj-mm-aaaa)"),
         new("time", "Heure actuelle (hh:mm:ss)"),
         new("timestamp", "Timestamp Unix (secondes)")
@@ -29,50 +27,46 @@ public sealed class GenModule : IModule {
     public string Description => "Génère une valeur (presse-papiers)";
 
 
-    public void Execute(string argument) {
-
+    public ModuleResult Execute(string argument) {
         argument = argument.Trim();
         if (argument.Length == 0)
-            return;
+            return ModuleResult.Error("Argument requis");
 
         var space = argument.IndexOf(' ');
         var cmd = space < 0 ? argument : argument[..space];
         var rest = space < 0 ? "" : argument[(space + 1)..].Trim();
 
-        if (cmd.Equals("b64", StringComparison.OrdinalIgnoreCase)) {
-            RunB64(rest);
-            return;
-        }
+        if (cmd.Equals("b64", StringComparison.OrdinalIgnoreCase))
+            return RunB64(rest);
 
-        if (cmd.Equals("hex", StringComparison.OrdinalIgnoreCase)) {
-            RunHex(rest);
-            return;
-        }
+        if (cmd.Equals("hex", StringComparison.OrdinalIgnoreCase))
+            return RunHex(rest);
 
         if (cmd.Equals("date", StringComparison.OrdinalIgnoreCase)) {
             ClipboardHelper.SetText(DateTime.Now.ToString("dd-MM-yyyy"));
-            return;
+            return ModuleResult.Ok("Copié");
         }
+
         if (cmd.Equals("time", StringComparison.OrdinalIgnoreCase)) {
             ClipboardHelper.SetText(DateTime.Now.ToString("HH:mm:ss"));
-            return;
+            return ModuleResult.Ok("Copié");
         }
+
         if (cmd.Equals("timestamp", StringComparison.OrdinalIgnoreCase)) {
             ClipboardHelper.SetText(DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
-            return;
+            return ModuleResult.Ok("Copié");
         }
+
+        return ModuleResult.Error("Commande inconnue");
     }
 
 
     public IReadOnlyList<ArgCompletion> SuggestCompletions(string argument) {
-
         ModuleArgs.SplitCurrentToken(argument, out var before, out var token);
 
-        // niveau 1
         if (before.Length == 0)
             return ModuleArgs.SuggestFlags(token, Flags);
 
-        // niveau 2
         if (before.Equals("b64 ", StringComparison.OrdinalIgnoreCase))
             return ModuleArgs.SuggestFlags(token, B64Flags);
 
@@ -81,63 +75,63 @@ public sealed class GenModule : IModule {
 
         return Array.Empty<ArgCompletion>();
     }
-    
 
-    private static void RunB64(string rest) {
 
+    private static ModuleResult RunB64(string rest) {
         var space = rest.IndexOf(' ');
         var mode = space < 0 ? rest : rest[..space];
         var text = space < 0 ? "" : rest[(space + 1)..].Trim();
 
         if (text.Length == 0)
-            return;
+            return ModuleResult.Error("Texte requis");
 
         if (mode.Equals("encode", StringComparison.OrdinalIgnoreCase)) {
-            
             var bytes = Encoding.UTF8.GetBytes(text);
             ClipboardHelper.SetText(Convert.ToBase64String(bytes));
-            return;
+            return ModuleResult.Ok("Copié");
         }
 
         if (mode.Equals("decode", StringComparison.OrdinalIgnoreCase)) {
-
             try {
                 var bytes = Convert.FromBase64String(text);
                 ClipboardHelper.SetText(Encoding.UTF8.GetString(bytes));
+                return ModuleResult.Ok("Copié");
             }
             catch {
-                // base64 invalide → ignore
+                return ModuleResult.Error("Base64 invalide");
             }
         }
+
+        return ModuleResult.Error("Mode inconnu");
     }
 
 
-    private static void RunHex(string rest) {
-
+    private static ModuleResult RunHex(string rest) {
         var space = rest.IndexOf(' ');
         var mode = space < 0 ? rest : rest[..space];
         var text = space < 0 ? "" : rest[(space + 1)..].Trim();
 
         if (text.Length == 0)
-            return;
+            return ModuleResult.Error("Texte requis");
 
         if (mode.Equals("encode", StringComparison.OrdinalIgnoreCase)) {
-            
             var bytes = Encoding.UTF8.GetBytes(text);
             ClipboardHelper.SetText(Convert.ToHexString(bytes).ToLowerInvariant());
-            return;
+            return ModuleResult.Ok("Copié");
         }
 
         if (mode.Equals("decode", StringComparison.OrdinalIgnoreCase)) {
-
             try {
                 var clean = text.Replace(" ", "", StringComparison.Ordinal);
                 var bytes = Convert.FromHexString(clean);
                 ClipboardHelper.SetText(Encoding.UTF8.GetString(bytes));
+                return ModuleResult.Ok("Copié");
             }
             catch {
-                // hex invalide → ignore
+                return ModuleResult.Error("Hex invalide");
             }
         }
+
+        return ModuleResult.Error("Mode inconnu");
     }
 }

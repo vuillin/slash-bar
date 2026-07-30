@@ -4,7 +4,6 @@ namespace SlashBar.Modules;
 
 public sealed class SetupModule : IModule {
 
-
     private static readonly ArgCompletion[] Flags = SetupProfiles.All
         .Select(p => new ArgCompletion(p.Name, p.Description))
         .ToArray();
@@ -15,26 +14,24 @@ public sealed class SetupModule : IModule {
     public string Description => "Lance un profil d'applications";
 
 
-    public void Execute(string argument) {
-
+    public ModuleResult Execute(string argument) {
         argument = argument.Trim();
         if (argument.Length == 0)
-            return;
-        
+            return ModuleResult.Error("Profil requis");
+
         var name = argument.Split(' ', 2)[0];
         var profile = SetupProfiles.Find(name);
         if (profile is null)
-            return;
+            return ModuleResult.Error("Profil introuvable");
 
         SetupRunner.Run(profile);
+        return ModuleResult.Ok("Setup lancé");
     }
 
 
     public IReadOnlyList<ArgCompletion> SuggestCompletions(string argument) {
-
         ModuleArgs.SplitCurrentToken(argument, out var before, out var token);
 
-        // niveau 1
         if (before.Length == 0)
             return ModuleArgs.SuggestFlags(token, Flags);
 
