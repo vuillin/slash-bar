@@ -44,24 +44,28 @@ public sealed class GenModule : IModule {
             return RunHex(rest);
 
         if (cmd.Equals("date", StringComparison.OrdinalIgnoreCase)) {
-            ClipboardHelper.SetText(DateTime.Now.ToString("dd-MM-yyyy"));
-            return ModuleResult.Ok("Copié");
+            var text = DateTime.Now.ToString("dd-MM-yyyy");
+            ClipboardHelper.SetText(text);
+            return ModuleResult.Copied(text);
         }
 
         if (cmd.Equals("time", StringComparison.OrdinalIgnoreCase)) {
-            ClipboardHelper.SetText(DateTime.Now.ToString("HH:mm:ss"));
-            return ModuleResult.Ok("Copié");
+            var text = DateTime.Now.ToString("HH:mm:ss");
+            ClipboardHelper.SetText(text);
+            return ModuleResult.Copied(text);
         }
 
         if (cmd.Equals("timestamp", StringComparison.OrdinalIgnoreCase)) {
-            ClipboardHelper.SetText(DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
-            return ModuleResult.Ok("Copié");
+            var text = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+            ClipboardHelper.SetText(text);
+            return ModuleResult.Copied(text);
         }
 
         if (cmd.Equals("lorem", StringComparison.OrdinalIgnoreCase)) {
-            ClipboardHelper.SetText(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
-            return ModuleResult.Ok("Copié");
+            const string text =
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+            ClipboardHelper.SetText(text);
+            return ModuleResult.Copied(text);
         }
 
         return ModuleResult.Error("Commande inconnue");
@@ -94,15 +98,17 @@ public sealed class GenModule : IModule {
 
         if (mode.Equals("encode", StringComparison.OrdinalIgnoreCase)) {
             var bytes = Encoding.UTF8.GetBytes(text);
-            ClipboardHelper.SetText(Convert.ToBase64String(bytes));
-            return ModuleResult.Ok("Copié");
+            var encoded = Convert.ToBase64String(bytes);
+            ClipboardHelper.SetText(encoded);
+            return ModuleResult.Copied(encoded);
         }
 
         if (mode.Equals("decode", StringComparison.OrdinalIgnoreCase)) {
             try {
                 var bytes = Convert.FromBase64String(text);
-                ClipboardHelper.SetText(Encoding.UTF8.GetString(bytes));
-                return ModuleResult.Ok("Copié");
+                var decoded = Encoding.UTF8.GetString(bytes);
+                ClipboardHelper.SetText(decoded);
+                return ModuleResult.Copied(decoded);
             }
             catch {
                 return ModuleResult.Error("Base64 invalide");
@@ -123,16 +129,18 @@ public sealed class GenModule : IModule {
 
         if (mode.Equals("encode", StringComparison.OrdinalIgnoreCase)) {
             var bytes = Encoding.UTF8.GetBytes(text);
-            ClipboardHelper.SetText(Convert.ToHexString(bytes).ToLowerInvariant());
-            return ModuleResult.Ok("Copié");
+            var encoded = Convert.ToHexString(bytes).ToLowerInvariant();
+            ClipboardHelper.SetText(encoded);
+            return ModuleResult.Copied(encoded);
         }
 
         if (mode.Equals("decode", StringComparison.OrdinalIgnoreCase)) {
             try {
                 var clean = text.Replace(" ", "", StringComparison.Ordinal);
                 var bytes = Convert.FromHexString(clean);
-                ClipboardHelper.SetText(Encoding.UTF8.GetString(bytes));
-                return ModuleResult.Ok("Copié");
+                var decoded = Encoding.UTF8.GetString(bytes);
+                ClipboardHelper.SetText(decoded);
+                return ModuleResult.Copied(decoded);
             }
             catch {
                 return ModuleResult.Error("Hex invalide");

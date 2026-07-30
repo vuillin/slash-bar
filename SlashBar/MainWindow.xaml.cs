@@ -94,7 +94,7 @@ public partial class MainWindow : Window
             if (_modules.TryExecute(SearchBox.Text, out var result))
             {
                 if (result.Kind == ModuleResultKind.Success)
-                    AppToast.ShowSuccess(result.Message);
+                    AppToast.ShowSuccess(result.Message, result.Detail);
                 else if (result.Kind == ModuleResultKind.Fail)
                     AppToast.ShowError(result.Message);
 

@@ -22,7 +22,7 @@ public sealed class MemoModule : IModule {
             return ModuleResult.Error("Memo introuvable");
 
         ClipboardHelper.SetText(entry.Value);
-        return ModuleResult.Ok("Copié");
+        return ModuleResult.Copied(entry.Value);
     }
 
 

@@ -35,8 +35,20 @@ public partial class AppToastWindow : Window {
     }
 
 
-    public void ShowToast(string message, bool success) {
+    public void ShowToast(string message, bool success, string? detail = null) {
         ToastText.Text = message;
+
+        if (string.IsNullOrWhiteSpace(detail)) {
+            ToastDetail.Text = "";
+            ToastDetail.Visibility = Visibility.Collapsed;
+        }
+        else {
+            // une ligne pour l'ellipsis ; espaces / retours → espace
+            var flat = string.Join(' ',
+                detail.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+            ToastDetail.Text = flat;
+            ToastDetail.Visibility = Visibility.Visible;
+        }
 
         if (success) {
             ToastIcon.Text = "✓";

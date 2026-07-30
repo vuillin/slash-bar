@@ -10,3 +10,4 @@
 | `color` | Color Picker | [color.md](modules/color.md) |
 | `clip` | Presse-papiers | [clip.md](modules/clip.md) |
 | `memo` | Memo | [memo.md](modules/memo.md) |
+| `calc` | Calculatrice | [calc.md](modules/calc.md) |

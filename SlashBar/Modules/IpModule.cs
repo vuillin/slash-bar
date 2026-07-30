@@ -22,13 +22,15 @@ public sealed class IpModule : IModule {
 
         try {
             if (argument.Equals("local", StringComparison.OrdinalIgnoreCase)) {
-                ClipboardHelper.SetText(GetLocalIp());
-                return ModuleResult.Ok("IP locale copiée");
+                var ip = GetLocalIp();
+                ClipboardHelper.SetText(ip);
+                return ModuleResult.Copied(ip);
             }
 
             if (argument.Length == 0) {
-                ClipboardHelper.SetText(GetPublicIp());
-                return ModuleResult.Ok("IP copiée");
+                var ip = GetPublicIp();
+                ClipboardHelper.SetText(ip);
+                return ModuleResult.Copied(ip);
             }
 
             return ModuleResult.Error("Option inconnue");
