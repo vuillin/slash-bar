@@ -12,6 +12,7 @@ gen hex decode <hex>
 gen date
 gen time
 gen timestamp
+gen lorem
 ```
 
 ## Types
@@ -25,6 +26,7 @@ gen timestamp
 | `date` | — | Date du jour (`jj-mm-aaaa`) |
 | `time` | — | Heure actuelle (`hh:mm:ss`) |
 | `timestamp` | — | Timestamp Unix UTC (secondes) |
+| `lorem` | — | Paragraphe Lorem Ipsum |
 
 ## Exemples
 
@@ -36,4 +38,5 @@ gen hex decode 68656c6c6f
 gen date
 gen time
 gen timestamp
+gen lorem
 ```
