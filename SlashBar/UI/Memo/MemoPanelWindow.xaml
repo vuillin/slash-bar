@@ -1,0 +1,496 @@
+<shell:DockedSidePanelWindow x:Class="SlashBar.MemoPanelWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:SlashBar.UI.Shell"
+        Title="SlashBar Memo"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        ShowActivated="True">
+
+    <Border Background="Transparent"
+            RenderTransformOrigin="0,0.5">
+        <Border.RenderTransform>
+            <TranslateTransform x:Name="SlideTransform" X="-394"/>
+        </Border.RenderTransform>
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="40"
+                              ShadowDepth="12"
+                              Direction="270"
+                              Opacity="0.28"
+                              Color="#000000"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="14"/>
+                <ColumnDefinition Width="380"/>
+                <ColumnDefinition Width="32"/>
+            </Grid.ColumnDefinitions>
+
+            <Border x:Name="RootBorder"
+                    Grid.Column="1"
+                    CornerRadius="24"
+                    Background="#F2F2F7"
+                    BorderBrush="#1A000000"
+                    BorderThickness="1">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border x:Name="HeaderBar"
+                            Grid.Row="0"
+                            Background="#E8E8ED"
+                            BorderBrush="#14000000"
+                            BorderThickness="0,0,0,1"
+                            CornerRadius="24,24,0,0"
+                            Padding="14,12"
+                            Cursor="SizeAll"
+                            MouseLeftButtonDown="HeaderBar_MouseLeftButtonDown">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0"
+                                       Text="&#xE8C8;"
+                                       FontFamily="Segoe MDL2 Assets"
+                                       FontSize="16"
+                                       Foreground="#8E8E93"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,10,0"
+                                       IsHitTestVisible="False"/>
+
+                            <TextBlock Grid.Column="1"
+                                       Text="Memo"
+                                       FontFamily="Segoe UI Variable Text, Segoe UI"
+                                       FontSize="15"
+                                       FontWeight="Medium"
+                                       Foreground="#3C3C43"
+                                       VerticalAlignment="Center"
+                                       Opacity="0.55"
+                                       IsHitTestVisible="False"/>
+
+                            <StackPanel Grid.Column="2"
+                                        Orientation="Horizontal"
+                                        VerticalAlignment="Center">
+
+                                <Button x:Name="ResetButton"
+                                        Click="ResetButton_Click"
+                                        Width="19"
+                                        Height="19"
+                                        Cursor="Hand"
+                                        ToolTip="Position d'origine"
+                                        Margin="0,0,8,0"
+                                        Visibility="Collapsed"
+                                        Template="{StaticResource SidePanelResetButtonTemplate}"/>
+
+                                <Button Click="CloseButton_Click"
+                                        Width="19"
+                                        Height="19"
+                                        Cursor="Hand"
+                                        ToolTip="Fermer"
+                                        VerticalAlignment="Center"
+                                        Template="{StaticResource SidePanelCloseButtonTemplate}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="1"
+                            Background="#F2F2F7"
+                            CornerRadius="0,0,24,24"
+                            Padding="16,14,16,18">
+                        <StackPanel>
+                            <Border Background="#FFFFFF"
+                                    CornerRadius="16"
+                                    BorderBrush="#0F000000"
+                                    BorderThickness="1"
+                                    Padding="14,14,14,12">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="1.4*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Column="0" Grid.Row="0"
+                                               Text="Nom"
+                                               FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
+                                               FontSize="12"
+                                               FontWeight="Medium"
+                                               Foreground="#8E8E93"
+                                               Margin="0,0,0,6"/>
+
+                                    <TextBlock Grid.Column="2" Grid.Row="0"
+                                               Text="Valeur"
+                                               FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
+                                               FontSize="12"
+                                               FontWeight="Medium"
+                                               Foreground="#8E8E93"
+                                               Margin="0,0,0,6"/>
+
+                                    <Border Grid.Column="0" Grid.Row="1"
+                                            Background="#F2F2F7"
+                                            CornerRadius="10"
+                                            Padding="10,8"
+                                            VerticalAlignment="Center">
+                                        <TextBox x:Name="MemoNameBox"
+                                                 Text=""
+                                                 FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
+                                                 FontSize="14"
+                                                 FontWeight="SemiBold"
+                                                 Foreground="#1C1C1E"
+                                                 Background="Transparent"
+                                                 BorderThickness="0"
+                                                 CaretBrush="#007AFF"
+                                                 MaxLength="40"
+                                                 TextChanged="MemoNameBox_TextChanged"/>
+                                    </Border>
+
+                                    <Border Grid.Column="2" Grid.Row="1"
+                                            Background="#F2F2F7"
+                                            CornerRadius="10"
+                                            Padding="10,8"
+                                            VerticalAlignment="Center">
+                                        <TextBox x:Name="MemoValueBox"
+                                                 Text=""
+                                                 FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
+                                                 FontSize="14"
+                                                 FontWeight="SemiBold"
+                                                 Foreground="#1C1C1E"
+                                                 Background="Transparent"
+                                                 BorderThickness="0"
+                                                 CaretBrush="#007AFF"/>
+                                    </Border>
+
+                                    <Button x:Name="AddMemoButton"
+                                            Grid.Column="4" Grid.Row="1"
+                                            Width="28"
+                                            Height="28"
+                                            Cursor="Hand"
+                                            ToolTip="Ajouter"
+                                            Tag="add"
+                                            VerticalAlignment="Center"
+                                            Click="AddMemo_Click">
+                                        <TextBlock x:Name="AddMemoIcon"
+                                                   Text="&#xE710;"
+                                                   FontFamily="Segoe MDL2 Assets"
+                                                   FontSize="16"
+                                                   Foreground="#34C759"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"/>
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border x:Name="Bg"
+                                                        Background="Transparent"
+                                                        CornerRadius="8"
+                                                        Width="28"
+                                                        Height="28">
+                                                    <ContentPresenter HorizontalAlignment="Center"
+                                                                      VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <MultiTrigger>
+                                                        <MultiTrigger.Conditions>
+                                                            <Condition Property="IsMouseOver" Value="True"/>
+                                                            <Condition Property="Tag" Value="add"/>
+                                                        </MultiTrigger.Conditions>
+                                                        <Setter TargetName="Bg" Property="Background" Value="#1A34C759"/>
+                                                    </MultiTrigger>
+                                                    <MultiTrigger>
+                                                        <MultiTrigger.Conditions>
+                                                            <Condition Property="IsMouseOver" Value="True"/>
+                                                            <Condition Property="Tag" Value="edit"/>
+                                                        </MultiTrigger.Conditions>
+                                                        <Setter TargetName="Bg" Property="Background" Value="#1A007AFF"/>
+                                                    </MultiTrigger>
+                                                    <MultiTrigger>
+                                                        <MultiTrigger.Conditions>
+                                                            <Condition Property="IsPressed" Value="True"/>
+                                                            <Condition Property="Tag" Value="add"/>
+                                                        </MultiTrigger.Conditions>
+                                                        <Setter TargetName="Bg" Property="Background" Value="#3334C759"/>
+                                                    </MultiTrigger>
+                                                    <MultiTrigger>
+                                                        <MultiTrigger.Conditions>
+                                                            <Condition Property="IsPressed" Value="True"/>
+                                                            <Condition Property="Tag" Value="edit"/>
+                                                        </MultiTrigger.Conditions>
+                                                        <Setter TargetName="Bg" Property="Background" Value="#33007AFF"/>
+                                                    </MultiTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </Grid>
+                            </Border>
+
+                            <Border Margin="0,12,0,0"
+                                    Background="#FFFFFF"
+                                    CornerRadius="12"
+                                    BorderBrush="#0F000000"
+                                    BorderThickness="1"
+                                    Padding="12,7">
+                                <DockPanel LastChildFill="True">
+                                    <TextBlock DockPanel.Dock="Left"
+                                               Text="&#xE721;"
+                                               FontFamily="Segoe MDL2 Assets"
+                                               FontSize="14"
+                                               Foreground="#8E8E93"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,8,0"
+                                               IsHitTestVisible="False"/>
+                                    <TextBox x:Name="MemoSearchBox"
+                                             FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
+                                             FontSize="14"
+                                             FontWeight="Medium"
+                                             Foreground="#1C1C1E"
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             CaretBrush="#007AFF"
+                                             VerticalAlignment="Center"
+                                             TextChanged="MemoSearchBox_TextChanged">
+                                        <TextBox.Style>
+                                            <Style TargetType="TextBox">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="TextBox">
+                                                            <Grid>
+                                                                <TextBlock x:Name="Placeholder"
+                                                                           Text="Rechercher"
+                                                                           FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
+                                                                           FontSize="14"
+                                                                           FontWeight="Medium"
+                                                                           Foreground="#8E8E93"
+                                                                           VerticalAlignment="Center"
+                                                                           IsHitTestVisible="False"
+                                                                           Visibility="Collapsed"/>
+                                                                <ScrollViewer x:Name="PART_ContentHost"
+                                                                              VerticalAlignment="Center"/>
+                                                            </Grid>
+                                                            <ControlTemplate.Triggers>
+                                                                <MultiTrigger>
+                                                                    <MultiTrigger.Conditions>
+                                                                        <Condition Property="Text" Value=""/>
+                                                                        <Condition Property="IsKeyboardFocused" Value="False"/>
+                                                                    </MultiTrigger.Conditions>
+                                                                    <Setter TargetName="Placeholder" Property="Visibility" Value="Visible"/>
+                                                                </MultiTrigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </TextBox.Style>
+                                    </TextBox>
+                                </DockPanel>
+                            </Border>
+
+                            <ScrollViewer Margin="0,12,0,0"
+                                          Padding="0,0,8,0"
+                                          VerticalScrollBarVisibility="Auto"
+                                          HorizontalScrollBarVisibility="Disabled"
+                                          MaxHeight="280">
+                                <ScrollViewer.Resources>
+                                    <Style TargetType="ScrollBar"
+                                           BasedOn="{StaticResource SidePanelThinScrollBar}"/>
+                                </ScrollViewer.Resources>
+                                <ItemsControl x:Name="MemoList">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <!-- Tag="{Binding}" = l'objet MemoEntry entier est stocké sur la carte -->
+                                            <Border Margin="0,0,0,8"
+                                                    Padding="12,10"
+                                                    Cursor="Hand"
+                                                    Background="#FFFFFF"
+                                                    BorderBrush="#14000000"
+                                                    BorderThickness="1"
+                                                    CornerRadius="12"
+                                                    MouseLeftButtonUp="MemoItem_Click"
+                                                    Tag="{Binding}">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="Background" Value="#F8F8FA"/>
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <StackPanel Grid.Column="0" Margin="2,0,10,0">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
+                                                                FontSize="12"
+                                                                FontWeight="SemiBold"
+                                                                Foreground="#8E8E93"/>
+                                                        <TextBlock Text="{Binding Value}"
+                                                                FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
+                                                                FontSize="13"
+                                                                FontWeight="Medium"
+                                                                Foreground="#1C1C1E"
+                                                                TextTrimming="CharacterEllipsis"
+                                                                Margin="0,2,0,0"/>
+                                                    </StackPanel>
+
+                                                    <StackPanel Grid.Column="1"
+                                                                Orientation="Horizontal"
+                                                                VerticalAlignment="Center">
+
+                                                        <!-- stylo : éditer -->
+                                                        <Button Click="EditMemo_Click"
+                                                                Tag="{Binding}"
+                                                                Width="28"
+                                                                Height="28"
+                                                                Cursor="Hand"
+                                                                ToolTip="Modifier"
+                                                                Margin="0,0,2,0">
+                                                            <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border x:Name="Bg"
+                                                                            Background="Transparent"
+                                                                            CornerRadius="8"
+                                                                            Width="28"
+                                                                            Height="28">
+                                                                        <TextBlock x:Name="Icon"
+                                                                                   Text="&#xE70F;"
+                                                                                   FontFamily="Segoe MDL2 Assets"
+                                                                                   FontSize="14"
+                                                                                   Foreground="#8E8E93"
+                                                                                   HorizontalAlignment="Center"
+                                                                                   VerticalAlignment="Center"/>
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter TargetName="Bg" Property="Background" Value="#1A007AFF"/>
+                                                                            <Setter TargetName="Icon" Property="Foreground" Value="#007AFF"/>
+                                                                        </Trigger>
+                                                                        <Trigger Property="IsPressed" Value="True">
+                                                                            <Setter TargetName="Bg" Property="Background" Value="#33007AFF"/>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+
+                                                        <!-- corbeille -->
+                                                        <Button Click="DeleteMemo_Click"
+                                                                Tag="{Binding}"
+                                                                Width="28"
+                                                                Height="28"
+                                                                Cursor="Hand"
+                                                                ToolTip="Supprimer">
+                                                            <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border x:Name="Bg"
+                                                                            Background="Transparent"
+                                                                            CornerRadius="8"
+                                                                            Width="28"
+                                                                            Height="28">
+                                                                        <Viewbox Width="13" Height="16"
+                                                                                 Stretch="Uniform"
+                                                                                 HorizontalAlignment="Center"
+                                                                                 VerticalAlignment="Center">
+                                                                            <Canvas Width="24" Height="28">
+                                                                                <Path x:Name="Icon"
+                                                                                      Fill="#8E8E93"
+                                                                                      Data="M9,2 L15,2 L16.5,5 L21,5 L21,7.5 L3,7.5 L3,5 L7.5,5 Z M5,10 L7.2,10 L7.2,22 L5,22 Z M10.9,10 L13.1,10 L13.1,22 L10.9,22 Z M16.8,10 L19,10 L19,22 L16.8,22 Z M4,26 L20,26 C21.1,26 22,25.1 22,24 L22,10 L2,10 L2,24 C2,25.1 2.9,26 4,26 Z"/>
+                                                                            </Canvas>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter TargetName="Bg" Property="Background" Value="#1AFF3B30"/>
+                                                                            <Setter TargetName="Icon" Property="Fill" Value="#FF3B30"/>
+                                                                        </Trigger>
+                                                                        <Trigger Property="IsPressed" Value="True">
+                                                                            <Setter TargetName="Bg" Property="Background" Value="#33FF3B30"/>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="CopiedToast"
+                            Grid.RowSpan="2"
+                            Style="{StaticResource SidePanelCopiedToastStyle}">
+                        <Border.RenderTransform>
+                            <TranslateTransform x:Name="CopiedToastSlide" Y="8"/>
+                        </Border.RenderTransform>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock x:Name="ToastIcon"
+                                       Text="✓"
+                                       FontSize="13"
+                                       FontWeight="SemiBold"
+                                       Foreground="#34C759"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,8,0"/>
+                            <TextBlock x:Name="ToastText"
+                                       Text="Copié"
+                                       FontFamily="Segoe UI Variable Text, Segoe UI"
+                                       FontSize="13"
+                                       FontWeight="Medium"
+                                       Foreground="#3C3C43"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <Button x:Name="DockButton"
+                    Grid.Column="2"
+                    Click="DockButton_Click"
+                    Width="34"
+                    Height="100"
+                    Margin="-2,0,0,0"
+                    Cursor="Hand"
+                    VerticalAlignment="Center"
+                    ToolTip="Replier / Déplier"
+                    Template="{StaticResource SidePanelDockButtonTemplate}">
+                <Path x:Name="Chevron"
+                      Stroke="#8E8E93"
+                      StrokeThickness="2.2"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round"
+                      StrokeLineJoin="Round"
+                      Width="10"
+                      Height="14"
+                      Stretch="Uniform"
+                      Data="M 6,0 L 1,6 L 6,12"/>
+            </Button>
+        </Grid>
+    </Border>
+</shell:DockedSidePanelWindow>
