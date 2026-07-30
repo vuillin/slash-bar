@@ -36,12 +36,12 @@ public sealed class MemoStore {
     }
 
 
-    public void Add(string name, string value) {
+    public bool Add(string name, string value) {
         name = name.Trim().ToLowerInvariant();
         value = value.Trim();
 
         if (name.Length == 0 || value.Length == 0)
-            return;
+            return false;
 
         lock (_lock) {
 
@@ -72,29 +72,30 @@ public sealed class MemoStore {
         }
 
         Changed?.Invoke();
+        return true;
     }
 
 
-    public void Update(string id, string name, string value) {
+    public bool Update(string id, string name, string value) {
         if (string.IsNullOrEmpty(id))
-            return;
+            return false;
 
         name = name.Trim().ToLowerInvariant();
         value = value.Trim();
 
         if (name.Length == 0 || value.Length == 0)
-            return;
+            return false;
 
         lock (_lock) {
             var index = _entries.FindIndex(e => e.Id == id);
             if (index < 0)
-                return;
+                return false;
 
             // un autre memo a déjà ce nom → on refuse
             var nameTaken = _entries.Exists(e =>
                 e.Id != id && e.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
             if (nameTaken)
-                return;
+                return false;
 
             var entry = _entries[index];
             entry.Name = name;
@@ -106,6 +107,7 @@ public sealed class MemoStore {
         }
 
         Changed?.Invoke();
+        return true;
     }
 
 
@@ -161,5 +163,18 @@ public sealed class MemoStore {
 
     private sealed class FileModel {
         public List<MemoEntry> Entries { get; set; } = [];
+    }
+
+
+    public MemoEntry? FindByName(string name) {
+        
+        name = name.Trim().ToLowerInvariant();
+        if (name.Length == 0)
+            return null;
+
+        lock (_lock) {
+            return _entries.FirstOrDefault(e =>
+                e.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        }
     }
 }

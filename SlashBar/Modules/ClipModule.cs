@@ -6,7 +6,8 @@ public sealed class ClipModule : IModule {
     public string Name => "Presse-papiers";
     public string Description => "Historique du presse-papiers";
 
-    public void Execute(string argument) {
+    public ModuleResult Execute(string argument) {
         SlashBar.ClipPanelWindow.Toggle();
+        return ModuleResult.None;
     }
 }

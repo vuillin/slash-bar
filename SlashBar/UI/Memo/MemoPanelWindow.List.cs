@@ -68,17 +68,28 @@ public partial class MemoPanelWindow {
 
     private void AddMemo_Click(object sender, RoutedEventArgs e) {
         var wasEditing = _editingId != null;
+        var name = MemoNameBox.Text.Trim();
+        var value = MemoValueBox.Text.Trim();
+
+        if (name.Length == 0 || value.Length == 0) {
+            ShowToast("!", "Nom et valeur requis", DeleteIconBrush, useMdl2: false);
+            return; // on ne vide PAS le formulaire
+        }
+
+        var saved = wasEditing
+            ? MemoBook.Store.Update(_editingId!, name, value)
+            : MemoBook.Store.Add(name, value);
+
+        if (!saved) {
+            // cas typique : en édition, le nouveau nom appartient déjà à un autre memo
+            ShowToast("!", "Nom déjà pris", DeleteIconBrush, useMdl2: false);
+            return;
+        }
 
         if (wasEditing)
-            MemoBook.Store.Update(_editingId!, MemoNameBox.Text, MemoValueBox.Text);
-        else
-            MemoBook.Store.Add(MemoNameBox.Text, MemoValueBox.Text);
-
-        if (wasEditing
-            && MemoNameBox.Text.Trim().Length > 0
-            && MemoValueBox.Text.Trim().Length > 0) {
             ShowToast("\uE73E", "Modifié", EditIconBrush, useMdl2: true);
-        }
+        else
+            ShowToast("\uE73E", "Ajouté", AddIconBrush, useMdl2: true);
 
         ClearEditor();
         MemoNameBox.Focus();

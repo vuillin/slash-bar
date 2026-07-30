@@ -8,7 +8,7 @@ public interface IModule
     string Description { get; }
 
     // "f chatgpt" → argument = "chatgpt"
-    void Execute(string argument);
+    ModuleResult Execute(string argument);
 
     // tab / ghost text
     IReadOnlyList<ArgCompletion> SuggestCompletions(string argument) => Array.Empty<ArgCompletion>();

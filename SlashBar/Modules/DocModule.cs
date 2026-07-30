@@ -10,30 +10,28 @@ public sealed class DocModule : IModule {
     public string Description => "Ouvre la documentation";
 
 
-    public void Execute(string argument) {
-
+    public ModuleResult Execute(string argument) {
         argument = argument.Trim();
         if (argument.Length == 0)
-            return;
+            return ModuleResult.Error("Langage requis");
 
         var space = argument.IndexOf(' ');
         var lang = space < 0 ? argument : argument[..space];
         var query = space < 0 ? "" : argument[(space + 1)..].Trim();
 
         if (!DocSources.ById.TryGetValue(lang, out var source))
-            return;
+            return ModuleResult.Error("Doc introuvable");
 
-        // recherche seulement si requête + URL de search native
         var url = query.Length > 0 && source.SearchUrl != null
             ? string.Format(source.SearchUrl, Uri.EscapeDataString(query))
             : source.HomeUrl;
 
         FirefoxHelper.OpenNewTab(url);
+        return ModuleResult.None;
     }
 
 
     public IReadOnlyList<ArgCompletion> SuggestCompletions(string argument) {
-
         ModuleArgs.SplitCurrentToken(argument, out var before, out var token);
 
         if (before.Length == 0)
