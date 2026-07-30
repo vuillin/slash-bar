@@ -10,14 +10,14 @@ public static class AppToast {
     private static AppToastWindow? _window;
 
 
-    public static void ShowSuccess(string message) =>
-        Show(message, success: true);
+    public static void ShowSuccess(string message, string? detail = null) =>
+        Show(message, success: true, detail);
 
     public static void ShowError(string message) =>
         Show(message, success: false);
 
 
-    private static void Show(string message, bool success) {
+    private static void Show(string message, bool success, string? detail = null) {
         if (string.IsNullOrWhiteSpace(message))
             return;
 
@@ -30,7 +30,7 @@ public static class AppToast {
             if (_window.IsVisible)
                 _window.CancelAndHide();
 
-            _window.ShowToast(message, success);
+            _window.ShowToast(message, success, detail);
         }
 
         if (app.Dispatcher.CheckAccess())

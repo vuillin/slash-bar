@@ -36,17 +36,27 @@
                        FontSize="14"
                        FontWeight="SemiBold"
                        Foreground="#34C759"
-                       VerticalAlignment="Center"
-                       Margin="0,0,10,0"/>
-            <TextBlock x:Name="ToastText"
-                       Text=""
-                       FontFamily="Segoe UI Variable Text, Segoe UI"
-                       FontSize="13"
-                       FontWeight="Medium"
-                       Foreground="#3C3C43"
-                       VerticalAlignment="Center"
-                       MaxWidth="280"
-                       TextWrapping="Wrap"/>
+                       VerticalAlignment="Top"
+                       Margin="0,1,10,0"/>
+            <StackPanel MaxWidth="280">
+                <TextBlock x:Name="ToastText"
+                           Text=""
+                           FontFamily="Segoe UI Variable Text, Segoe UI"
+                           FontSize="13"
+                           FontWeight="Medium"
+                           Foreground="#3C3C43"
+                           TextWrapping="Wrap"/>
+                <TextBlock x:Name="ToastDetail"
+                           Text=""
+                           FontFamily="Segoe UI Variable Text, Segoe UI"
+                           FontSize="12"
+                           Foreground="#8E8E93"
+                           Margin="0,2,0,0"
+                           MaxWidth="280"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"
+                           Visibility="Collapsed"/>
+            </StackPanel>
         </StackPanel>
     </Border>
 </Window>
