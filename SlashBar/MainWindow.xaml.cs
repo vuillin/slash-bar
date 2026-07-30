@@ -40,7 +40,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        PositionAtTop();
+        PositionAtBottom();
 
         Loaded += OnLoaded;
 
@@ -108,9 +108,11 @@ public partial class MainWindow : Window
         }
     }
 
+    private bool _suggestionsOpen;
+    private int _suggestionsAnimEpoch;
+
     private void UpdateSuggestions()
     {
-        var wasVisible = SuggestionsPanel.Visibility == Visibility.Visible;
         var inArgMode = _modules.IsInArgumentMode(SearchBox.Text);
 
         if (inArgMode)
@@ -132,11 +134,21 @@ public partial class MainWindow : Window
                 return;
             }
 
-            ShowSuggestionsPanel(wasVisible);
+            ShowSuggestionsPanel();
             return;
         }
 
         _argCompletions = Array.Empty<ArgCompletion>();
+
+        var raw = SearchBox.Text.TrimStart();
+        if (raw.Contains(' '))
+        {
+            _moduleCompletions = Array.Empty<IModule>();
+            ClearGhost();
+            HideSuggestionsPanel();
+            return;
+        }
+
         _moduleCompletions = _modules.Suggest(SearchBox.Text, max: 5);
 
         if (_completionIndex >= _moduleCompletions.Count)
@@ -153,7 +165,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        ShowSuggestionsPanel(wasVisible);
+        ShowSuggestionsPanel();
     }
 
     private void RefreshArgSuggestionsList()
@@ -170,22 +182,122 @@ public partial class MainWindow : Window
             .ToList();
     }
 
-    private void ShowSuggestionsPanel(bool wasVisible)
+    private void ShowSuggestionsPanel()
     {
-        SuggestionsPanel.Visibility = Visibility.Visible;
+        SuggestionsCard.Width = RootBorder.ActualWidth > 0 ? RootBorder.ActualWidth : Width;
 
-        if (!wasVisible)
-            AnimateSuggestionsIn();
+        if (!SuggestionsPopup.IsOpen)
+            SuggestionsPopup.IsOpen = true;
+
+        SuggestionsCard.UpdateLayout();
+
+        var target = MeasureSuggestionsHeight();
+        if (target <= 0)
+        {
+            HideSuggestionsPanel();
+            return;
+        }
+
+        // hauteur en un coup — seule opacity / slide sont animés
+        SuggestionsHost.BeginAnimation(HeightProperty, null);
+        SuggestionsHost.Height = target;
+
+        if (_suggestionsOpen)
+            return;
+
+        _suggestionsOpen = true;
+        AnimateSuggestionsIn();
     }
 
     private void HideSuggestionsPanel()
     {
-        SuggestionsPanel.BeginAnimation(OpacityProperty, null);
-        SuggestionsSlide.BeginAnimation(TranslateTransform.YProperty, null);
-        SuggestionsPanel.Visibility = Visibility.Collapsed;
-        SuggestionsPanel.Opacity = 0;
-        SuggestionsSlide.Y = -6;
         ClearGhost();
+
+        if (!_suggestionsOpen)
+        {
+            ResetSuggestionsInstant();
+            return;
+        }
+
+        _suggestionsOpen = false;
+        AnimateSuggestionsOut();
+    }
+
+    private double MeasureSuggestionsHeight()
+    {
+        var width = SuggestionsCard.Width;
+        if (width <= 0)
+            width = RootBorder.ActualWidth > 0 ? RootBorder.ActualWidth : Width;
+
+        SuggestionsPanel.InvalidateMeasure();
+        SuggestionsPanel.Measure(new System.Windows.Size(width, double.PositiveInfinity));
+        return SuggestionsPanel.DesiredSize.Height;
+    }
+
+    private void AnimateSuggestionsIn()
+    {
+        var epoch = ++_suggestionsAnimEpoch;
+        var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+        var duration = TimeSpan.FromMilliseconds(180);
+
+        SuggestionsCard.BeginAnimation(OpacityProperty, null);
+        SuggestionsSlide.BeginAnimation(TranslateTransform.YProperty, null);
+
+        SuggestionsCard.Opacity = 0;
+        SuggestionsSlide.Y = 10;
+
+        var fade = new DoubleAnimation(0, 1, duration) { EasingFunction = ease };
+        fade.Completed += (_, _) =>
+        {
+            if (epoch != _suggestionsAnimEpoch)
+                return;
+            SuggestionsCard.Opacity = 1;
+            SuggestionsCard.BeginAnimation(OpacityProperty, null);
+            SuggestionsSlide.Y = 0;
+            SuggestionsSlide.BeginAnimation(TranslateTransform.YProperty, null);
+        };
+
+        SuggestionsCard.BeginAnimation(OpacityProperty, fade);
+        SuggestionsSlide.BeginAnimation(TranslateTransform.YProperty,
+            new DoubleAnimation(10, 0, duration) { EasingFunction = ease });
+    }
+
+    private void AnimateSuggestionsOut()
+    {
+        var epoch = ++_suggestionsAnimEpoch;
+        var ease = new CubicEase { EasingMode = EasingMode.EaseIn };
+        var duration = TimeSpan.FromMilliseconds(140);
+
+        SuggestionsCard.BeginAnimation(OpacityProperty, null);
+        SuggestionsSlide.BeginAnimation(TranslateTransform.YProperty, null);
+
+        var fromOpacity = SuggestionsCard.Opacity;
+        var fromY = SuggestionsSlide.Y;
+
+        var fade = new DoubleAnimation(fromOpacity, 0, duration) { EasingFunction = ease };
+        fade.Completed += (_, _) =>
+        {
+            if (epoch != _suggestionsAnimEpoch)
+                return;
+            ResetSuggestionsInstant();
+        };
+
+        SuggestionsCard.BeginAnimation(OpacityProperty, fade);
+        SuggestionsSlide.BeginAnimation(TranslateTransform.YProperty,
+            new DoubleAnimation(fromY, 10, duration) { EasingFunction = ease });
+    }
+
+    private void ResetSuggestionsInstant()
+    {
+        _suggestionsAnimEpoch++;
+        _suggestionsOpen = false;
+        SuggestionsHost.BeginAnimation(HeightProperty, null);
+        SuggestionsCard.BeginAnimation(OpacityProperty, null);
+        SuggestionsSlide.BeginAnimation(TranslateTransform.YProperty, null);
+        SuggestionsHost.Height = 0;
+        SuggestionsCard.Opacity = 0;
+        SuggestionsSlide.Y = 10;
+        SuggestionsPopup.IsOpen = false;
     }
 
     private void UpdateArgGhost()
@@ -219,9 +331,11 @@ public partial class MainWindow : Window
 
         var chosen = _moduleCompletions[_completionIndex];
         var token = SearchBox.Text.TrimStart();
-        // pas encore d'espace : tout le champ = préfixe en cours
         if (token.Contains(' '))
-            token = token.Split(' ', 2)[0];
+        {
+            ClearGhost();
+            return;
+        }
 
         SetGhostSuffix(chosen.Prefix, token);
     }
@@ -330,30 +444,17 @@ public partial class MainWindow : Window
         return raw[(space + 1)..];
     }
 
-    private void AnimateSuggestionsIn()
+    private void PositionAtBottom()
     {
-        var ease = new QuadraticEase { EasingMode = EasingMode.EaseOut };
+        var work = SystemParameters.WorkArea;
+        Width = Math.Min(520, work.Width * 0.38);
+        Left = work.Left + (work.Width - Width) / 2;
 
-        SuggestionsPanel.BeginAnimation(
-            OpacityProperty,
-            new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(160))
-            {
-                EasingFunction = ease
-            });
+        if (ActualHeight <= 0)
+            UpdateLayout();
 
-        SuggestionsSlide.BeginAnimation(
-            TranslateTransform.YProperty,
-            new DoubleAnimation(-6, 0, TimeSpan.FromMilliseconds(180))
-            {
-                EasingFunction = ease
-            });
-    }
-
-    private void PositionAtTop()
-    {
-        Width = SystemParameters.PrimaryScreenWidth * 0.5;
-        Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
-        Top = 0;
+        const double bottomMargin = 16;
+        Top = work.Bottom - Math.Max(ActualHeight, 48) - bottomMargin;
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
@@ -363,7 +464,7 @@ public partial class MainWindow : Window
 
         try
         {
-            PositionAtTop();
+            PositionAtBottom();
             RegisterGlobalHotkeys();
             _hotkeysRegistered = true;
 
@@ -449,13 +550,13 @@ public partial class MainWindow : Window
             return;
 
         _isAnimating = true;
-        PositionAtTop();
+        PositionAtBottom();
         SearchBox.Text = "";
         _completionIndex = 0;
         UpdateSuggestions();
 
         Opacity = 0;
-        SlideTransform.Y = -20;
+        SlideTransform.Y = 20;
 
         _ignoreDeactivate = true;
         Show();
@@ -469,7 +570,7 @@ public partial class MainWindow : Window
             EasingFunction = ease
         };
 
-        var slideIn = new DoubleAnimation(-20, 0, TimeSpan.FromMilliseconds(220))
+        var slideIn = new DoubleAnimation(20, 0, TimeSpan.FromMilliseconds(220))
         {
             EasingFunction = ease
         };
@@ -500,7 +601,7 @@ public partial class MainWindow : Window
             EasingFunction = ease
         };
 
-        var slideOut = new DoubleAnimation(SlideTransform.Y, -16, TimeSpan.FromMilliseconds(160))
+        var slideOut = new DoubleAnimation(SlideTransform.Y, 16, TimeSpan.FromMilliseconds(160))
         {
             EasingFunction = ease
         };
@@ -510,7 +611,9 @@ public partial class MainWindow : Window
             BeginAnimation(OpacityProperty, null);
             SlideTransform.BeginAnimation(TranslateTransform.YProperty, null);
             Opacity = 0;
-            SlideTransform.Y = -20;
+            SlideTransform.Y = 20;
+            ResetSuggestionsInstant();
+
             Hide();
             _isOpen = false;
             _isAnimating = false;
@@ -526,7 +629,17 @@ public partial class MainWindow : Window
         if (_ignoreDeactivate || _isAnimating)
             return;
 
-        AnimateClose();
+        // Popup = autre HWND : ne pas fermer si le clic reste sur les suggestions
+        Dispatcher.BeginInvoke(() =>
+        {
+            if (_ignoreDeactivate || _isAnimating || IsActive)
+                return;
+
+            if (SuggestionsPopup.IsOpen && SuggestionsPopup.IsMouseOver)
+                return;
+
+            AnimateClose();
+        });
     }
 
     protected override void OnClosed(EventArgs e)
