@@ -1,0 +1,24 @@
+[
+  {
+    "name": "dev",
+    "description": "Example work setup",
+    "steps": [
+      {
+        "fileName": "%LOCALAPPDATA%\\Programs\\Microsoft VS Code\\Code.exe",
+        "layout": "Maximize",
+        "windowProcessName": "Code"
+      },
+      {
+        "fileName": "C:\\Program Files\\Mozilla Firefox\\firefox.exe",
+        "arguments": "-new-window https://example.com",
+        "layout": "LeftHalf",
+        "windowProcessName": "firefox"
+      },
+      {
+        "fileName": "C:\\Program Files\\Mozilla Thunderbird\\thunderbird.exe",
+        "layout": "Minimized",
+        "windowProcessName": "thunderbird"
+      }
+    ]
+  }
+]

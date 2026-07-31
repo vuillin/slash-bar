@@ -13,8 +13,10 @@ public static class SetupRunner {
                 ? []
                 : WindowPlacer.SnapshotWindows(processName);
 
+            var fileName = Environment.ExpandEnvironmentVariables(step.FileName);
+
             var process = Process.Start(new ProcessStartInfo {
-                FileName = step.FileName,
+                FileName = fileName,
                 Arguments = step.Arguments ?? "",
                 UseShellExecute = false
             });
