@@ -1,45 +1,58 @@
-# setup — Profils
+# setup — Profiles
 
-Lance un ensemble d'applications et les place sur l'écran.
+Launch a set of applications and place their windows on screen.
 
-Les profils sont déclarés en dur dans `SlashBar/Modules/Setup/SetupProfiles.cs`.
+Profiles are **not** hard-coded. Edit:
 
-## Syntaxe
+`%LocalAppData%\SlashBar\setup-profiles.json`
+
+If the file is missing, SlashBar creates an empty `[]`. Copy the example from [`docs/examples/setup-profiles.example.json`](../examples/setup-profiles.example.json) and adapt paths to your machine.
+
+`fileName` supports environment variables (`%LOCALAPPDATA%`, `%ProgramFiles%`, etc.).
+
+## Syntax
 
 ```
-setup <profil>
+setup <profile>
 ```
 
-## Layouts disponibles
+## Available layouts
 
 | Layout | Description |
 |--------|-------------|
-| `Default` | Aucun placement particulier |
-| `Maximize` | Fenêtre maximisée |
-| `Minimized` | Fenêtre réduite |
-| `LeftHalf` | Moitié gauche (écran de droite) |
-| `RightHalf` | Moitié droite (écran de droite) |
-| `RightMonitor` | Plein écran sur l'écran de droite |
+| `Default` | No special placement |
+| `Maximize` | Maximized window |
+| `Minimized` | Minimized window |
+| `LeftHalf` | Left half (right monitor) |
+| `RightHalf` | Right half (right monitor) |
+| `RightMonitor` | Full screen on the right monitor |
 
-## Ajouter un profil
+## JSON shape
 
-Dans `SetupProfiles.All` :
-
-```csharp
-new("nom", "Description", [
-    new(@"C:\chemin\app.exe",
-        Arguments: "--optionnel",
-        Layout: WindowLayout.Maximize,
-        WindowProcessName: "NomDuProcess"),
-]),
+```json
+[
+  {
+    "name": "dev",
+    "description": "My work setup",
+    "steps": [
+      {
+        "fileName": "%LOCALAPPDATA%\\Programs\\Microsoft VS Code\\Code.exe",
+        "layout": "Maximize",
+        "windowProcessName": "Code"
+      }
+    ]
+  }
+]
 ```
 
-- `FileName` : exécutable (ou raccourci `.lnk` avec `UseShellExecute` adapté)
-- `Arguments` : arguments CLI optionnels
-- `Layout` : placement de la fenêtre
-- `WindowProcessName` : nom du process pour retrouver la fenêtre (ex. `firefox`, `Cursor`)
+- `fileName`: executable path (env vars expanded)
+- `arguments`: optional CLI arguments
+- `layout`: window placement (see table above)
+- `windowProcessName`: process name used to find the window (e.g. `firefox`, `Cursor`)
 
-## Exemple
+Edits to the JSON are picked up on the next `setup` command (no restart required).
+
+## Example
 
 ```
 setup dev

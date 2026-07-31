@@ -1,22 +1,22 @@
-# ip — Adresse IP
+# ip — IP address
 
-Copie une adresse IP dans le presse-papiers.
+Copy an IP address to the clipboard.
 
-## Syntaxe
+## Syntax
 
 ```
-ip           → IP publique
-ip local     → IP locale (LAN)
+ip           → public IP
+ip local     → local IP (LAN)
 ```
 
 ## Options
 
 | Option | Description |
 |--------|-------------|
-| _(aucune)_ | Adresse IP publique (`api.ipify.org`) |
-| `local` | Adresse IP locale (LAN) |
+| _(none)_ | Public IP address (`api.ipify.org`) |
+| `local` | Local IP address (LAN) |
 
-## Exemples
+## Examples
 
 ```
 ip
