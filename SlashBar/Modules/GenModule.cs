@@ -5,33 +5,33 @@ namespace SlashBar.Modules;
 public sealed class GenModule : IModule {
 
     private static readonly ArgCompletion[] Flags = [
-        new("b64", "Base64 encodage/décodage"),
-        new("hex", "Hexadécimal encodage/décodage"),
-        new("date", "Date du jour (jj-mm-aaaa)"),
-        new("time", "Heure actuelle (hh:mm:ss)"),
-        new("timestamp", "Timestamp Unix (secondes)"),
-        new("lorem", "Paragraphe Lorem Ipsum")
+        new("b64", "Base64 encode/decode"),
+        new("hex", "Hex encode/decode"),
+        new("date", "Today's date (dd-mm-yyyy)"),
+        new("time", "Current time (hh:mm:ss)"),
+        new("timestamp", "Unix timestamp (seconds)"),
+        new("lorem", "Lorem Ipsum paragraph")
     ];
 
     private static readonly ArgCompletion[] B64Flags = [
-        new("encode", "Encoder en Base64"),
-        new("decode", "Décoder depuis Base64")
+        new("encode", "Encode to Base64"),
+        new("decode", "Decode from Base64")
     ];
 
     private static readonly ArgCompletion[] HexFlags = [
-        new("encode", "Encoder en hexadécimal"),
-        new("decode", "Décoder depuis l'hexadécimal")
+        new("encode", "Encode to hexadecimal"),
+        new("decode", "Decode from hexadecimal")
     ];
 
     public string Prefix => "gen";
-    public string Name => "Générateur";
-    public string Description => "Génère une valeur (presse-papiers)";
+    public string Name => "Generator";
+    public string Description => "Generate a value (clipboard)";
 
 
     public ModuleResult Execute(string argument) {
         argument = argument.Trim();
         if (argument.Length == 0)
-            return ModuleResult.Error("Argument requis");
+            return ModuleResult.Error("Argument required");
 
         var space = argument.IndexOf(' ');
         var cmd = space < 0 ? argument : argument[..space];
@@ -68,7 +68,7 @@ public sealed class GenModule : IModule {
             return ModuleResult.Copied(text);
         }
 
-        return ModuleResult.Error("Commande inconnue");
+        return ModuleResult.Error("Unknown command");
     }
 
 
@@ -94,7 +94,7 @@ public sealed class GenModule : IModule {
         var text = space < 0 ? "" : rest[(space + 1)..].Trim();
 
         if (text.Length == 0)
-            return ModuleResult.Error("Texte requis");
+            return ModuleResult.Error("Text required");
 
         if (mode.Equals("encode", StringComparison.OrdinalIgnoreCase)) {
             var bytes = Encoding.UTF8.GetBytes(text);
@@ -111,11 +111,11 @@ public sealed class GenModule : IModule {
                 return ModuleResult.Copied(decoded);
             }
             catch {
-                return ModuleResult.Error("Base64 invalide");
+                return ModuleResult.Error("Invalid Base64");
             }
         }
 
-        return ModuleResult.Error("Mode inconnu");
+        return ModuleResult.Error("Unknown mode");
     }
 
 
@@ -125,7 +125,7 @@ public sealed class GenModule : IModule {
         var text = space < 0 ? "" : rest[(space + 1)..].Trim();
 
         if (text.Length == 0)
-            return ModuleResult.Error("Texte requis");
+            return ModuleResult.Error("Text required");
 
         if (mode.Equals("encode", StringComparison.OrdinalIgnoreCase)) {
             var bytes = Encoding.UTF8.GetBytes(text);
@@ -143,10 +143,10 @@ public sealed class GenModule : IModule {
                 return ModuleResult.Copied(decoded);
             }
             catch {
-                return ModuleResult.Error("Hex invalide");
+                return ModuleResult.Error("Invalid hex");
             }
         }
 
-        return ModuleResult.Error("Mode inconnu");
+        return ModuleResult.Error("Unknown mode");
     }
 }

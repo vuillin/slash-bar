@@ -1,6 +1,6 @@
 namespace SlashBar.Modules;
 
 /// <summary>
-/// Représente une proposition d'autocomplétion pour un argument de commande
+/// Represents an autocomplete suggestion for a command argument.
 /// </summary>
 public sealed record ArgCompletion(string Value, string Description);

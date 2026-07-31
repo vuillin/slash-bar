@@ -4,7 +4,7 @@ using System.Windows.Media;
 namespace SlashBar.Modules.Shortcuts;
 
 /// <summary>
-/// Pins, labels et icônes des raccourcis autour de la barre.
+/// Pins, labels, and icons for shortcuts around the bar.
 /// </summary>
 public static class ShortcutCatalog {
 
@@ -13,7 +13,7 @@ public static class ShortcutCatalog {
     private const double ArcFactor = 0.7;
     private const double AlignNudge = 17;
 
-    // Près de la barre → vers l'extérieur. null = slot vide.
+    // Near the bar → outward. null = empty slot.
     private static readonly string?[] LeftFromBar = ["memo", null, null, null, null];
     private static readonly string?[] RightFromBar = ["color", "clip", null, null, null];
 
@@ -26,8 +26,8 @@ public static class ShortcutCatalog {
     };
 
     private static readonly Dictionary<string, string> Labels = new(StringComparer.OrdinalIgnoreCase) {
-        ["memo"] = "Mémo",
-        ["clip"] = "Presse-Papiers",
+        ["memo"] = "Memo",
+        ["clip"] = "Clipboard",
         ["color"] = "Color Picker",
     };
 

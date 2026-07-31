@@ -8,13 +8,13 @@ namespace SlashBar.Modules;
 public sealed class IpModule : IModule {
 
     private static readonly ArgCompletion[] Flags = [
-        new("local", "Adresse IP locale (LAN)")
+        new("local", "Local IP address (LAN)")
     ];
 
 
     public string Prefix => "ip";
-    public string Name => "Adresse IP";
-    public string Description => "Copie l'adresse IP (presse-papiers)";
+    public string Name => "IP address";
+    public string Description => "Copy an IP address to the clipboard";
 
 
     public ModuleResult Execute(string argument) {
@@ -33,10 +33,10 @@ public sealed class IpModule : IModule {
                 return ModuleResult.Copied(ip);
             }
 
-            return ModuleResult.Error("Option inconnue");
+            return ModuleResult.Error("Unknown option");
         }
         catch {
-            return ModuleResult.Error("IP inaccessible");
+            return ModuleResult.Error("IP unavailable");
         }
     }
 

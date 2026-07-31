@@ -82,7 +82,7 @@ public sealed class ClipboardWatcher {
             if (string.IsNullOrWhiteSpace(text))
                 return;
 
-            // même contenu que la dernière fois → ignore.
+            // same content as last time → skip.
             if (text == _lastSeen)
                 return;
             _lastSeen = text;
@@ -95,7 +95,7 @@ public sealed class ClipboardWatcher {
             _store.Add(text);
         }
         catch {
-            // clipboard parfois encore verrouillé malgré le BeginInvoke.
+            // clipboard sometimes still locked despite BeginInvoke.
         }
     }
 

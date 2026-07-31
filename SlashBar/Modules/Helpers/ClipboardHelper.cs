@@ -4,7 +4,7 @@ namespace SlashBar.Modules;
 
 
 /// <summary>
-/// Copie du texte dans le presse-papiers
+/// Copies text to the clipboard.
 /// </summary>
 public static class ClipboardHelper {
 

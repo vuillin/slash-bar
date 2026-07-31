@@ -161,7 +161,7 @@
                              VerticalAlignment="Center"
                              SelectionBrush="#33007AFF"/>
 
-                    <TextBlock Text="Rechercher..."
+                    <TextBlock Text="Search..."
                                FontFamily="Segoe UI Variable Text, Segoe UI"
                                FontSize="15"
                                FontWeight="Medium"

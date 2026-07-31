@@ -6,7 +6,7 @@ using DrawingSize = System.Drawing.Size;
 namespace SlashBar.Modules.Color;
 
 /// <summary>
-/// Capture une région d'écran et lit le pixel central. Aucune dépendance WPF Window.
+/// Captures a screen region and reads the center pixel. No WPF Window dependency.
 /// </summary>
 public sealed class ScreenColorSampler : IDisposable {
 
@@ -27,7 +27,7 @@ public sealed class ScreenColorSampler : IDisposable {
     public int SampleSize => _size;
 
     /// <summary>
-    /// Remplit <paramref name="bgraDestination"/> (BGRA, stride = size*4) et retourne la couleur du centre.
+    /// Fills <paramref name="bgraDestination"/> (BGRA, stride = size*4) and returns the center color.
     /// </summary>
     public (byte R, byte G, byte B) Sample(int centerX, int centerY, Span<byte> bgraDestination) {
         ObjectDisposedException.ThrowIf(_disposed, this);

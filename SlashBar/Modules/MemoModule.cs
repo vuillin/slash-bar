@@ -6,7 +6,7 @@ public sealed class MemoModule : IModule {
 
     public string Prefix => "memo";
     public string Name => "Memo";
-    public string Description => "Raccourcis de texte à copier";
+    public string Description => "Text shortcuts to copy";
 
 
     public ModuleResult Execute(string argument) {
@@ -19,7 +19,7 @@ public sealed class MemoModule : IModule {
 
         var entry = MemoBook.Store.FindByName(argument);
         if (entry == null)
-            return ModuleResult.Error("Memo introuvable");
+            return ModuleResult.Error("Memo not found");
 
         ClipboardHelper.SetText(entry.Value);
         return ModuleResult.Copied(entry.Value);

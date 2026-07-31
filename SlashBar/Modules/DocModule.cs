@@ -1,26 +1,26 @@
 namespace SlashBar.Modules;
 
 /// <summary>
-/// Ouvre la doc officielle (accueil ou recherche si dispo)
+/// Opens official docs (home page, or search when available).
 /// </summary>
 public sealed class DocModule : IModule {
 
     public string Prefix => "doc";
     public string Name => "Documentation";
-    public string Description => "Ouvre la documentation";
+    public string Description => "Open documentation";
 
 
     public ModuleResult Execute(string argument) {
         argument = argument.Trim();
         if (argument.Length == 0)
-            return ModuleResult.Error("Langage requis");
+            return ModuleResult.Error("Language required");
 
         var space = argument.IndexOf(' ');
         var lang = space < 0 ? argument : argument[..space];
         var query = space < 0 ? "" : argument[(space + 1)..].Trim();
 
         if (!DocSources.ById.TryGetValue(lang, out var source))
-            return ModuleResult.Error("Doc introuvable");
+            return ModuleResult.Error("Doc not found");
 
         var url = query.Length > 0 && source.SearchUrl != null
             ? string.Format(source.SearchUrl, Uri.EscapeDataString(query))

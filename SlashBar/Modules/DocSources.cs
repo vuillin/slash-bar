@@ -1,17 +1,17 @@
 namespace SlashBar.Modules;
 
 /// <summary>
-/// Sources de documentation (doc + recherche optionnelle)
+/// Documentation sources (home page + optional search).
 /// </summary>
 internal static class DocSources {
 
-    // SearchUrl null = pas de recherche native → toujours doc
+    // SearchUrl null = no native search → always open doc home
     internal sealed record DocSource(string Id, string Label, string HomeUrl, string? SearchUrl);
 
-    // {0} = requête déjà encodée
+    // {0} = already URL-encoded query
     private static readonly DocSource[] All = [
 
-        // langages
+        // languages
         new("php", "PHP",
             "https://www.php.net/manual/en/",
             "https://www.php.net/search.php?pattern={0}"),
@@ -119,7 +119,7 @@ internal static class DocSources {
             "https://www.gnu.org/software/bash/manual/",
             "https://www.gnu.org/cgi-bin/estseek.cgi?phrase={0}"),
 
-        // outils / packages
+        // tools / packages
         new("npm", "npm packages",
             "https://www.npmjs.com/",
             "https://www.npmjs.com/search?q={0}"),

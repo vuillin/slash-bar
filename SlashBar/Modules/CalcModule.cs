@@ -11,8 +11,8 @@ public sealed class CalcModule : IModule {
         new(@"^[0-9+\-*/().\s]+$", RegexOptions.Compiled);
 
     public string Prefix => "calc";
-    public string Name => "Calculatrice";
-    public string Description => "Évalue une expression";
+    public string Name => "Calculator";
+    public string Description => "Evaluate an expression";
 
 
     public ModuleResult Execute(string argument) {
@@ -31,7 +31,7 @@ public sealed class CalcModule : IModule {
         if (!TryEvaluate(argument, out var text, out _))
             return Array.Empty<ArgCompletion>();
 
-        // Value = expression actuelle → pas de ghost parasite ; Description = preview
+        // Value = current expression (no ghost); Description = preview
         return [new ArgCompletion(argument.Trim(), $"= {text}")];
 
     }
@@ -44,12 +44,12 @@ public sealed class CalcModule : IModule {
         var expr = Normalize(argument);
 
         if (expr.Length == 0) {
-            error = "Expression requise";
+            error = "Expression required";
             return false;
         }
 
         if (!Allowed.IsMatch(expr)) {
-            error = "Expression invalide";
+            error = "Invalid expression";
             return false;
         }
         
@@ -59,11 +59,11 @@ public sealed class CalcModule : IModule {
             return true;
         }
         catch (DivideByZeroException) {
-            error = "Division par zéro";
+            error = "Division by zero";
             return false;
         }
         catch {
-            error = "Expression invalide";
+            error = "Invalid expression";
             return false;
         }
     }
@@ -89,7 +89,7 @@ public sealed class CalcModule : IModule {
                 case ',':
                     sb.Append('.');
                     break;
-                case '\u00A0' or '\u202F': // espaces insécables
+                case '\u00A0' or '\u202F': // non-breaking spaces
                     sb.Append(' ');
                     break;
                 default:
@@ -110,11 +110,11 @@ public sealed class CalcModule : IModule {
 
         var d = Convert.ToDecimal(value, CultureInfo.InvariantCulture);
 
-        // entier exact → sans décimales
+        // exact integer → no decimals
         if (d == decimal.Truncate(d))
             return decimal.Truncate(d).ToString(CultureInfo.InvariantCulture);
             
-        // sinon trim des zéros (max ~10 décimales utiles)
+        // otherwise trim trailing zeros (~10 useful decimals max)
         return d.ToString("0.##########", CultureInfo.InvariantCulture);
 
     }

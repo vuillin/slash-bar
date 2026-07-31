@@ -1,12 +1,12 @@
 namespace SlashBar.Modules;
 
 /// <summary>
-/// Détecte et normalise une url
+/// Detects and normalizes URLs.
 /// </summary>
 public static class UrlHelper {
 
     /// <summary>
-    /// true si <paramref name="input"/> ressemble à une url. ex: "github.com" → "https://github.com/"
+    /// true when <paramref name="input"/> looks like a URL. e.g. "github.com" → "https://github.com/"
     /// </summary>
     public static bool TryNormalize(string input, out string url) {
 

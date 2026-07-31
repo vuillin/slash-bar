@@ -14,7 +14,7 @@ public sealed class ModuleRegistry
                         && typeof(IModule).IsAssignableFrom(t)
                         && t.GetConstructor(Type.EmptyTypes) != null)
             .Select(t => (IModule)Activator.CreateInstance(t)!)
-            // "gh" avant "g"
+            // "gh" before "g"
             .OrderByDescending(m => m.Prefix.Length)
             .ThenBy(m => m.Prefix, StringComparer.OrdinalIgnoreCase)
             .ToList();
@@ -78,7 +78,7 @@ public sealed class ModuleRegistry
         return false;
     }
 
-    // comme TryResolve mais sans trim l'argument
+    // like TryResolve but without trimming the argument
     private bool TryResolveArgument(string input, out IModule module, out string argument)
     {
         module = null!;

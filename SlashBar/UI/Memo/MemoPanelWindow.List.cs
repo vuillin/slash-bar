@@ -72,8 +72,8 @@ public partial class MemoPanelWindow {
         var value = MemoValueBox.Text.Trim();
 
         if (name.Length == 0 || value.Length == 0) {
-            ShowToast("!", "Nom et valeur requis", DeleteIconBrush, useMdl2: false);
-            return; // on ne vide PAS le formulaire
+            ShowToast("!", "Name and value required", DeleteIconBrush, useMdl2: false);
+            return;
         }
 
         var saved = wasEditing
@@ -81,15 +81,15 @@ public partial class MemoPanelWindow {
             : MemoBook.Store.Add(name, value);
 
         if (!saved) {
-            // cas typique : en édition, le nouveau nom appartient déjà à un autre memo
-            ShowToast("!", "Nom déjà pris", DeleteIconBrush, useMdl2: false);
+            // typical case: while editing, the new name already belongs to another memo
+            ShowToast("!", "Name already taken", DeleteIconBrush, useMdl2: false);
             return;
         }
 
         if (wasEditing)
-            ShowToast("\uE73E", "Modifié", EditIconBrush, useMdl2: true);
+            ShowToast("\uE73E", "Updated", EditIconBrush, useMdl2: true);
         else
-            ShowToast("\uE73E", "Ajouté", AddIconBrush, useMdl2: true);
+            ShowToast("\uE73E", "Added", AddIconBrush, useMdl2: true);
 
         ClearEditor();
         MemoNameBox.Focus();
@@ -114,7 +114,7 @@ public partial class MemoPanelWindow {
     private void MemoItem_Click(object sender, MouseButtonEventArgs e) {
         if (sender is FrameworkElement { Tag: MemoEntry entry }) {
             ClipboardHelper.SetText(entry.Value);
-            ShowToast("✓", "Copié", AddIconBrush, useMdl2: false);
+            ShowToast("✓", "Copied", AddIconBrush, useMdl2: false);
         }
     }
 
@@ -134,7 +134,7 @@ public partial class MemoPanelWindow {
             ClearEditor();
 
         MemoBook.Store.Remove(entry.Id);
-        ShowToast("\uE711", "Supprimé", DeleteIconBrush, useMdl2: true);
+        ShowToast("\uE711", "Deleted", DeleteIconBrush, useMdl2: true);
     }
 
 
@@ -150,13 +150,13 @@ public partial class MemoPanelWindow {
         if (editing) {
             AddMemoIcon.Text = "\uE73E";
             AddMemoIcon.Foreground = EditIconBrush;
-            AddMemoButton.ToolTip = "Enregistrer";
+            AddMemoButton.ToolTip = "Save";
             AddMemoButton.Tag = "edit";
         }
         else {
             AddMemoIcon.Text = "\uE710";
             AddMemoIcon.Foreground = AddIconBrush;
-            AddMemoButton.ToolTip = "Ajouter";
+            AddMemoButton.ToolTip = "Add";
             AddMemoButton.Tag = "add";
         }
     }

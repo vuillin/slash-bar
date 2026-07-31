@@ -72,7 +72,7 @@
                                        IsHitTestVisible="False"/>
 
                             <TextBlock Grid.Column="1"
-                                       Text="Couleur"
+                                       Text="Color"
                                        FontFamily="Segoe UI Variable Text, Segoe UI"
                                        FontSize="15"
                                        FontWeight="Medium"
@@ -90,7 +90,7 @@
                                         Width="19"
                                         Height="19"
                                         Cursor="Hand"
-                                        ToolTip="Position d'origine"
+                                        ToolTip="Reset position"
                                         Margin="0,0,8,0"
                                         Visibility="Collapsed"
                                         Template="{StaticResource SidePanelResetButtonTemplate}"/>
@@ -99,7 +99,7 @@
                                         Width="19"
                                         Height="19"
                                         Cursor="Hand"
-                                        ToolTip="Fermer"
+                                        ToolTip="Close"
                                         VerticalAlignment="Center"
                                         Template="{StaticResource SidePanelCloseButtonTemplate}"/>
                             </StackPanel>
@@ -270,7 +270,7 @@
                                                        VerticalAlignment="Center"/>
                                         </DockPanel>
 
-                                        <Button Content="Copier"
+                                        <Button Content="Copy"
                                                 Click="CopyHex_Click"
                                                 Height="34"
                                                 Cursor="Hand"
@@ -309,7 +309,7 @@
                                         BorderThickness="1"
                                         Padding="14,14,14,12">
                                     <StackPanel>
-                                        <TextBlock Text="RVB"
+                                        <TextBlock Text="RGB"
                                                    FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
                                                    FontSize="12"
                                                    FontWeight="Medium"
@@ -333,7 +333,7 @@
                                                        TextWrapping="Wrap"/>
                                         </DockPanel>
 
-                                        <Button Content="Copier"
+                                        <Button Content="Copy"
                                                 Click="CopyRgb_Click"
                                                 Height="34"
                                                 Cursor="Hand"
@@ -370,7 +370,7 @@
                                         Margin="0,18,0,0"
                                         Visibility="Collapsed">
 
-                                <TextBlock Text="HISTORIQUE"
+                                <TextBlock Text="HISTORY"
                                         FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
                                         FontSize="11"
                                         FontWeight="SemiBold"
@@ -425,7 +425,7 @@
                                        Foreground="#34C759"
                                        VerticalAlignment="Center"
                                        Margin="0,0,8,0"/>
-                            <TextBlock Text="Copié"
+                            <TextBlock Text="Copied"
                                        FontFamily="Segoe UI Variable Text, Segoe UI"
                                        FontSize="13"
                                        FontWeight="Medium"
@@ -444,7 +444,7 @@
                     Margin="-2,0,0,0"
                     Cursor="Hand"
                     VerticalAlignment="Center"
-                    ToolTip="Replier / Déplier"
+                    ToolTip="Collapse / Expand"
                     Template="{StaticResource SidePanelDockButtonTemplate}">
                 <Path x:Name="Chevron"
                       Stroke="#8E8E93"

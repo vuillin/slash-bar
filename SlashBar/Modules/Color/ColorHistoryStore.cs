@@ -78,7 +78,7 @@ public sealed class ColorHistoryStore {
             _entries.Clear();
             _entries.AddRange(data.Entries.Take(MaxEntries));
         } catch {
-            // fichier corrompu -> on repart vide 
+            // corrupt file → start empty 
         }
     }
 

@@ -43,7 +43,7 @@ public partial class AppToastWindow : Window {
             ToastDetail.Visibility = Visibility.Collapsed;
         }
         else {
-            // une ligne pour l'ellipsis ; espaces / retours → espace
+            // single line for ellipsis; spaces / newlines → space
             var flat = string.Join(' ',
                 detail.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
             ToastDetail.Text = flat;
@@ -69,12 +69,12 @@ public partial class AppToastWindow : Window {
 
     private void PlaceTopRightOnBarScreen() {
         var screen = GetBarScreen();
-        var area = screen.WorkingArea; // pixels absolus du bureau virtuel
+        var area = screen.WorkingArea; // absolute pixels on the virtual desktop
 
         var hwnd = new WindowInteropHelper(this).EnsureHandle();
         UpdateLayout();
 
-        // taille en pixels (DIPs → device)
+        // size in pixels (DIPs → device)
         var source = PresentationSource.FromVisual(this);
         var toDevice = source?.CompositionTarget?.TransformToDevice ?? Matrix.Identity;
         var sizePx = toDevice.Transform(new System.Windows.Point(ActualWidth, ActualHeight));
@@ -92,7 +92,7 @@ public partial class AppToastWindow : Window {
     }
 
 
-    /// <summary>Écran où se trouve la barre SlashBar</summary>
+    /// <summary>Screen that contains the SlashBar window.</summary>
     private static System.Windows.Forms.Screen GetBarScreen() {
         var bar = System.Windows.Application.Current?.MainWindow
             ?? System.Windows.Application.Current?.Windows.OfType<MainWindow>().FirstOrDefault();
@@ -101,7 +101,7 @@ public partial class AppToastWindow : Window {
             var source = PresentationSource.FromVisual(bar);
             var toDevice = source?.CompositionTarget?.TransformToDevice ?? Matrix.Identity;
 
-            // centre de la barre en pixels écran
+            // bar center in screen pixels
             var centerDip = new System.Windows.Point(
                 bar.Left + bar.ActualWidth / 2,
                 bar.Top + Math.Max(bar.ActualHeight / 2, 1));
@@ -122,7 +122,7 @@ public partial class AppToastWindow : Window {
         ToastRoot.BeginAnimation(OpacityProperty, null);
         ToastSlide.BeginAnimation(TranslateTransform.XProperty, null);
 
-        // Show d'abord pour avoir ActualWidth / CompositionTarget
+        // Show first so ActualWidth / CompositionTarget are available
         Show();
         UpdateLayout();
         PlaceTopRightOnBarScreen();

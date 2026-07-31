@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:SlashBar"
              StartupUri="MainWindow.xaml"
              ShutdownMode="OnExplicitShutdown">
-    <!-- sinon Hide() kill l'app -->
+    <!-- otherwise Hide() shuts down the app -->
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

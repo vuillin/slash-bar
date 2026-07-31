@@ -4,7 +4,7 @@ namespace SlashBar.Modules;
 
 
 /// <summary>
-/// Lance Firefox (URL, onglet, recherche, privé)
+/// Launches Firefox (URL, tab, search, private window).
 /// </summary>
 public static class FirefoxHelper {
 
