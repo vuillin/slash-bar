@@ -62,18 +62,11 @@ public sealed class CalcModule : IModule {
             error = "Division par zéro";
             return false;
         }
-        catch (EvaluateException) when (IsDivideByZero()) {
-            error = "Division par zéro";
-            return false;
-        }
         catch {
             error = "Expression invalide";
             return false;
         }
     }
-
-
-    private static bool IsDivideByZero() => false;
 
 
     private static string Normalize(string input) {
