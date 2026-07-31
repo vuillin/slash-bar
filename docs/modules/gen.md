@@ -1,13 +1,13 @@
-# gen — Générateur
+# gen — Generator
 
-Génère une valeur et la copie dans le presse-papiers.
+Generate a value and copy it to the clipboard.
 
-## Syntaxe
+## Syntax
 
 ```
-gen b64 encode <texte>
+gen b64 encode <text>
 gen b64 decode <base64>
-gen hex encode <texte>
+gen hex encode <text>
 gen hex decode <hex>
 gen date
 gen time
@@ -17,18 +17,18 @@ gen lorem
 
 ## Types
 
-| Type | Sous-commande | Description |
-|------|---------------|-------------|
-| `b64` | `encode` | Encodage Base64 (UTF-8) |
-| `b64` | `decode` | Décodage Base64 |
-| `hex` | `encode` | Encodage hexadécimal (UTF-8) |
-| `hex` | `decode` | Décodage hexadécimal |
-| `date` | — | Date du jour (`jj-mm-aaaa`) |
-| `time` | — | Heure actuelle (`hh:mm:ss`) |
-| `timestamp` | — | Timestamp Unix UTC (secondes) |
-| `lorem` | — | Paragraphe Lorem Ipsum |
+| Type | Subcommand | Description |
+|------|------------|-------------|
+| `b64` | `encode` | Base64 encode (UTF-8) |
+| `b64` | `decode` | Base64 decode |
+| `hex` | `encode` | Hex encode (UTF-8) |
+| `hex` | `decode` | Hex decode |
+| `date` | — | Today’s date (`dd-mm-yyyy`) |
+| `time` | — | Current time (`hh:mm:ss`) |
+| `timestamp` | — | Unix UTC timestamp (seconds) |
+| `lorem` | — | Lorem Ipsum paragraph |
 
-## Exemples
+## Examples
 
 ```
 gen b64 encode hello

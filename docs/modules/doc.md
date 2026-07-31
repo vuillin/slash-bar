@@ -1,59 +1,59 @@
 # doc — Documentation
 
-Ouvre la documentation officielle dans un nouvel onglet.
+Open official documentation in a new tab.
 
-## Syntaxe
+## Syntax
 
 ```
-doc <source>              → page d'accueil
-doc <source> <requête>    → recherche (si dispo), sinon accueil
+doc <source>              → home page
+doc <source> <query>      → search (if available), otherwise home
 ```
 
-Si la source n'a pas de recherche native, une requête ouvre quand même la page d'accueil.
+If the source has no native search, a query still opens the home page.
 
 ## Sources
 
-| Id | Documentation | Recherche |
-|----|---------------|-----------|
-| `php` | PHP | oui |
-| `py` | Python 3 | oui |
-| `js` | JavaScript (MDN) | oui |
-| `ts` | TypeScript | non |
-| `java` | Java (Oracle) | oui |
-| `cs` | C# / .NET | oui |
-| `dotnet` | .NET | oui |
-| `cpp` | C++ (cppreference) | oui |
-| `c` | C (cppreference) | oui |
-| `rust` | Rust std | oui |
-| `go` | Go packages | oui |
-| `ruby` | Ruby | non |
-| `kt` | Kotlin | oui |
-| `swift` | Swift / Apple | oui |
-| `lua` | Lua | non |
-| `mdn` | MDN Web Docs | oui |
-| `html` | HTML (MDN) | oui |
-| `css` | CSS (MDN) | oui |
-| `node` | Node.js | non |
-| `react` | React | non |
-| `vue` | Vue.js | non |
-| `angular` | Angular | non |
-| `laravel` | Laravel | non |
-| `symfony` | Symfony | oui |
-| `flask` | Flask | oui |
-| `mysql` | MySQL | oui |
-| `pg` | PostgreSQL | oui |
-| `mongo` | MongoDB | oui |
-| `redis` | Redis | non |
-| `sqlite` | SQLite | oui |
-| `docker` | Docker | non |
-| `git` | Git | oui |
-| `linux` | Linux man | oui |
-| `bash` | Bash / GNU | oui |
-| `npm` | npm packages | oui |
-| `pypi` | PyPI | oui |
-| `maven` | Maven Central | oui |
+| Id | Documentation | Search |
+|----|---------------|--------|
+| `php` | PHP | yes |
+| `py` | Python 3 | yes |
+| `js` | JavaScript (MDN) | yes |
+| `ts` | TypeScript | no |
+| `java` | Java (Oracle) | yes |
+| `cs` | C# / .NET | yes |
+| `dotnet` | .NET | yes |
+| `cpp` | C++ (cppreference) | yes |
+| `c` | C (cppreference) | yes |
+| `rust` | Rust std | yes |
+| `go` | Go packages | yes |
+| `ruby` | Ruby | no |
+| `kt` | Kotlin | yes |
+| `swift` | Swift / Apple | yes |
+| `lua` | Lua | no |
+| `mdn` | MDN Web Docs | yes |
+| `html` | HTML (MDN) | yes |
+| `css` | CSS (MDN) | yes |
+| `node` | Node.js | no |
+| `react` | React | no |
+| `vue` | Vue.js | no |
+| `angular` | Angular | no |
+| `laravel` | Laravel | no |
+| `symfony` | Symfony | yes |
+| `flask` | Flask | yes |
+| `mysql` | MySQL | yes |
+| `pg` | PostgreSQL | yes |
+| `mongo` | MongoDB | yes |
+| `redis` | Redis | no |
+| `sqlite` | SQLite | yes |
+| `docker` | Docker | no |
+| `git` | Git | yes |
+| `linux` | Linux man | yes |
+| `bash` | Bash / GNU | yes |
+| `npm` | npm packages | yes |
+| `pypi` | PyPI | yes |
+| `maven` | Maven Central | yes |
 
-## Exemples
+## Examples
 
 ```
 doc php

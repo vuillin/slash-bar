@@ -1,18 +1,18 @@
-# calc — Calculatrice
+# calc — Calculator
 
-Évalue une expression et copie le résultat.
+Evaluate an expression and copy the result.
 
-## Syntaxe
+## Syntax
 
 ```
 calc <expression>
 ```
 
-Opérateurs : `+` `-` `*` `/` et parenthèses. Espaces optionnels.
+Operators: `+` `-` `*` `/` and parentheses. Spaces are optional.
 
-Accepté aussi : `×` `÷` `−`, virgule décimale (`2,5` → `2.5`).
+Also accepted: `×` `÷` `−`, decimal comma (`2,5` → `2.5`).
 
-## Exemples
+## Examples
 
 ```
 calc 2+2

@@ -1,13 +1,13 @@
 # Modules
 
-| Préfixe | Module | Documentation |
-|---------|--------|---------------|
-| `f` | Recherche Firefox | [f.md](modules/f.md) |
-| `gen` | Générateur | [gen.md](modules/gen.md) |
+| Prefix | Module | Documentation |
+|--------|--------|---------------|
+| `f` | Firefox search | [f.md](modules/f.md) |
+| `gen` | Generator | [gen.md](modules/gen.md) |
 | `doc` | Documentation | [doc.md](modules/doc.md) |
-| `setup` | Profils d'applications | [setup.md](modules/setup.md) |
-| `ip` | Adresse IP | [ip.md](modules/ip.md) |
+| `setup` | App profiles | [setup.md](modules/setup.md) |
+| `ip` | IP address | [ip.md](modules/ip.md) |
 | `color` | Color Picker | [color.md](modules/color.md) |
-| `clip` | Presse-papiers | [clip.md](modules/clip.md) |
+| `clip` | Clipboard | [clip.md](modules/clip.md) |
 | `memo` | Memo | [memo.md](modules/memo.md) |
-| `calc` | Calculatrice | [calc.md](modules/calc.md) |
+| `calc` | Calculator | [calc.md](modules/calc.md) |

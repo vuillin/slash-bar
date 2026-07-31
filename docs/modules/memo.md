@@ -1,29 +1,29 @@
 # memo — Memo
 
-Raccourcis texte (nom → valeur).
+Text shortcuts (name → value).
 
-## Syntaxe
+## Syntax
 
 ```
-memo              → ouvre / ferme le panneau
-memo <nom>        → copie la valeur
+memo              → toggle the panel
+memo <name>       → copy the value
 ```
 
-Noms en minuscules. Suggestions dynamiques (max 5).
+Names are lowercase. Dynamic suggestions (max 5).
 
-## Panneau
+## Panel
 
-| Action | Effet |
+| Action | Effect |
 |--------|--------|
-| Nom + Valeur + `+` | Ajoute |
-| Stylo | Édite |
-| Corbeille | Supprime |
-| Clic carte | Copie la valeur |
-| Recherche | Filtre nom / valeur |
+| Name + Value + `+` | Add |
+| Pencil | Edit |
+| Trash | Delete |
+| Click card | Copy the value |
+| Search | Filter name / value |
 
-Persistance : `%LocalAppData%/SlashBar/memos.json`.
+Persisted at `%LocalAppData%/SlashBar/memos.json`.
 
-## Exemples
+## Examples
 
 ```
 memo

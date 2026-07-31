@@ -1,24 +1,24 @@
 # color — Color Picker
 
-Prélever et formater une couleur.
+Pick and format a color.
 
-## Syntaxe
+## Syntax
 
 ```
 color
 ```
 
-## Comportement
+## Behavior
 
-| Action | Effet |
+| Action | Effect |
 |--------|--------|
-| Souris hors panneau | Eyedropper + loupe ; aperçu live de la couleur |
-| Clic hors panneau | Verrouille la couleur prélevée |
-| Copier Hex / RGB | Copie dans le presse-papiers et ajoute à l'historique (5 max.) |
-| Clic historique | Applique la couleur au picker |
-| Flèches | Déplace le curseur d'1 px |
+| Mouse outside the panel | Eyedropper + magnifier; live color preview |
+| Click outside the panel | Lock the sampled color |
+| Copy Hex / RGB | Copy to clipboard and add to history (max 5) |
+| Click history | Apply the color to the picker |
+| Arrow keys | Move the cursor by 1 px |
 
-## Exemples
+## Examples
 
 ```
 color

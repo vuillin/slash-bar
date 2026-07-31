@@ -1,22 +1,22 @@
-# f — Recherche Firefox
+# f — Firefox search
 
-Recherche web ou ouverture d'URL dans Firefox.
+Web search or open a URL in Firefox.
 
-## Syntaxe
+## Syntax
 
 ```
 f
-f <requête | url>
-f private <requête | url>
+f <query | url>
+f private <query | url>
 ```
 
-## Paramètres
+## Parameters
 
-| Paramètre | Description |
+| Parameter | Description |
 |-----------|-------------|
-| `private` | Navigation privée |
+| `private` | Private browsing |
 
-## Exemples
+## Examples
 
 ```
 f
@@ -26,7 +26,7 @@ f private reddit.com
 f private
 ```
 
-- `f` seul : lance Firefox
-- Texte libre : recherche via le moteur par défaut de Firefox
-- Entrée de type URL (`github.com`, `https://…`) : ouverture de la page
-- `f private` seul : ouverture d'une fenêtre privée
+- `f` alone: launches Firefox
+- Free text: search with Firefox’s default search engine
+- URL-like input (`github.com`, `https://…`): opens the page
+- `f private` alone: opens a private window

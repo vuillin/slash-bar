@@ -1,24 +1,24 @@
-# clip — Presse-papiers
+# clip — Clipboard
 
-Ouvre l'historique du presse-papiers.
+Open the clipboard history.
 
-## Syntaxe
+## Syntax
 
 ```
 clip
 ```
 
-## Comportement
+## Behavior
 
-| Action | Effet |
+| Action | Effect |
 |--------|--------|
-| Clic sur une entrée | Recopie le texte et affiche « Copié » |
-| Icône poubelle | Supprime l'entrée |
-| Tout effacer | Vide l'historique |
+| Click an entry | Copy the text again and show “Copied” |
+| Trash icon | Delete the entry |
+| Clear all | Empty the history |
 
-L'historique est persisté sous `%LocalAppData%/SlashBar/clipboard-history.json`.
+History is persisted at `%LocalAppData%/SlashBar/clipboard-history.json`.
 
-## Exemples
+## Examples
 
 ```
 clip
