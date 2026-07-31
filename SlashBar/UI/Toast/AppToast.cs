@@ -3,7 +3,7 @@ using System.Windows;
 namespace SlashBar;
 
 /// <summary>
-/// Notif globale haut-droite (succès / erreur) pour les commandes lanceur.
+/// Global top-right notification (success / error) for launcher commands.
 /// </summary>
 public static class AppToast {
 

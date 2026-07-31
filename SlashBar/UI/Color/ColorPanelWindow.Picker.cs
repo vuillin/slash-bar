@@ -11,7 +11,7 @@ public partial class ColorPanelWindow {
 
     private double _hue;         // 0–360
     private double _saturation;  // 0–1
-    private double _value;       // 0–1 (luminosité du carré SV)
+    private double _value;       // 0–1 (SV square brightness)
 
     private System.Windows.Media.Color _selectedColor;
     private bool _draggingSatVal;
@@ -29,7 +29,7 @@ public partial class ColorPanelWindow {
         SetSelectedColor(color, fromPicker: false);
 
 
-    /// <summary>Preview rapide pendant le hover eyedropper (sans repositionner les curseurs HSV).</summary>
+    /// <summary>Quick preview while eyedropper is hovered (without moving HSV cursors).</summary>
     private void ApplyColorPreview(System.Windows.Media.Color color) {
         _selectedColor = color;
         HsvColorConverter.RgbToHsv(color.R, color.G, color.B, out _hue, out _saturation, out _value);
@@ -89,7 +89,7 @@ public partial class ColorPanelWindow {
         if (w <= 0)
             return;
 
-        // Le curseur est frère de HueBar (pas clipé) → positionné sur la même largeur
+        // Cursor is a sibling of HueBar (not clipped) → positioned at the same width
         var x = _hue / 360.0 * w - HueThumb.Width / 2;
         HueThumb.Margin = new Thickness(x, 0, 0, 0);
     }

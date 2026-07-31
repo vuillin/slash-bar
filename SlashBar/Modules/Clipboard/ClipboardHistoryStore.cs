@@ -44,7 +44,7 @@ public sealed class ClipboardHistoryStore {
 
         lock (_lock) {
 
-            // si identique au plus récent -> ignore 
+            // same as most recent entry → skip 
             if (_entries.Count > 0
                 && _entries[0].Text.Equals(text, StringComparison.Ordinal))
                 return;
@@ -80,7 +80,7 @@ public sealed class ClipboardHistoryStore {
             _entries.AddRange(data.Entries);
         
         } catch {
-            // fichier corrompu -> on repart vide
+            // corrupt file → start empty
         }
     }
 

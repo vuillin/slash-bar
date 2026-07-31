@@ -46,7 +46,7 @@ public partial class MainWindow : Window {
             if (_applyingCompletion)
                 return;
 
-            // frappe manuelle → sort de la nav historique
+            // manual typing → exit history navigation
             if (_historyIndex >= 0)
                 ResetHistoryNavigation();
 

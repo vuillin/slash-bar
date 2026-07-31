@@ -5,7 +5,7 @@ namespace SlashBar;
 public partial class MainWindow {
 
     private readonly CommandHistoryStore _commandHistory = new();
-    private int _historyIndex = -1; // -1 = ligne courante
+    private int _historyIndex = -1; // -1 = current line
     private string _historyDraft = "";
 
     private bool NavigateHistory(bool reverse) {
@@ -13,7 +13,7 @@ public partial class MainWindow {
         if (entries.Count == 0)
             return false;
 
-        // ↑ = plus vieux (index +), ↓ = plus récent (index -)
+        // ↑ = older (index +), ↓ = newer (index -)
         if (reverse) // Up
         {
             if (_historyIndex < 0)

@@ -35,7 +35,7 @@ public partial class ColorPanelWindow {
         ShowMagnifier();
         Owner = _overlay;
 
-        // Après Show/Activate du panneau, IsMouseOver peut changer d'un tick
+        // After panel Show/Activate, IsMouseOver can flip for one tick
         Dispatcher.BeginInvoke(() => {
             if (_pickModeActive)
                 SyncMagnifierVisibility();
@@ -53,7 +53,7 @@ public partial class ColorPanelWindow {
     }
 
 
-    /// <summary>Loupe visible hors panneau, cachée dessus.</summary>
+    /// <summary>Magnifier visible outside the panel, hidden on top of it.</summary>
     private void SyncMagnifierVisibility() {
         if (!_pickModeActive || _magnifier == null)
             return;

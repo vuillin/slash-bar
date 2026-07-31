@@ -1,7 +1,7 @@
 namespace SlashBar.UI.Shell;
 
 /// <summary>
-/// Garantit qu'un seul panneau latéral est ouvert à la fois.
+/// Ensures only one side panel is open at a time.
 /// </summary>
 public static class SidePanelCoordinator {
 

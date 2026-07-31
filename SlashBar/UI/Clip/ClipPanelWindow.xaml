@@ -60,7 +60,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- icône clipboard -->
+                            <!-- clipboard icon -->
                             <Grid Grid.Column="0"
                                   Width="16"
                                   Height="18"
@@ -86,7 +86,7 @@
                             </Grid>
 
                             <TextBlock Grid.Column="1"
-                                       Text="Presse-papiers"
+                                       Text="Clipboard"
                                        FontFamily="Segoe UI Variable Text, Segoe UI"
                                        FontSize="15"
                                        FontWeight="Medium"
@@ -99,23 +99,23 @@
                                         Orientation="Horizontal"
                                         VerticalAlignment="Center">
 
-                                <!-- feu orange : reset position -->
+                                <!-- orange light: reset position -->
                                 <Button x:Name="ResetButton"
                                         Click="ResetButton_Click"
                                         Width="19"
                                         Height="19"
                                         Cursor="Hand"
-                                        ToolTip="Position d'origine"
+                                        ToolTip="Reset position"
                                         Margin="0,0,8,0"
                                         Visibility="Collapsed"
                                         Template="{StaticResource SidePanelResetButtonTemplate}"/>
 
-                                <!-- feu rouge : fermer -->
+                                <!-- red light: close -->
                                 <Button Click="CloseButton_Click"
                                         Width="19"
                                         Height="19"
                                         Cursor="Hand"
-                                        ToolTip="Fermer"
+                                        ToolTip="Close"
                                         VerticalAlignment="Center"
                                         Template="{StaticResource SidePanelCloseButtonTemplate}"/>
                             </StackPanel>
@@ -133,12 +133,12 @@
                                         HorizontalAlignment="Center"
                                         Margin="0,0,0,10"
                                         Padding="10,6"
-                                        ToolTip="Supprimer tout l'historique"
+                                        ToolTip="Clear all history"
                                         FontFamily="Segoe UI Variable Text, Segoe UI"
                                         FontSize="12"
                                         FontWeight="Medium"
                                         Foreground="#FF3B30"
-                                        Content="Effacer tout">
+                                        Content="Clear all">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <Border x:Name="Bg"
@@ -203,14 +203,14 @@
                                                                FontSize="13"
                                                                Foreground="#3C3C43"/>
 
-                                                    <!-- corbeille -->
+                                                    <!-- trash -->
                                                     <Button Grid.Column="1"
                                                             Click="DeleteHistoryItem_Click"
                                                             Tag="{Binding}"
                                                             Width="28"
                                                             Height="28"
                                                             Cursor="Hand"
-                                                            ToolTip="Supprimer"
+                                                            ToolTip="Delete"
                                                             VerticalAlignment="Center">
                                                         <Button.Template>
                                                             <ControlTemplate TargetType="Button">
@@ -251,7 +251,7 @@
                         </ScrollViewer>
                     </Border>
 
-                    <!-- toast "Copié" -->
+                    <!-- "Copied" toast -->
                     <Border x:Name="CopiedToast"
                             Grid.RowSpan="2"
                             Style="{StaticResource SidePanelCopiedToastStyle}">
@@ -265,7 +265,7 @@
                                        Foreground="#34C759"
                                        VerticalAlignment="Center"
                                        Margin="0,0,8,0"/>
-                            <TextBlock Text="Copié"
+                            <TextBlock Text="Copied"
                                        FontFamily="Segoe UI Variable Text, Segoe UI"
                                        FontSize="13"
                                        FontWeight="Medium"
@@ -276,7 +276,7 @@
                 </Grid>
             </Border>
 
-            <!-- onglet flèche -->
+            <!-- arrow tab -->
             <Button x:Name="DockButton"
                     Grid.Column="2"
                     Click="DockButton_Click"
@@ -285,7 +285,7 @@
                     Margin="-2,0,0,0"
                     Cursor="Hand"
                     VerticalAlignment="Center"
-                    ToolTip="Replier / Déplier"
+                    ToolTip="Collapse / Expand"
                     Template="{StaticResource SidePanelDockButtonTemplate}">
                 <Path x:Name="Chevron"
                       Stroke="#8E8E93"

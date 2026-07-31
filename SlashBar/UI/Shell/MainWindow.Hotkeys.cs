@@ -31,10 +31,10 @@ public partial class MainWindow {
 
             ClipboardHistory.Watcher.Start();
 
-            Hide(); // ctrl+espace pour rouvrir
+            Hide(); // Ctrl+Space to reopen
         }
         catch (Exception ex) {
-            System.Windows.MessageBox.Show(this, "Erreur au démarrage :\n" + ex.Message, "SlashBar");
+            System.Windows.MessageBox.Show(this, "Startup error:\n" + ex.Message, "SlashBar");
         }
     }
 
@@ -57,8 +57,8 @@ public partial class MainWindow {
         if (!okSearch || !okQuit) {
             System.Windows.MessageBox.Show(
                 this,
-                "Impossible d'enregistrer Ctrl+Espace ou Ctrl+Shift+Q.\n" +
-                "Un autre logiciel utilise peut-être déjà ce raccourci.",
+                "Could not register Ctrl+Space or Ctrl+Shift+Q.\n" +
+                "Another app may already use this shortcut.",
                 "SlashBar");
             return;
         }

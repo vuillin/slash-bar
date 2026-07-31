@@ -7,8 +7,8 @@ using System.Windows.Shapes;
 namespace SlashBar.UI.Shell;
 
 /// <summary>
-/// Shell commun des panneaux latéraux dockés (slide, collapse, traffic lights, detach).
-/// Les fenêtres dérivées doivent exposer les mêmes noms XAML : SlideTransform, DockButton,
+/// Shared shell for docked side panels (slide, collapse, traffic lights, detach).
+/// Derived windows must expose the same XAML names: SlideTransform, DockButton,
 /// ResetButton, Chevron.
 /// </summary>
 public abstract class DockedSidePanelWindow : Window {

@@ -6,7 +6,7 @@ namespace SlashBar;
 
 public partial class MainWindow {
 
-    private bool _ignoreDeactivate; // sinon l'anim ferme la barre
+    private bool _ignoreDeactivate; // otherwise deactivate animation closes the bar
     private bool _isAnimating;
     private bool _isOpen;
 
@@ -45,7 +45,7 @@ public partial class MainWindow {
         _completionIndex = 0;
         UpdateSuggestions();
 
-        // Fenêtre opaque, chrome invisible → pas de flash layered
+        // Opaque window, invisible chrome → no layered-window flash
         BeginAnimation(OpacityProperty, null);
         Opacity = 1;
         ResetChromeVisuals();
@@ -162,7 +162,7 @@ public partial class MainWindow {
         if (_ignoreDeactivate || _isAnimating)
             return;
 
-        // Popup = autre HWND : ne pas fermer si le clic reste sur les suggestions
+        // Popup is a separate HWND: don't close if the click stays on suggestions
         Dispatcher.BeginInvoke(() => {
             if (_ignoreDeactivate || _isAnimating || IsActive)
                 return;

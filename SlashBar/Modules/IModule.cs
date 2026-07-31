@@ -1,6 +1,6 @@
 ﻿namespace SlashBar.Modules;
 
-// classes IModule du dossier = chargées auto
+// IModule implementations in this folder are discovered automatically.
 public interface IModule
 {
     string Prefix { get; }

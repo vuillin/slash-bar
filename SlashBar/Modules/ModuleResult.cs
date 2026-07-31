@@ -1,9 +1,9 @@
 namespace SlashBar.Modules;
 
 public enum ModuleResultKind {
-    None,    // rien à afficher
-    Success, // toast vert
-    Fail     // toast rouge
+    None,    // nothing to show
+    Success, // green toast
+    Fail     // red toast
 }
 
 public sealed class ModuleResult {
@@ -24,7 +24,7 @@ public sealed class ModuleResult {
         new(ModuleResultKind.Success, message, detail);
 
     public static ModuleResult Copied(string value) =>
-        Ok("Copié", value);
+        Ok("Copied", value);
 
     public static ModuleResult Error(string message) =>
         new(ModuleResultKind.Fail, message);

@@ -68,7 +68,7 @@ public sealed class CommandHistoryStore {
                     .Take(MaxEntries));
         }
         catch {
-            // corrompu → vide
+            // corrupt → empty
         }
     }
 

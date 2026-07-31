@@ -1,13 +1,13 @@
 namespace SlashBar.Modules;
 
 /// <summary>
-/// Helpers communs pour parser les arguments des modules
+/// Shared helpers for parsing module arguments.
 /// </summary>
 public static class ModuleArgs {
 
 
     /// <summary>
-    /// Retire le flag s'il est en tête. "private foo" → true + "foo"
+    /// Removes the flag when it leads the argument. "private foo" → true + "foo"
     /// </summary>
     public static bool ConsumeFlag(ref string argument, string flag) {
 
@@ -28,7 +28,7 @@ public static class ModuleArgs {
 
 
     /// <summary>
-    /// découpe l'argument : tout sauf le dernier mot + le mot en cours
+    /// Splits the argument into prefix and current token (everything before the last word + the word being typed).
     /// "b64 encode" → ("b64 ", "encode")
     /// </summary>
     public static void SplitCurrentToken(string argument, out string before, out string token) {
@@ -46,7 +46,7 @@ public static class ModuleArgs {
 
 
     /// <summary>
-    /// Suggestions pour le 1er mot
+    /// Suggestions for the first word only.
     /// </summary>
     public static IReadOnlyList<ArgCompletion> SuggestFlags(
 

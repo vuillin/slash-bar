@@ -45,7 +45,7 @@ public sealed class MemoStore {
 
         lock (_lock) {
 
-            // si le nom existe déjà -> on met à jour et on remonte
+            // name already exists → update and move to top
             var existing = _entries.FindIndex(e =>
                 e.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
@@ -91,7 +91,7 @@ public sealed class MemoStore {
             if (index < 0)
                 return false;
 
-            // un autre memo a déjà ce nom → on refuse
+            // another memo already has this name → reject
             var nameTaken = _entries.Exists(e =>
                 e.Id != id && e.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
             if (nameTaken)
@@ -145,7 +145,7 @@ public sealed class MemoStore {
             _entries.AddRange(data.Entries);
 
         } catch {
-            // fichier corrompu
+            // corrupt file
         }
     }
 

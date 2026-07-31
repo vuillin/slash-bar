@@ -3,8 +3,8 @@ namespace SlashBar.Modules;
 public sealed class ClipModule : IModule {
 
     public string Prefix => "clip";
-    public string Name => "Presse-papiers";
-    public string Description => "Historique du presse-papiers";
+    public string Name => "Clipboard";
+    public string Description => "Clipboard history";
 
     public ModuleResult Execute(string argument) {
         SlashBar.ClipPanelWindow.Toggle();

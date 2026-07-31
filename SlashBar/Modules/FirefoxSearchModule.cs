@@ -1,18 +1,17 @@
 namespace SlashBar.Modules;
 
 /// <summary>
-/// Module permettant d'effectuer des recherches Web ou d'ouvrir des URL dans Firefox,
-/// avec support du mode navigation privée.
+/// Web search or open URLs in Firefox, with private browsing support.
 /// </summary>
 public sealed class FirefoxSearchModule : IModule {
 
     private static readonly ArgCompletion[] Flags = [
-        new("private", "Recherche en navigation privée")
+        new("private", "Search in a private window")
     ];
 
     public string Prefix => "f";
-    public string Name => "Recherche Firefox";
-    public string Description => "Recherche web dans Firefox";
+    public string Name => "Firefox search";
+    public string Description => "Web search in Firefox";
 
     public ModuleResult Execute(string argument) {
         argument = argument.Trim();

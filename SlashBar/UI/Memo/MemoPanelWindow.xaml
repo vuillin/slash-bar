@@ -88,7 +88,7 @@
                                         Width="19"
                                         Height="19"
                                         Cursor="Hand"
-                                        ToolTip="Position d'origine"
+                                        ToolTip="Reset position"
                                         Margin="0,0,8,0"
                                         Visibility="Collapsed"
                                         Template="{StaticResource SidePanelResetButtonTemplate}"/>
@@ -97,7 +97,7 @@
                                         Width="19"
                                         Height="19"
                                         Cursor="Hand"
-                                        ToolTip="Fermer"
+                                        ToolTip="Close"
                                         VerticalAlignment="Center"
                                         Template="{StaticResource SidePanelCloseButtonTemplate}"/>
                             </StackPanel>
@@ -128,7 +128,7 @@
                                     </Grid.RowDefinitions>
 
                                     <TextBlock Grid.Column="0" Grid.Row="0"
-                                               Text="Nom"
+                                               Text="Name"
                                                FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
                                                FontSize="12"
                                                FontWeight="Medium"
@@ -136,7 +136,7 @@
                                                Margin="0,0,0,6"/>
 
                                     <TextBlock Grid.Column="2" Grid.Row="0"
-                                               Text="Valeur"
+                                               Text="Value"
                                                FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
                                                FontSize="12"
                                                FontWeight="Medium"
@@ -182,7 +182,7 @@
                                             Width="28"
                                             Height="28"
                                             Cursor="Hand"
-                                            ToolTip="Ajouter"
+                                            ToolTip="Add"
                                             Tag="add"
                                             VerticalAlignment="Center"
                                             Click="AddMemo_Click">
@@ -271,7 +271,7 @@
                                                         <ControlTemplate TargetType="TextBox">
                                                             <Grid>
                                                                 <TextBlock x:Name="Placeholder"
-                                                                           Text="Rechercher"
+                                                                           Text="Search"
                                                                            FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
                                                                            FontSize="14"
                                                                            FontWeight="Medium"
@@ -317,7 +317,7 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <!-- Tag="{Binding}" = l'objet MemoEntry entier est stocké sur la carte -->
+                                            <!-- Tag="{Binding}" = the whole MemoEntry is stored on the card -->
                                             <Border Margin="0,0,0,8"
                                                     Padding="12,10"
                                                     Cursor="Hand"
@@ -361,13 +361,13 @@
                                                                 Orientation="Horizontal"
                                                                 VerticalAlignment="Center">
 
-                                                        <!-- stylo : éditer -->
+                                                        <!-- pencil: edit -->
                                                         <Button Click="EditMemo_Click"
                                                                 Tag="{Binding}"
                                                                 Width="28"
                                                                 Height="28"
                                                                 Cursor="Hand"
-                                                                ToolTip="Modifier"
+                                                                ToolTip="Edit"
                                                                 Margin="0,0,2,0">
                                                             <Button.Template>
                                                                 <ControlTemplate TargetType="Button">
@@ -397,13 +397,13 @@
                                                             </Button.Template>
                                                         </Button>
 
-                                                        <!-- corbeille -->
+                                                        <!-- trash -->
                                                         <Button Click="DeleteMemo_Click"
                                                                 Tag="{Binding}"
                                                                 Width="28"
                                                                 Height="28"
                                                                 Cursor="Hand"
-                                                                ToolTip="Supprimer">
+                                                                ToolTip="Delete">
                                                             <Button.Template>
                                                                 <ControlTemplate TargetType="Button">
                                                                     <Border x:Name="Bg"
@@ -459,7 +459,7 @@
                                        VerticalAlignment="Center"
                                        Margin="0,0,8,0"/>
                             <TextBlock x:Name="ToastText"
-                                       Text="Copié"
+                                       Text="Copied"
                                        FontFamily="Segoe UI Variable Text, Segoe UI"
                                        FontSize="13"
                                        FontWeight="Medium"
@@ -478,7 +478,7 @@
                     Margin="-2,0,0,0"
                     Cursor="Hand"
                     VerticalAlignment="Center"
-                    ToolTip="Replier / Déplier"
+                    ToolTip="Collapse / Expand"
                     Template="{StaticResource SidePanelDockButtonTemplate}">
                 <Path x:Name="Chevron"
                       Stroke="#8E8E93"

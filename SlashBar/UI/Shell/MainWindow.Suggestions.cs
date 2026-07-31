@@ -96,7 +96,7 @@ public partial class MainWindow {
             return;
         }
 
-        // hauteur en un coup — seule opacity / slide sont animés
+        // set height immediately — only opacity / slide are animated
         SuggestionsHost.BeginAnimation(HeightProperty, null);
         SuggestionsHost.Height = target;
 
@@ -296,7 +296,7 @@ public partial class MainWindow {
         var raw = SearchBox.Text.TrimStart();
         var leadingWs = SearchBox.Text[..(SearchBox.Text.Length - raw.Length)];
 
-        // "ge" → "gen" (pas d'espace)
+        // "ge" → "gen" (no space)
         ApplyText(leadingWs + module.Prefix);
         return true;
     }
