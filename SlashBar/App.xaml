@@ -9,6 +9,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="UI/Shell/SidePanelChrome.xaml"/>
+                <ResourceDictionary Source="Assets/Icons/Color_icon.xaml"/>
+                <ResourceDictionary Source="Assets/Icons/Memo_icon.xaml"/>
+                <ResourceDictionary Source="Assets/Icons/Clip_icon.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
