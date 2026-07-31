@@ -37,6 +37,10 @@ public partial class MainWindow : Window
     private int _completionIndex;
     private string _ghostSuffix = "";
 
+    private readonly CommandHistoryStore _commandHistory = new();
+    private int _historyIndex = -1; // -1 = ligne courante
+    private string _historyDraft = "";
+
     public MainWindow()
     {
         InitializeComponent();
@@ -58,12 +62,12 @@ public partial class MainWindow : Window
             }
             else if (e.Key == Key.Down)
             {
-                if (CycleCompletion(reverse: false))
+                if (CycleCompletion(reverse: false) || NavigateHistory(reverse: false))
                     e.Handled = true;
             }
             else if (e.Key == Key.Up)
             {
-                if (CycleCompletion(reverse: true))
+                if (CycleCompletion(reverse: true) || NavigateHistory(reverse: true))
                     e.Handled = true;
             }
         };
@@ -82,6 +86,10 @@ public partial class MainWindow : Window
             if (_applyingCompletion)
                 return;
 
+            // frappe manuelle → sort de la nav historique
+            if (_historyIndex >= 0)
+                ResetHistoryNavigation();
+
             _completionIndex = 0;
             UpdateSuggestions();
         };
@@ -93,6 +101,8 @@ public partial class MainWindow : Window
         {
             if (_modules.TryExecute(SearchBox.Text, out var result))
             {
+                _commandHistory.Add(SearchBox.Text);
+
                 if (result.Kind == ModuleResultKind.Success)
                     AppToast.ShowSuccess(result.Message, result.Detail);
                 else if (result.Kind == ModuleResultKind.Fail)
@@ -396,6 +406,57 @@ public partial class MainWindow : Window
         return true;
     }
 
+    private bool NavigateHistory(bool reverse)
+    {
+        var entries = _commandHistory.GetAll();
+        if (entries.Count == 0)
+            return false;
+
+        // ↑ = plus vieux (index +), ↓ = plus récent (index -)
+        if (reverse) // Up
+        {
+            if (_historyIndex < 0)
+                _historyDraft = SearchBox.Text;
+
+            if (_historyIndex >= entries.Count - 1)
+                return true;
+
+            _historyIndex++;
+            ApplyHistoryEntry(entries[_historyIndex]);
+            return true;
+        }
+
+        // Down
+        if (_historyIndex < 0)
+            return false;
+
+        _historyIndex--;
+        if (_historyIndex < 0)
+        {
+            ApplyHistoryEntry(_historyDraft);
+            return true;
+        }
+
+        ApplyHistoryEntry(entries[_historyIndex]);
+        return true;
+    }
+
+    private void ApplyHistoryEntry(string text)
+    {
+        _applyingCompletion = true;
+        SearchBox.Text = text;
+        SearchBox.CaretIndex = SearchBox.Text.Length;
+        _applyingCompletion = false;
+        _completionIndex = 0;
+        UpdateSuggestions();
+    }
+
+    private void ResetHistoryNavigation()
+    {
+        _historyIndex = -1;
+        _historyDraft = "";
+    }
+
     private bool AcceptCompletion()
     {
         if (_modules.IsInArgumentMode(SearchBox.Text))
@@ -551,6 +612,7 @@ public partial class MainWindow : Window
 
         _isAnimating = true;
         PositionAtBottom();
+        ResetHistoryNavigation();
         SearchBox.Text = "";
         _completionIndex = 0;
         UpdateSuggestions();
