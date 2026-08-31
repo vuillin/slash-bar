@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 
 namespace SlashBar.Modules;
@@ -10,7 +11,9 @@ public sealed class GenModule : IModule {
         new("date", "Today's date (dd-mm-yyyy)"),
         new("time", "Current time (hh:mm:ss)"),
         new("timestamp", "Unix timestamp (seconds)"),
-        new("lorem", "Lorem Ipsum paragraph")
+        new("lorem", "Lorem Ipsum paragraph"),
+        new("up", "Uppercase text"),
+        new("low", "Lowercase text"),
     ];
 
     private static readonly ArgCompletion[] B64Flags = [
@@ -67,6 +70,12 @@ public sealed class GenModule : IModule {
             ClipboardHelper.SetText(text);
             return ModuleResult.Copied(text);
         }
+
+        if (cmd.Equals("up", StringComparison.OrdinalIgnoreCase))
+            return RunCase(rest, upper: true);
+
+        if (cmd.Equals("low", StringComparison.OrdinalIgnoreCase))
+            return RunCase(rest, upper: false);
 
         return ModuleResult.Error("Unknown command");
     }
@@ -149,4 +158,20 @@ public sealed class GenModule : IModule {
 
         return ModuleResult.Error("Unknown mode");
     }
-}
+
+
+    private static readonly CultureInfo Fr = CultureInfo.GetCultureInfo("fr-FR");
+
+    private static ModuleResult RunCase(string text, bool upper) {
+        text = text.Trim();
+        if (text.Length == 0)
+            return ModuleResult.Error("Text required");
+
+        var result = upper
+            ? text.ToUpper(Fr)
+            : text.ToLower(Fr);
+
+        ClipboardHelper.SetText(result);
+        return ModuleResult.Copied(result);
+    }
+} 
