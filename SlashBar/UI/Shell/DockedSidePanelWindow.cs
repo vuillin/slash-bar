@@ -8,8 +8,8 @@ namespace SlashBar.UI.Shell;
 
 /// <summary>
 /// Shared shell for docked side panels (slide, collapse, traffic lights, detach).
-/// Derived windows must expose the same XAML names: SlideTransform, DockButton,
-/// ResetButton, Chevron.
+/// Derived windows must expose SlideTransform and ResetButton.
+/// DockButton / Chevron are required only when <see cref="ShowsDockTab"/> is true.
 /// </summary>
 public abstract class DockedSidePanelWindow : Window {
 
@@ -17,6 +17,16 @@ public abstract class DockedSidePanelWindow : Window {
     protected const double TabWidth = 32;
 
     protected abstract double PanelContentWidth { get; }
+
+    protected virtual bool ShowsDockTab => true;
+
+    protected virtual double DockedHeight(double workAreaHeight) => workAreaHeight * 0.5;
+
+    protected virtual double DockedTop(System.Drawing.Rectangle workArea, double height) =>
+        workArea.Top + (workArea.Height - height) / 2;
+
+    protected double ChromeWidth =>
+        LeftMargin + PanelContentWidth + (ShowsDockTab ? TabWidth : 0);
 
     protected double CollapsedX => -(LeftMargin + PanelContentWidth);
 
@@ -81,15 +91,18 @@ public abstract class DockedSidePanelWindow : Window {
             ?? System.Windows.Forms.Screen.AllScreens[0];
         var area = screen.WorkingArea;
 
-        var height = area.Height * 0.5;
+        var height = DockedHeight(area.Height);
         Left = area.Left;
-        Top = area.Top + (area.Height - height) / 2;
+        Top = DockedTop(area, height);
         Height = height;
-        Width = LeftMargin + PanelContentWidth + TabWidth;
+        Width = ChromeWidth;
     }
 
 
     protected void FadeDockTab(bool show) {
+        if (!ShowsDockTab)
+            return;
+
         DockBtn.IsHitTestVisible = show;
 
         var anim = new DoubleAnimation(
@@ -112,9 +125,11 @@ public abstract class DockedSidePanelWindow : Window {
         IsAnimating = true;
         IsDetached = false;
         ResetBtn.Visibility = Visibility.Collapsed;
-        DockBtn.BeginAnimation(OpacityProperty, null);
-        DockBtn.Opacity = 1;
-        DockBtn.IsHitTestVisible = true;
+        if (ShowsDockTab) {
+            DockBtn.BeginAnimation(OpacityProperty, null);
+            DockBtn.Opacity = 1;
+            DockBtn.IsHitTestVisible = true;
+        }
 
         PositionLeft();
         SetChevronCollapsed(false);
@@ -149,9 +164,11 @@ public abstract class DockedSidePanelWindow : Window {
                 IsCollapsed = false;
                 IsAnimating = false;
                 ResetBtn.Visibility = Visibility.Collapsed;
-                DockBtn.BeginAnimation(OpacityProperty, null);
-                DockBtn.Opacity = 1;
-                DockBtn.IsHitTestVisible = true;
+                if (ShowsDockTab) {
+                    DockBtn.BeginAnimation(OpacityProperty, null);
+                    DockBtn.Opacity = 1;
+                    DockBtn.IsHitTestVisible = true;
+                }
                 SetChevronCollapsed(false);
             };
             BeginAnimation(OpacityProperty, fade);
@@ -159,7 +176,7 @@ public abstract class DockedSidePanelWindow : Window {
         }
 
         var from = Slide.X;
-        var to = CollapsedX - TabWidth;
+        var to = CollapsedX - (ShowsDockTab ? TabWidth : 0);
 
         AnimateSlide(from, to, 200, EasingMode.EaseIn, () => {
             Slide.BeginAnimation(TranslateTransform.XProperty, null);
@@ -214,6 +231,9 @@ public abstract class DockedSidePanelWindow : Window {
 
 
     protected void SetChevronCollapsed(bool collapsed) {
+        if (!ShowsDockTab)
+            return;
+
         ChevronPath.Data = Geometry.Parse(collapsed
             ? "M 1,0 L 6,6 L 1,12"
             : "M 6,0 L 1,6 L 6,12");
@@ -239,9 +259,9 @@ public abstract class DockedSidePanelWindow : Window {
         var screen = System.Windows.Forms.Screen.PrimaryScreen
             ?? System.Windows.Forms.Screen.AllScreens[0];
         var area = screen.WorkingArea;
-        var height = area.Height * 0.5;
+        var height = DockedHeight(area.Height);
         var targetLeft = (double)area.Left;
-        var targetTop = area.Top + (area.Height - height) / 2;
+        var targetTop = DockedTop(area, height);
 
         Slide.BeginAnimation(TranslateTransform.XProperty, null);
         Slide.X = 0;
@@ -255,7 +275,7 @@ public abstract class DockedSidePanelWindow : Window {
             Left = targetLeft;
             Top = targetTop;
             Height = height;
-            Width = LeftMargin + PanelContentWidth + TabWidth;
+            Width = ChromeWidth;
             BeginAnimation(LeftProperty, null);
             BeginAnimation(TopProperty, null);
             BeginAnimation(HeightProperty, null);

@@ -11,3 +11,4 @@
 | `clip` | Clipboard | [clip.md](modules/clip.md) |
 | `memo` | Memo | [memo.md](modules/memo.md) |
 | `calc` | Calculator | [calc.md](modules/calc.md) |
+| `weather` | Weather | [weather.md](modules/weather.md) |

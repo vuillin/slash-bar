@@ -11,4 +11,8 @@
     <AssemblyName>SlashBar</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Resource Include="Assets\Icons\Weather\*.png" />
+  </ItemGroup>
+
 </Project>

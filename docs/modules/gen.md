@@ -13,6 +13,8 @@ gen date
 gen time
 gen timestamp
 gen lorem
+gen up <text>
+gen low <text>
 ```
 
 ## Types
@@ -27,6 +29,8 @@ gen lorem
 | `time` | — | Current time (`hh:mm:ss`) |
 | `timestamp` | — | Unix UTC timestamp (seconds) |
 | `lorem` | — | Lorem Ipsum paragraph |
+| `up` | — | Uppercase (`fr-FR`) |
+| `low` | — | Lowercase (`fr-FR`) |
 
 ## Examples
 
@@ -39,4 +43,6 @@ gen date
 gen time
 gen timestamp
 gen lorem
+gen up Hello World
+gen low Hello World
 ```

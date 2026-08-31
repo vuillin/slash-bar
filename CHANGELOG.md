@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `weather` module: docked panel with current weather from the public IP (Open-Meteo)
+- `gen up` / `gen low`: copy text as uppercase / lowercase (`fr-FR`)
+
 ## [1.0.0] - 2026-07-31
 
 First public release.

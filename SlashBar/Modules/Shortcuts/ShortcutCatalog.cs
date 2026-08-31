@@ -14,7 +14,7 @@ public static class ShortcutCatalog {
     private const double AlignNudge = 17;
 
     // Near the bar → outward. null = empty slot.
-    private static readonly string?[] LeftFromBar = ["memo", null, null, null, null];
+    private static readonly string?[] LeftFromBar = ["memo", "weather", null, null, null];
     private static readonly string?[] RightFromBar = ["color", "clip", null, null, null];
 
     private static readonly Dictionary<string, string> Glyphs = new(StringComparer.OrdinalIgnoreCase);
@@ -23,12 +23,14 @@ public static class ShortcutCatalog {
         ["color"] = "IconColor",
         ["memo"] = "IconMemo",
         ["clip"] = "IconClip",
+        ["weather"] = "IconWeather",
     };
 
     private static readonly Dictionary<string, string> Labels = new(StringComparer.OrdinalIgnoreCase) {
         ["memo"] = "Memo",
         ["clip"] = "Clipboard",
         ["color"] = "Color Picker",
+        ["weather"] = "Weather",
     };
 
     public static IReadOnlyList<ShortcutSlot> CreateLeftRail() =>

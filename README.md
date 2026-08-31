@@ -17,10 +17,10 @@ Press `Ctrl+Space` to show the bar at the bottom of the screen.
 **Bar** — type a command (e.g. `calc 2+2`, `f docs`); suggestions appear below. `Tab` completes, `Enter` runs. `↑` / `↓` cycle suggestions / parameters first, then **command history**.
 
 **Rails** — icons on each side of the bar open common tools:
-- left: Memo
+- left: Memo, Weather
 - right: Color Picker, Clipboard
 
-**Panels** — Memo, Color, and Clip open as docked side panels (only one at a time). You can collapse, detach, or close them. They also open via command (`memo`, `color`, `clip`).
+**Panels** — Memo, Color, Clip, and Weather open as docked side panels (only one at a time). You can collapse, detach, or close them. They also open via command (`memo`, `color`, `clip`, `weather`).
 
 **History** — clipboard and picked colors keep a history in their panels; bar commands can be replayed with the arrow keys.
 
