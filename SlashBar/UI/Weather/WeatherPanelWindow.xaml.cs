@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using SlashBar.Modules.Weather;
 using SlashBar.UI.Shell;
 
@@ -17,12 +18,17 @@ public partial class WeatherPanelWindow : DockedSidePanelWindow {
 
     private static WeatherPanelWindow? _instance;
 
+    private readonly DispatcherTimer _refreshTimer;
     private int _loadId;
 
 
     private WeatherPanelWindow() {
         InitializeComponent();
         Width = ShellWidth;
+        _refreshTimer = new DispatcherTimer {
+            Interval = WeatherCacheStore.ForecastTtl
+        };
+        _refreshTimer.Tick += (_, _) => LoadWeather(showLoadingOnFailure: false);
         PreviewKeyDown += (_, e) => {
             if (e.Key == Key.Escape)
                 AnimateClose();
@@ -54,14 +60,42 @@ public partial class WeatherPanelWindow : DockedSidePanelWindow {
 
 
     protected override async void OnPanelOpening() {
-        var id = ++_loadId;
-        ShowStatus("Loading…");
-
         await WeatherGeolocator.RequestAccessAsync();
+
+        var locationKey = WeatherClient.BuildLocationKey();
+        var hasCache = WeatherCacheStore.TryRead(locationKey, out var cached);
+
+        if (hasCache) {
+            ShowSnapshot(cached!.Snapshot);
+            if (WeatherCacheStore.IsFresh(cached))
+                return;
+        }
+
+        LoadWeather(showLoadingOnFailure: !hasCache);
+    }
+
+
+    protected override void OnPanelOpened() {
+        _refreshTimer.Start();
+    }
+
+
+    protected override void OnPanelClosing() {
+        _refreshTimer.Stop();
+        _loadId++;
+    }
+
+
+    private void LoadWeather(bool showLoadingOnFailure) {
+        var id = ++_loadId;
+        var locationKey = WeatherClient.BuildLocationKey();
+
+        if (showLoadingOnFailure)
+            ShowStatus("Loading…");
 
         _ = Task.Run(() => {
             try {
-                var snapshot = WeatherClient.Fetch();
+                var snapshot = WeatherClient.FetchFresh(locationKey);
                 Dispatcher.Invoke(() => {
                     if (id != _loadId)
                         return;
@@ -72,7 +106,8 @@ public partial class WeatherPanelWindow : DockedSidePanelWindow {
                 Dispatcher.Invoke(() => {
                     if (id != _loadId)
                         return;
-                    ShowStatus("Weather unavailable");
+                    if (showLoadingOnFailure && ContentCard.Visibility != Visibility.Visible)
+                        ShowStatus("Weather unavailable");
                 });
             }
         });

@@ -44,4 +44,12 @@ public static class WeatherCodes {
 
     public static Uri IconUri(int code, bool isDay) =>
         new($"pack://application:,,,/Assets/Icons/Weather/{IconFile(code, isDay)}.png");
+
+
+    public static Uri SunriseIconUri() =>
+        new("pack://application:,,,/Assets/Icons/Weather/lever_soleil.png");
+
+
+    public static Uri SunsetIconUri() =>
+        new("pack://application:,,,/Assets/Icons/Weather/coucher_soleil.png");
 }

@@ -7,26 +7,79 @@ namespace SlashBar.Modules.Weather;
 
 public static class WeatherClient {
 
+    private static readonly HttpClient Http = CreateHttpClient();
+
     private static readonly JsonSerializerOptions JsonOptions = new() {
         PropertyNameCaseInsensitive = true
     };
 
 
-    public static WeatherSnapshot Fetch() {
-        using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
+    public static string BuildLocationKey() {
+        var city = WeatherLocationStore.ReadCity();
+        if (city is not null)
+            return "city:" + NormalizeLocationToken(city);
+
+        var gps = WeatherGeolocator.TryGetPosition();
+        if (gps is not null)
+            return $"gps:{gps.Value.Lat:F2},{gps.Value.Lon:F2}";
+
+        return "ip";
+    }
+
+
+    public static WeatherSnapshot FetchFresh(string locationKey) {
+        var place = ResolvePlace(locationKey);
+        var forecast = FetchForecast(place.Latitude, place.Longitude);
+        var snapshot = BuildSnapshot(place, forecast);
+        WeatherCacheStore.Write(locationKey, ToResolvedPlace(place), snapshot);
+        return snapshot;
+    }
+
+
+    private static HttpClient CreateHttpClient() {
+        var http = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
         http.DefaultRequestHeaders.UserAgent.ParseAdd("SlashBar/1.0");
+        return http;
+    }
 
-        var place = ResolvePlace(http);
-        var forecast = FetchForecast(http, place.Latitude, place.Longitude);
+
+    private static string NormalizeLocationToken(string value) =>
+        value.Trim().ToLowerInvariant();
+
+
+    private static PlaceDto ResolvePlace(string locationKey) {
+        var city = WeatherLocationStore.ReadCity();
+        if (city is not null) {
+            var stored = WeatherLocationStore.ReadGeocode(city);
+            if (stored is not null)
+                return FromStoredGeocode(stored);
+
+            var geocoded = GeocodeCity(city);
+            var label = FormatPlaceLabel(geocoded.City, geocoded.Country);
+            WeatherLocationStore.SaveGeocode(
+                city,
+                geocoded.Latitude,
+                geocoded.Longitude,
+                label);
+            return geocoded;
+        }
+
+        if (WeatherCacheStore.TryRead(locationKey, out var cached)
+            && cached.ResolvedPlace is not null) {
+            return FromResolvedPlace(cached.ResolvedPlace);
+        }
+
+        var gps = WeatherGeolocator.TryGetPosition();
+        if (gps is not null)
+            return ReverseGeocode(gps.Value.Lat, gps.Value.Lon);
+
+        return FetchPlaceFromIp();
+    }
+
+
+    private static WeatherSnapshot BuildSnapshot(PlaceDto place, ForecastDto forecast) {
         var current = forecast.Current!;
-
-        var city = place.City?.Trim() ?? "";
-        var country = place.Country?.Trim() ?? "";
-        var label = city.Length == 0
-            ? "Unknown location"
-            : country.Length == 0
-                ? city
-                : $"{city}, {country}";
+        var label = FormatPlaceLabel(place.City, place.Country);
 
         var high = "";
         var low = "";
@@ -44,32 +97,55 @@ public static class WeatherClient {
             Low = low,
             WeatherCode = current.WeatherCode,
             IsDay = current.IsDay == 1,
-            Hours = TakeUpcomingHours(forecast.Hourly)
+            Hours = TakeUpcomingHours(forecast.Hourly, forecast.Daily)
         };
     }
 
 
-    private static PlaceDto ResolvePlace(HttpClient http) {
-        var city = WeatherLocationStore.ReadCity();
-        if (city is not null)
-            return GeocodeCity(http, city);
-
-        var gps = WeatherGeolocator.TryGetPosition();
-        if (gps is not null)
-            return ReverseGeocode(http, gps.Value.Lat, gps.Value.Lon);
-
-        return FetchPlaceFromIp(http);
+    private static string FormatPlaceLabel(string city, string country) {
+        city = city.Trim();
+        country = country.Trim();
+        if (city.Length == 0)
+            return "Unknown location";
+        return country.Length == 0 ? city : $"{city}, {country}";
     }
 
 
-    private static PlaceDto GeocodeCity(HttpClient http, string city) {
+    private static PlaceDto FromStoredGeocode(StoredGeocode geocode) {
+        var parts = geocode.Label.Split(',', 2, StringSplitOptions.TrimEntries);
+        return new PlaceDto {
+            Success = true,
+            City = parts.Length > 0 ? parts[0] : geocode.CityQuery,
+            Country = parts.Length > 1 ? parts[1] : "",
+            Latitude = geocode.Latitude,
+            Longitude = geocode.Longitude
+        };
+    }
+
+
+    private static PlaceDto FromResolvedPlace(ResolvedPlace place) => new() {
+        Success = true,
+        City = place.City,
+        Country = place.Country,
+        Latitude = place.Latitude,
+        Longitude = place.Longitude
+    };
+
+
+    private static ResolvedPlace ToResolvedPlace(PlaceDto place) => new() {
+        City = place.City,
+        Country = place.Country,
+        Latitude = place.Latitude,
+        Longitude = place.Longitude
+    };
+    private static PlaceDto GeocodeCity(string city) {
         var url =
             "https://geocoding-api.open-meteo.com/v1/search" +
             $"?name={Uri.EscapeDataString(city)}" +
             "&count=1" +
             "&language=en";
 
-        var json = http.GetStringAsync(url)
+        var json = Http.GetStringAsync(url)
             .GetAwaiter()
             .GetResult();
 
@@ -88,7 +164,7 @@ public static class WeatherClient {
     }
 
 
-    private static PlaceDto ReverseGeocode(HttpClient http, double lat, double lon) {
+    private static PlaceDto ReverseGeocode(double lat, double lon) {
         var url =
             "https://nominatim.openstreetmap.org/reverse" +
             $"?lat={lat.ToString(CultureInfo.InvariantCulture)}" +
@@ -99,7 +175,7 @@ public static class WeatherClient {
             "&accept-language=en";
 
         try {
-            var json = http.GetStringAsync(url)
+            var json = Http.GetStringAsync(url)
                 .GetAwaiter()
                 .GetResult();
 
@@ -138,8 +214,8 @@ private static string? FirstNonEmpty(params string?[] values) {
 }
 
 
-    private static PlaceDto FetchPlaceFromIp(HttpClient http) {
-        var json = http.GetStringAsync("https://ipwho.is/")
+    private static PlaceDto FetchPlaceFromIp() {
+        var json = Http.GetStringAsync("https://ipwho.is/")
             .GetAwaiter()
             .GetResult();
 
@@ -154,19 +230,19 @@ private static string? FirstNonEmpty(params string?[] values) {
     }
 
 
-    private static ForecastDto FetchForecast(HttpClient http, double lat, double lon) {
+    private static ForecastDto FetchForecast(double lat, double lon) {
         var url =
             "https://api.open-meteo.com/v1/forecast" +
             $"?latitude={lat.ToString(CultureInfo.InvariantCulture)}" +
             $"&longitude={lon.ToString(CultureInfo.InvariantCulture)}" +
             "&current=temperature_2m,weather_code,is_day" +
-            "&daily=temperature_2m_max,temperature_2m_min" +
+            "&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min" +
             "&hourly=temperature_2m,weather_code,is_day" +
             "&forecast_days=1" +
             "&forecast_hours=12" +
             "&timezone=auto";
 
-        var json = http.GetStringAsync(url)
+        var json = Http.GetStringAsync(url)
             .GetAwaiter()
             .GetResult();
 
@@ -178,7 +254,10 @@ private static string? FirstNonEmpty(params string?[] values) {
     }
 
 
-    private static IReadOnlyList<WeatherHour> TakeUpcomingHours(HourlyDto? hourly) {
+    private sealed record HourSlot(DateTime At, WeatherHour Hour);
+
+
+    private static IReadOnlyList<WeatherHour> TakeUpcomingHours(HourlyDto? hourly, DailyDto? daily) {
         if (hourly?.Time is null
             || hourly.Temperature2m is null
             || hourly.WeatherCode is null)
@@ -189,9 +268,9 @@ private static string? FirstNonEmpty(params string?[] values) {
             hourly.Time.Length,
             Math.Min(hourly.Temperature2m.Length, hourly.WeatherCode.Length));
 
-        var hours = new List<WeatherHour>(6);
+        var slots = new List<HourSlot>(6);
 
-        for (var i = 0; i < length && hours.Count < 6; i++) {
+        for (var i = 0; i < length && slots.Count < 6; i++) {
             if (!DateTime.TryParse(
                     hourly.Time[i],
                     CultureInfo.InvariantCulture,
@@ -206,15 +285,135 @@ private static string? FirstNonEmpty(params string?[] values) {
                         && i < hourly.IsDay.Length
                         && hourly.IsDay[i] == 1;
 
-            hours.Add(new WeatherHour {
-                Label = at.ToString("HH") + "h",
-                Temperature = $"{Math.Round(hourly.Temperature2m[i])}°",
+            slots.Add(new HourSlot(at, new WeatherHour {
+                Label = FormatHourLabel(at),
+                Temperature = FormatTemperature(hourly.Temperature2m[i]),
                 Icon = WeatherCodes.IconUri(hourly.WeatherCode[i], isDay)
-            });
+            }));
         }
 
-        return hours;
+        if (slots.Count == 0)
+            return [];
+
+        var windowEnd = slots[^1].At;
+        var sunEvents = CollectSunEvents(hourly, daily, now, windowEnd);
+        if (sunEvents.Count == 0)
+            return slots.Select(slot => slot.Hour).ToList();
+
+        var kept = slots.Take(6 - sunEvents.Count).ToList();
+        kept.AddRange(sunEvents);
+        kept.Sort((a, b) => a.At.CompareTo(b.At));
+
+        return kept.Select(slot => slot.Hour).ToList();
     }
+
+
+    private static List<HourSlot> CollectSunEvents(
+        HourlyDto hourly,
+        DailyDto? daily,
+        DateTime now,
+        DateTime windowEnd) {
+        var events = new List<HourSlot>(2);
+
+        if (daily?.Sunrise is { Length: > 0 } sunrises
+            && TryParseSunEvent(sunrises[0], out var sunrise)
+            && sunrise > now
+            && sunrise <= windowEnd) {
+            events.Add(new HourSlot(sunrise, new WeatherHour {
+                Label = FormatHourLabel(sunrise),
+                Temperature = FormatTemperature(TemperatureAt(hourly, sunrise)),
+                Icon = WeatherCodes.SunriseIconUri()
+            }));
+        }
+
+        if (daily?.Sunset is { Length: > 0 } sunsets
+            && TryParseSunEvent(sunsets[0], out var sunset)
+            && sunset > now
+            && sunset <= windowEnd) {
+            events.Add(new HourSlot(sunset, new WeatherHour {
+                Label = FormatHourLabel(sunset),
+                Temperature = FormatTemperature(TemperatureAt(hourly, sunset)),
+                Icon = WeatherCodes.SunsetIconUri()
+            }));
+        }
+
+        return events;
+    }
+
+
+    /// <summary>
+    /// Hourly API returns on-the-hour samples; linearly interpolate between neighbours.
+    /// Open-Meteo also offers minutely_15, but interpolation avoids a second time grid.
+    /// </summary>
+    private static double? TemperatureAt(HourlyDto hourly, DateTime at) {
+        if (hourly.Time is null || hourly.Temperature2m is null)
+            return null;
+
+        var length = Math.Min(hourly.Time.Length, hourly.Temperature2m.Length);
+        if (length == 0)
+            return null;
+
+        DateTime? beforeAt = null;
+        double? beforeTemp = null;
+        DateTime? afterAt = null;
+        double? afterTemp = null;
+
+        for (var i = 0; i < length; i++) {
+            if (!DateTime.TryParse(
+                    hourly.Time[i],
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out var slotAt))
+                continue;
+
+            var temp = hourly.Temperature2m[i];
+
+            if (slotAt == at)
+                return temp;
+
+            if (slotAt < at) {
+                beforeAt = slotAt;
+                beforeTemp = temp;
+                continue;
+            }
+
+            afterAt = slotAt;
+            afterTemp = temp;
+            break;
+        }
+
+        if (beforeTemp is null)
+            return afterTemp;
+
+        if (afterTemp is null || beforeAt is null || afterAt is null)
+            return beforeTemp;
+
+        var span = (afterAt.Value - beforeAt.Value).TotalMinutes;
+        if (span <= 0)
+            return beforeTemp;
+
+        var ratio = (at - beforeAt.Value).TotalMinutes / span;
+        return beforeTemp.Value + ((afterTemp.Value - beforeTemp.Value) * ratio);
+    }
+
+
+    private static string FormatTemperature(double? celsius) =>
+        celsius is null ? "" : $"{Math.Round(celsius.Value)}°";
+
+
+    private static bool TryParseSunEvent(string raw, out DateTime at) {
+        at = default;
+        if (!DateTime.TryParse(raw, CultureInfo.InvariantCulture, DateTimeStyles.None, out at))
+            return false;
+
+        return true;
+    }
+
+
+    private static string FormatHourLabel(DateTime at) =>
+        at.Minute == 0
+            ? at.ToString("HH") + "h"
+            : $"{at:HH}h{at:mm}";
 
 
     private sealed class PlaceDto {
@@ -274,6 +473,10 @@ private static string? FirstNonEmpty(params string?[] values) {
 
 
     private sealed class DailyDto {
+        public string[]? Sunrise { get; set; }
+
+        public string[]? Sunset { get; set; }
+
         [JsonPropertyName("temperature_2m_max")]
         public double[]? Temperature2mMax { get; set; }
 
