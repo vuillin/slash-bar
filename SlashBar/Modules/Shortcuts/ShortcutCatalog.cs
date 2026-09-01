@@ -1,7 +1,70 @@
-using System.Windows;
 using System.Windows.Media;
-
+using WpfBrush = System.Windows.Media.Brush;
+using WpfColor = System.Windows.Media.Color;
 namespace SlashBar.Modules.Shortcuts;
+
+internal static class ShortcutTileBackgrounds {
+    private static readonly WpfBrush DefaultBorder = CreateSolid(0x1A, 0, 0, 0);
+    private static readonly WpfBrush Empty = CreateSolid(0x40, 0x8E, 0x8E, 0x93);
+    private static readonly WpfBrush EmptyBorder = CreateSolid(0x33, 0xFF, 0xFF, 0xFF);
+
+    private static readonly WpfBrush Weather = CreateLinear(
+        (0x5A, 0xC8, 0xFA),
+        (0x0A, 0x84, 0xFF),
+        (0x00, 0x47, 0xAB));
+
+    private static readonly WpfBrush Memo = CreateLinear(
+        (0xFF, 0xD6, 0x60),
+        (0xFF, 0x9F, 0x0A),
+        (0xC7, 0x77, 0x00));
+
+    private static readonly WpfBrush Color = CreateLinear(
+        (0xFF, 0x69, 0x61),
+        (0xFF, 0x3B, 0x30),
+        (0xC4, 0x1E, 0x16));
+
+    private static readonly WpfBrush Clip = CreateLinear(
+        (0x8E, 0x8E, 0xFF),
+        (0x58, 0x56, 0xD6),
+        (0x36, 0x34, 0xA3));
+
+    private static WpfBrush CreateLinear(
+        (byte r, byte g, byte b) light,
+        (byte r, byte g, byte b) mid,
+        (byte r, byte g, byte b) dark) {
+        var brush = new LinearGradientBrush {
+            StartPoint = new System.Windows.Point(0, 0),
+            EndPoint = new System.Windows.Point(1, 1),
+            GradientStops = {
+                new GradientStop(WpfColor.FromRgb(light.r, light.g, light.b), 0),
+                new GradientStop(WpfColor.FromRgb(mid.r, mid.g, mid.b), 0.55),
+                new GradientStop(WpfColor.FromRgb(dark.r, dark.g, dark.b), 1),
+            }
+        };
+        brush.Freeze();
+        return brush;
+    }
+
+    public static WpfBrush? ForPrefix(string? prefix) => prefix switch {
+        "weather" => Weather,
+        "memo" => Memo,
+        "color" => Color,
+        "clip" => Clip,
+        _ => null,
+    };
+
+    public static WpfBrush DefaultTileBorder => DefaultBorder;
+
+    public static WpfBrush EmptyTileBackground => Empty;
+
+    public static WpfBrush EmptyTileBorder => EmptyBorder;
+
+    private static SolidColorBrush CreateSolid(byte a, byte r, byte g, byte b) {
+        var brush = new SolidColorBrush(WpfColor.FromArgb(a, r, g, b));
+        brush.Freeze();
+        return brush;
+    }
+}
 
 /// <summary>
 /// Pins, labels, and icons for shortcuts around the bar.
@@ -49,10 +112,10 @@ public static class ShortcutCatalog {
                     ? pinsFromBar[distanceFromBar]
                     : null;
 
-                ImageSource? icon = null;
+                System.Windows.Media.ImageSource? icon = null;
                 if (prefix != null
                     && IconKeys.TryGetValue(prefix, out var iconKey)
-                    && System.Windows.Application.Current?.TryFindResource(iconKey) is ImageSource found) {
+                    && System.Windows.Application.Current?.TryFindResource(iconKey) is System.Windows.Media.ImageSource found) {
                     icon = found;
                 }
 
@@ -66,7 +129,23 @@ public static class ShortcutCatalog {
                     ? name
                     : "";
 
-                return new ShortcutSlot(offsetY, glyph, prefix, icon, label);
+                var tileBackground = prefix == null
+                    ? ShortcutTileBackgrounds.EmptyTileBackground
+                    : ShortcutTileBackgrounds.ForPrefix(prefix);
+                var tileBorderBrush = prefix == null
+                    ? ShortcutTileBackgrounds.EmptyTileBorder
+                    : tileBackground != null
+                        ? System.Windows.Media.Brushes.Transparent
+                        : ShortcutTileBackgrounds.DefaultTileBorder;
+
+                return new ShortcutSlot(
+                    offsetY,
+                    glyph,
+                    prefix,
+                    icon,
+                    label,
+                    tileBackground,
+                    tileBorderBrush);
             })
             .ToList();
     }

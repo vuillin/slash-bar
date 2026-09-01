@@ -1,20 +1,21 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <!-- Phosphor eyedropper-duotone (256×256) -->
     <DrawingImage x:Key="IconColor">
         <DrawingImage.Drawing>
-            <GeometryDrawing>
-                <GeometryDrawing.Brush>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#FF453A" Offset="0"/>
-                        <GradientStop Color="#FF3B30" Offset="0.45"/>
-                        <GradientStop Color="#C41E16" Offset="1"/>
-                    </LinearGradientBrush>
-                </GeometryDrawing.Brush>
-                <GeometryDrawing.Geometry>
-                    <PathGeometry Figures="M331.41,-135.93 L95.93,-371.17 q-12.15,-12.16 -18.1,-26.79 q-5.96,-14.63 -5.96,-30.42 q0,-15.8 6.02,-30.39 q6.01,-14.58 18.04,-26.73 l222.83,-221.59 l-109.35,-109.58 l68.94,-71.46 L680.74,-485.5 q12.26,12.15 17.78,26.73 q5.52,14.59 5.52,30.39 q0,15.79 -5.52,30.41 q-5.52,14.62 -17.78,26.8 L445.5,-135.93 q-11.91,11.91 -26.66,17.98 q-14.75,6.08 -30.38,6.08 q-15.63,0 -30.26,-5.96 q-14.64,-5.95 -26.79,-18.1 Z M388.22,-637.39 L181.15,-430.33 h414.13 L388.22,-637.39 Z M797.5,-111.87 q-37.43,0 -63.15,-26.7 q-25.72,-26.69 -25.72,-65.13 q0,-26.82 12.42,-50.67 q12.43,-23.85 29.43,-46.13 l46.78,-57.59 l48.31,57.59 q16.23,22.28 29.4,46.13 q13.16,23.85 13.16,50.67 q0,38.44 -26.6,65.13 q-26.6,26.7 -64.03,26.7 Z"/>
-                </GeometryDrawing.Geometry>
-            </GeometryDrawing>
+            <DrawingGroup>
+                <GeometryDrawing Geometry="F1 M207.8,87.6l-25.37,25.53,4.89,4.88a16,16,0,0,1,0,22.64l-9,9a8,8,0,0,1-11.32,0l-60.68-60.7a8,8,0,0,1,0-11.32l9-9a16,16,0,0,1,22.63,0l4.88,4.89,25-25.11c10.79-10.79,28.37-11.45,39.45-1A28,28,0,0,1,207.8,87.6Z">
+                    <GeometryDrawing.Brush>
+                        <SolidColorBrush Color="#FFFFFF" Opacity="0.22"/>
+                    </GeometryDrawing.Brush>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="F1 M224,67.3a35.79,35.79,0,0,0-11.26-25.66c-14-13.28-36.72-12.78-50.62,1.13L142.8,62.2a24,24,0,0,0-33.14.77l-9,9a16,16,0,0,0,0,22.64l2,2.06-51,51a39.75,39.75,0,0,0-10.53,38l-8,18.41A13.68,13.68,0,0,0,36,219.3a15.92,15.92,0,0,0,17.71,3.35L71.23,215a39.89,39.89,0,0,0,37.06-10.75l51-51,2.06,2.06a16,16,0,0,0,22.62,0l9-9a24,24,0,0,0,.74-33.18l19.75-19.87A35.75,35.75,0,0,0,224,67.3ZM97,193a24,24,0,0,1-24,6,8,8,0,0,0-5.55.31l-18.1,7.91L57,189.41a8,8,0,0,0,.25-5.75A23.88,23.88,0,0,1,63,159l51-51,33.94,34ZM202.13,82l-25.37,25.52a8,8,0,0,0,0,11.3l4.89,4.89a8,8,0,0,1,0,11.32l-9,9L112,83.26l9-9a8,8,0,0,1,11.31,0l4.89,4.89a8,8,0,0,0,5.65,2.34h0a8,8,0,0,0,5.66-2.36l24.94-25.09c7.81-7.82,20.5-8.18,28.29-.81a20,20,0,0,1,.39,28.7Z">
+                    <GeometryDrawing.Brush>
+                        <SolidColorBrush Color="#FFFFFF"/>
+                    </GeometryDrawing.Brush>
+                </GeometryDrawing>
+            </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
 

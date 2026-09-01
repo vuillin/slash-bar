@@ -43,8 +43,8 @@
 
                 <Border Width="60" Height="60"
                         CornerRadius="16"
-                        Background="#F2F2F7"
-                        BorderBrush="#1A000000"
+                        Background="{Binding TileBackground}"
+                        BorderBrush="{Binding TileBorderBrush}"
                         BorderThickness="1"
                         HorizontalAlignment="Center">
                     <Grid HorizontalAlignment="Center"
