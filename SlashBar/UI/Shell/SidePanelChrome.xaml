@@ -76,6 +76,8 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
+    <Thickness x:Key="SidePanelShadowMargin">0,32,24,32</Thickness>
+
     <Style x:Key="SidePanelCopiedToastStyle" TargetType="Border">
         <Setter Property="VerticalAlignment" Value="Bottom"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>

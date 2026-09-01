@@ -12,7 +12,7 @@ public partial class MemoPanelWindow : DockedSidePanelWindow {
 
     private MemoPanelWindow() {
         InitializeComponent();
-        Width = LeftMargin + PanelContentWidth + TabWidth;
+        Width = ShellWidth;
         PreviewKeyDown += (_, e) => {
             if (e.Key == Key.Escape)
                 AnimateClose();

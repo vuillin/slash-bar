@@ -22,7 +22,7 @@ public partial class WeatherPanelWindow : DockedSidePanelWindow {
 
     private WeatherPanelWindow() {
         InitializeComponent();
-        Width = ChromeWidth;
+        Width = ShellWidth;
         PreviewKeyDown += (_, e) => {
             if (e.Key == Key.Escape)
                 AnimateClose();

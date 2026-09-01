@@ -14,7 +14,7 @@ public partial class ClipPanelWindow : DockedSidePanelWindow {
 
     private ClipPanelWindow() {
         InitializeComponent();
-        Width = LeftMargin + PanelContentWidth + TabWidth;
+        Width = ShellWidth;
         PreviewKeyDown += (_, e) => {
             if (e.Key == Key.Escape)
                 AnimateClose();

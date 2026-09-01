@@ -16,7 +16,7 @@ public partial class ColorPanelWindow : DockedSidePanelWindow {
 
     private ColorPanelWindow() {
         InitializeComponent();
-        Width = LeftMargin + PanelContentWidth + TabWidth;
+        Width = ShellWidth;
 
         MouseEnter += (_, _) => SyncMagnifierVisibility();
         MouseLeave += (_, _) => SyncMagnifierVisibility();

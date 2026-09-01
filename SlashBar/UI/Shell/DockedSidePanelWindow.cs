@@ -28,6 +28,11 @@ public abstract class DockedSidePanelWindow : Window {
     protected double ChromeWidth =>
         LeftMargin + PanelContentWidth + (ShowsDockTab ? TabWidth : 0);
 
+    private static Thickness ShadowMargin =>
+        (Thickness)System.Windows.Application.Current.FindResource("SidePanelShadowMargin");
+
+    protected double ShellWidth => ChromeWidth + ShadowMargin.Right;
+
     protected double CollapsedX => -(LeftMargin + PanelContentWidth);
 
     protected bool IsCollapsed { get; set; }
@@ -92,10 +97,11 @@ public abstract class DockedSidePanelWindow : Window {
         var area = screen.WorkingArea;
 
         var height = DockedHeight(area.Height);
-        Left = area.Left;
-        Top = DockedTop(area, height);
-        Height = height;
-        Width = ChromeWidth;
+        var pad = ShadowMargin;
+        Left = area.Left - pad.Left;
+        Top = DockedTop(area, height) - pad.Top;
+        Height = height + pad.Top + pad.Bottom;
+        Width = ShellWidth;
     }
 
 
@@ -260,8 +266,10 @@ public abstract class DockedSidePanelWindow : Window {
             ?? System.Windows.Forms.Screen.AllScreens[0];
         var area = screen.WorkingArea;
         var height = DockedHeight(area.Height);
-        var targetLeft = (double)area.Left;
-        var targetTop = DockedTop(area, height);
+        var pad = ShadowMargin;
+        var targetLeft = area.Left - pad.Left;
+        var targetTop = DockedTop(area, height) - pad.Top;
+        var targetHeight = height + pad.Top + pad.Bottom;
 
         Slide.BeginAnimation(TranslateTransform.XProperty, null);
         Slide.X = 0;
@@ -269,13 +277,13 @@ public abstract class DockedSidePanelWindow : Window {
         var ease = new QuadraticEase { EasingMode = EasingMode.EaseInOut };
         var animL = new DoubleAnimation(Left, targetLeft, TimeSpan.FromMilliseconds(280)) { EasingFunction = ease };
         var animT = new DoubleAnimation(Top, targetTop, TimeSpan.FromMilliseconds(280)) { EasingFunction = ease };
-        var animH = new DoubleAnimation(Height, height, TimeSpan.FromMilliseconds(280)) { EasingFunction = ease };
+        var animH = new DoubleAnimation(Height, targetHeight, TimeSpan.FromMilliseconds(280)) { EasingFunction = ease };
 
         animL.Completed += (_, _) => {
             Left = targetLeft;
             Top = targetTop;
-            Height = height;
-            Width = ChromeWidth;
+            Height = targetHeight;
+            Width = ShellWidth;
             BeginAnimation(LeftProperty, null);
             BeginAnimation(TopProperty, null);
             BeginAnimation(HeightProperty, null);
