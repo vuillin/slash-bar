@@ -16,7 +16,7 @@ public static class WeatherClient {
         using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
         http.DefaultRequestHeaders.UserAgent.ParseAdd("SlashBar/1.0");
 
-        var place = FetchPlace(http);
+        var place = ResolvePlace(http);
         var forecast = FetchForecast(http, place.Latitude, place.Longitude);
         var current = forecast.Current!;
 
@@ -49,7 +49,96 @@ public static class WeatherClient {
     }
 
 
-    private static PlaceDto FetchPlace(HttpClient http) {
+    private static PlaceDto ResolvePlace(HttpClient http) {
+        var city = WeatherLocationStore.ReadCity();
+        if (city is not null)
+            return GeocodeCity(http, city);
+
+        var gps = WeatherGeolocator.TryGetPosition();
+        if (gps is not null)
+            return ReverseGeocode(http, gps.Value.Lat, gps.Value.Lon);
+
+        return FetchPlaceFromIp(http);
+    }
+
+
+    private static PlaceDto GeocodeCity(HttpClient http, string city) {
+        var url =
+            "https://geocoding-api.open-meteo.com/v1/search" +
+            $"?name={Uri.EscapeDataString(city)}" +
+            "&count=1" +
+            "&language=en";
+
+        var json = http.GetStringAsync(url)
+            .GetAwaiter()
+            .GetResult();
+
+        var result = JsonSerializer.Deserialize<GeocodingDto>(json, JsonOptions);
+        var hit = result?.Results is { Count: > 0 } hits ? hits[0] : null;
+        if (hit is null || (hit.Latitude == 0 && hit.Longitude == 0))
+            throw new InvalidOperationException("City not found");
+
+        return new PlaceDto {
+            Success = true,
+            City = hit.Name,
+            Country = hit.Country,
+            Latitude = hit.Latitude,
+            Longitude = hit.Longitude
+        };
+    }
+
+
+    private static PlaceDto ReverseGeocode(HttpClient http, double lat, double lon) {
+        var url =
+            "https://nominatim.openstreetmap.org/reverse" +
+            $"?lat={lat.ToString(CultureInfo.InvariantCulture)}" +
+            $"&lon={lon.ToString(CultureInfo.InvariantCulture)}" +
+            "&format=json" +
+            "&zoom=10" +
+            "&addressdetails=1" +
+            "&accept-language=en";
+
+        try {
+            var json = http.GetStringAsync(url)
+                .GetAwaiter()
+                .GetResult();
+
+            var data = JsonSerializer.Deserialize<NominatimDto>(json, JsonOptions);
+            var address = data?.Address;
+            var name =
+                FirstNonEmpty(address?.City, address?.Town, address?.Village, address?.Municipality)
+                ?? "";
+
+            return new PlaceDto {
+                Success = true,
+                City = name.Length == 0 ? "Current location" : name,
+                Country = address?.Country ?? "",
+                Latitude = lat,
+                Longitude = lon
+            };
+        }
+        catch {
+            return new PlaceDto {
+                Success = true,
+                City = "Current location",
+                Latitude = lat,
+                Longitude = lon
+            };
+        }
+    }
+
+
+private static string? FirstNonEmpty(params string?[] values) {
+    foreach (var value in values) {
+        var trimmed = value?.Trim() ?? "";
+        if (trimmed.Length > 0)
+            return trimmed;
+    }
+    return null;
+}
+
+
+    private static PlaceDto FetchPlaceFromIp(HttpClient http) {
         var json = http.GetStringAsync("https://ipwho.is/")
             .GetAwaiter()
             .GetResult();
@@ -134,6 +223,32 @@ public static class WeatherClient {
         public string Country { get; set; } = "";
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+    }
+
+
+    private sealed class GeocodingDto {
+        public List<GeocodingHitDto>? Results { get; set; }
+    }
+    
+
+    private sealed class GeocodingHitDto {
+        public string Name { get; set; } = "";
+        public string Country { get; set; } = "";
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+    }
+
+
+    private sealed class NominatimDto {
+        public NominatimAddressDto? Address { get; set; }
+    }
+
+    private sealed class NominatimAddressDto {
+        public string? City { get; set; }
+        public string? Town { get; set; }
+        public string? Village { get; set; }
+        public string? Municipality { get; set; }
+        public string? Country { get; set; }
     }
 
 

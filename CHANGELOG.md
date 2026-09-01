@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `weather` module: docked panel with current weather from the public IP (Open-Meteo)
+- `weather` module: docked panel (Open-Meteo); location from `%LocalAppData%\SlashBar\weather.json`, then Windows Geolocator, then public IP
 - `gen up` / `gen low`: copy text as uppercase / lowercase (`fr-FR`)
 
 ## [1.0.0] - 2026-07-31

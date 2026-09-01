@@ -53,11 +53,13 @@ public partial class WeatherPanelWindow : DockedSidePanelWindow {
     }
 
 
-    protected override void OnPanelOpening() {
+    protected override async void OnPanelOpening() {
         var id = ++_loadId;
         ShowStatus("Loading…");
 
-        Task.Run(() => {
+        await WeatherGeolocator.RequestAccessAsync();
+
+        _ = Task.Run(() => {
             try {
                 var snapshot = WeatherClient.Fetch();
                 Dispatcher.Invoke(() => {
