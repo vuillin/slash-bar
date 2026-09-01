@@ -7,10 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-01
+
 ### Added
 
-- `weather` module: docked panel (Open-Meteo); location from `%LocalAppData%\SlashBar\weather.json`, then Windows Geolocator, then public IP
+- `weather` module: top-docked panel with current conditions, daily high/low, and the next 6 hours (Open-Meteo; no API key)
+- Weather location, in order: city in `%LocalAppData%\SlashBar\weather.json`, then Windows Geolocation, then public IP (`ipwho.is`); geocoded coordinates are saved back into `weather.json`
+- Weather forecast cache in `%LocalAppData%\SlashBar\weather-cache.json` (15-minute TTL); stale snapshot shown immediately on open, background refresh when stale, auto-refresh while the panel stays open
+- Sunrise and sunset slots in the hourly strip when they fall within the window
+- Custom weather icons (`Assets/Icons/Weather/`)
+- Weather shortcut on the left icon rail
+- Per-module gradient tile backgrounds on pinned shortcut tiles
+- `gen lorem`: copy a Lorem Ipsum paragraph
 - `gen up` / `gen low`: copy text as uppercase / lowercase (`fr-FR`)
+
+### Changed
+
+- Left shortcut rail: Memo, Weather (was Memo only in 1.0.0)
+- README and module docs updated for Weather and `gen` subcommands
 
 ## [1.0.0] - 2026-07-31
 
@@ -32,5 +46,6 @@ First public release.
 - Dev launcher (`run.ps1`) uses `dotnet` from PATH / `DOTNET_ROOT` instead of a machine-specific SDK path
 - Full English UI, module messages, and in-code comments
 
-[Unreleased]: https://github.com/vuillin/slash-bar/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/vuillin/slash-bar/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/vuillin/slash-bar/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/vuillin/slash-bar/releases/tag/v1.0.0
