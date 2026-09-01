@@ -28,7 +28,7 @@
             <Border x:Name="RootBorder"
                     Grid.Column="1"
                     CornerRadius="24"
-                    Background="#F2F2F7"
+                    Background="#FFFFFF"
                     BorderBrush="#1A000000"
                     BorderThickness="1">
                 <Border.Effect>
@@ -47,32 +47,20 @@
 
                     <Border x:Name="HeaderBar"
                             Grid.Row="0"
-                            Background="#E8E8ED"
-                            BorderBrush="#14000000"
-                            BorderThickness="0,0,0,1"
+                            Background="Transparent"
                             CornerRadius="24,24,0,0"
-                            Padding="14,12"
+                            Padding="14,12,14,8"
                             Cursor="SizeAll"
                             MouseLeftButtonDown="HeaderBar_MouseLeftButtonDown">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Column="0"
-                                       Text="&#xE790;"
-                                       FontFamily="Segoe MDL2 Assets"
-                                       FontSize="16"
-                                       Foreground="#8E8E93"
-                                       VerticalAlignment="Center"
-                                       Margin="0,0,10,0"
-                                       IsHitTestVisible="False"/>
-
-                            <TextBlock Grid.Column="1"
-                                       Text="Color"
+                                       Text="Color picker"
                                        FontFamily="Segoe UI Variable Text, Segoe UI"
                                        FontSize="15"
                                        FontWeight="Medium"
@@ -81,7 +69,7 @@
                                        Opacity="0.55"
                                        IsHitTestVisible="False"/>
 
-                            <StackPanel Grid.Column="2"
+                            <StackPanel Grid.Column="1"
                                         Orientation="Horizontal"
                                         VerticalAlignment="Center">
 
@@ -107,7 +95,7 @@
                     </Border>
 
                     <Border Grid.Row="1"
-                            Background="#F2F2F7"
+                            Background="#FFFFFF"
                             CornerRadius="0,0,24,24"
                             Padding="16,14,16,18">
 
@@ -385,9 +373,10 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Height="40"
-                                                    Margin="3,0"
-                                                    CornerRadius="10"
+                                            <Border Width="40"
+                                                    Height="40"
+                                                    Margin="3"
+                                                    CornerRadius="20"
                                                     Background="{Binding Brush}"
                                                     BorderBrush="#1A000000"
                                                     BorderThickness="1"
