@@ -29,6 +29,16 @@ public partial class ColorPanelWindow {
         HistorySection.Visibility = items.Count > 0
             ? Visibility.Visible
             : Visibility.Collapsed;
+        SyncPanelHeight();
+    }
+
+
+    private void SyncPanelHeight() {
+        if (!IsVisible || IsAnimating)
+            return;
+
+        var pad = (Thickness)System.Windows.Application.Current.FindResource("SidePanelShadowMargin");
+        Height = DockedHeight(0) + pad.Top + pad.Bottom;
     }
 
 
@@ -42,7 +52,7 @@ public partial class ColorPanelWindow {
 
         var color = System.Windows.Media.Color.FromRgb(entry.R, entry.G, entry.B);
         _colorLocked = true;
-        ApplyColorToUi(color);
+        SetSelectedColor(color);
         e.Handled = true;
     }
 

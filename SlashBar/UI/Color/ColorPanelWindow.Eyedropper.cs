@@ -70,9 +70,6 @@ public partial class ColorPanelWindow {
 
     private void ShowMagnifier() {
         if (_magnifier != null) {
-
-            _magnifier.Owner = null;
-            _magnifier.Owner = _overlay;
             _magnifier.Show();
             return;
         }
@@ -229,7 +226,7 @@ public partial class ColorPanelWindow {
                 if (!_pickModeActive)
                     return;
                 _colorLocked = true;
-                ApplyColorToUi(_hoveredColor);
+                SetSelectedColor(_hoveredColor);
                 e.Handled = true;
             };
         }

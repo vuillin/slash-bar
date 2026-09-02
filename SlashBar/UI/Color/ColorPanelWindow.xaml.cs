@@ -1,13 +1,16 @@
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
+using SlashBar.Modules.Color;
 using SlashBar.UI.Shell;
 
 namespace SlashBar;
 
 public partial class ColorPanelWindow : DockedSidePanelWindow {
 
-    protected override double PanelContentWidth => 400;
+    protected override double PanelContentWidth => 382;
+
+    protected override double DockedHeight(double workAreaHeight) =>
+        ColorHistory.Store.GetAll().Count > 0 ? 338 : 268;
 
     private static ColorPanelWindow? _instance;
 

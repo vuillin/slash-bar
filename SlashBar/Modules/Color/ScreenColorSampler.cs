@@ -24,8 +24,6 @@ public sealed class ScreenColorSampler : IDisposable {
         _bgraBuffer = new byte[sampleSize * sampleSize * 4];
     }
 
-    public int SampleSize => _size;
-
     /// <summary>
     /// Fills <paramref name="bgraDestination"/> (BGRA, stride = size*4) and returns the center color.
     /// </summary>

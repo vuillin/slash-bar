@@ -44,11 +44,9 @@ public sealed class ColorHistoryStore {
                 return;
 
             _entries.Insert(0, new ColorHistoryEntry {
-                Id = Guid.NewGuid().ToString("N"),
                 R = r,
                 G = g,
                 B = b,
-                CreatedAt = DateTimeOffset.UtcNow
             });
 
             while (_entries.Count > MaxEntries)
