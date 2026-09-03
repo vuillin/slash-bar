@@ -58,8 +58,12 @@ public partial class ColorPanelWindow {
 
 
     private sealed class ColorHistoryItem {
+        private static readonly SolidColorBrush HexOnDark = Freeze(Colors.White);
+        private static readonly SolidColorBrush HexOnLight = Freeze(Colors.Black);
+
         public ColorHistoryEntry Entry { get; }
         public SolidColorBrush Brush { get; }
+        public SolidColorBrush HexForeground { get; }
         public string Hex { get; }
 
         public ColorHistoryItem(ColorHistoryEntry entry) {
@@ -68,6 +72,16 @@ public partial class ColorPanelWindow {
             Brush = new SolidColorBrush(color);
             Brush.Freeze();
             Hex = ColorFormats.ToHex(color);
+            HexForeground = PerceivedLuminance(color) >= 160 ? HexOnLight : HexOnDark;
+        }
+
+        private static int PerceivedLuminance(System.Windows.Media.Color color) =>
+            (color.R * 299 + color.G * 587 + color.B * 114) / 1000;
+
+        private static SolidColorBrush Freeze(System.Windows.Media.Color color) {
+            var brush = new SolidColorBrush(color);
+            brush.Freeze();
+            return brush;
         }
     }
 }

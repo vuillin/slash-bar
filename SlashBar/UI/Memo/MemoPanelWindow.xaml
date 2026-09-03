@@ -122,34 +122,13 @@
                                         <ColumnDefinition Width="10"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
 
-                                    <TextBlock Grid.Column="0" Grid.Row="0"
-                                               Text="Name"
-                                               FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
-                                               FontSize="12"
-                                               FontWeight="Medium"
-                                               Foreground="#8E8E93"
-                                               Margin="0,0,0,6"/>
-
-                                    <TextBlock Grid.Column="2" Grid.Row="0"
-                                               Text="Value"
-                                               FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
-                                               FontSize="12"
-                                               FontWeight="Medium"
-                                               Foreground="#8E8E93"
-                                               Margin="0,0,0,6"/>
-
-                                    <Border Grid.Column="0" Grid.Row="1"
+                                    <Border Grid.Column="0"
                                             Background="#F2F2F7"
                                             CornerRadius="10"
                                             Padding="10,8"
                                             VerticalAlignment="Center">
                                         <TextBox x:Name="MemoNameBox"
-                                                 Text=""
                                                  FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
                                                  FontSize="14"
                                                  FontWeight="SemiBold"
@@ -158,27 +137,92 @@
                                                  BorderThickness="0"
                                                  CaretBrush="#007AFF"
                                                  MaxLength="40"
-                                                 TextChanged="MemoNameBox_TextChanged"/>
+                                                 TextChanged="MemoNameBox_TextChanged">
+                                            <TextBox.Style>
+                                                <Style TargetType="TextBox">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="TextBox">
+                                                                <Grid>
+                                                                    <TextBlock x:Name="Placeholder"
+                                                                               Text="Name"
+                                                                               FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
+                                                                               FontSize="14"
+                                                                               FontWeight="Medium"
+                                                                               Foreground="#8E8E93"
+                                                                               VerticalAlignment="Center"
+                                                                               IsHitTestVisible="False"
+                                                                               Visibility="Collapsed"/>
+                                                                    <ScrollViewer x:Name="PART_ContentHost"
+                                                                                  VerticalAlignment="Center"/>
+                                                                </Grid>
+                                                                <ControlTemplate.Triggers>
+                                                                    <MultiTrigger>
+                                                                        <MultiTrigger.Conditions>
+                                                                            <Condition Property="Text" Value=""/>
+                                                                            <Condition Property="IsKeyboardFocused" Value="False"/>
+                                                                        </MultiTrigger.Conditions>
+                                                                        <Setter TargetName="Placeholder" Property="Visibility" Value="Visible"/>
+                                                                    </MultiTrigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </TextBox.Style>
+                                        </TextBox>
                                     </Border>
 
-                                    <Border Grid.Column="2" Grid.Row="1"
+                                    <Border Grid.Column="2"
                                             Background="#F2F2F7"
                                             CornerRadius="10"
                                             Padding="10,8"
                                             VerticalAlignment="Center">
                                         <TextBox x:Name="MemoValueBox"
-                                                 Text=""
                                                  FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
                                                  FontSize="14"
                                                  FontWeight="SemiBold"
                                                  Foreground="#1C1C1E"
                                                  Background="Transparent"
                                                  BorderThickness="0"
-                                                 CaretBrush="#007AFF"/>
+                                                 CaretBrush="#007AFF">
+                                            <TextBox.Style>
+                                                <Style TargetType="TextBox">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="TextBox">
+                                                                <Grid>
+                                                                    <TextBlock x:Name="Placeholder"
+                                                                               Text="Value"
+                                                                               FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
+                                                                               FontSize="14"
+                                                                               FontWeight="Medium"
+                                                                               Foreground="#8E8E93"
+                                                                               VerticalAlignment="Center"
+                                                                               IsHitTestVisible="False"
+                                                                               Visibility="Collapsed"/>
+                                                                    <ScrollViewer x:Name="PART_ContentHost"
+                                                                                  VerticalAlignment="Center"/>
+                                                                </Grid>
+                                                                <ControlTemplate.Triggers>
+                                                                    <MultiTrigger>
+                                                                        <MultiTrigger.Conditions>
+                                                                            <Condition Property="Text" Value=""/>
+                                                                            <Condition Property="IsKeyboardFocused" Value="False"/>
+                                                                        </MultiTrigger.Conditions>
+                                                                        <Setter TargetName="Placeholder" Property="Visibility" Value="Visible"/>
+                                                                    </MultiTrigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </TextBox.Style>
+                                        </TextBox>
                                     </Border>
 
                                     <Button x:Name="AddMemoButton"
-                                            Grid.Column="4" Grid.Row="1"
+                                            Grid.Column="4"
                                             Width="28"
                                             Height="28"
                                             Cursor="Hand"

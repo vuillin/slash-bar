@@ -17,7 +17,12 @@ public partial class ClipPanelWindow {
     }
 
     private void RefreshHistory() {
-        HistoryList.ItemsSource = ClipboardHistory.Store.GetAll();
+        var items = ClipboardHistory.Store.GetAll()
+            .Select(e => new ClipboardHistoryItem(e))
+            .ToList();
+
+        HistoryList.ItemsSource = items;
+        EntryCountText.Text = items.Count.ToString();
     }
 
     private void OnHistoryChanged() =>
@@ -40,5 +45,30 @@ public partial class ClipPanelWindow {
 
     private void ClearAllHistory_Click(object sender, RoutedEventArgs e) {
         ClipboardHistory.Store.ClearAll();
+    }
+
+
+    private sealed class ClipboardHistoryItem {
+        public ClipboardHistoryEntry Entry { get; }
+        public string Text => Entry.Text;
+        public System.Windows.Media.ImageSource Icon { get; }
+
+        public ClipboardHistoryItem(ClipboardHistoryEntry entry) {
+            Entry = entry;
+            Icon = IconFor(ClipboardContentClassifier.Classify(entry.Text));
+        }
+
+        private static System.Windows.Media.ImageSource IconFor(ClipboardContentKind kind) {
+            var key = kind switch {
+                ClipboardContentKind.Color => "IconClipKindColor",
+                ClipboardContentKind.Code => "IconClipKindCode",
+                ClipboardContentKind.FilePath => "IconClipKindFile",
+                ClipboardContentKind.Url => "IconClipKindUrl",
+                ClipboardContentKind.Email => "IconClipKindMail",
+                ClipboardContentKind.LongText => "IconClipKindLongText",
+                _ => "IconClipKindOther"
+            };
+            return (System.Windows.Media.ImageSource)System.Windows.Application.Current.FindResource(key);
+        }
     }
 }

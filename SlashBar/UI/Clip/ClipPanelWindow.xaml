@@ -14,20 +14,20 @@
     <Border Background="Transparent"
             RenderTransformOrigin="0,0.5">
         <Border.RenderTransform>
-            <TranslateTransform x:Name="SlideTransform" X="-354"/>
+            <TranslateTransform x:Name="SlideTransform" X="-386"/>
         </Border.RenderTransform>
 
         <Grid Margin="{StaticResource SidePanelShadowMargin}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="14"/>
-                <ColumnDefinition Width="340"/>
+                <ColumnDefinition Width="372"/>
                 <ColumnDefinition Width="32"/>
             </Grid.ColumnDefinitions>
 
             <Border x:Name="RootBorder"
                     Grid.Column="1"
                     CornerRadius="24"
-                    Background="#F2F2F7"
+                    Background="#FFFFFF"
                     BorderBrush="#1A000000"
                     BorderThickness="1">
                 <Border.Effect>
@@ -46,56 +46,28 @@
 
                     <Border x:Name="HeaderBar"
                             Grid.Row="0"
-                            Background="#E8E8ED"
-                            BorderBrush="#14000000"
-                            BorderThickness="0,0,0,1"
+                            Background="Transparent"
                             CornerRadius="24,24,0,0"
-                            Padding="14,12"
+                            Padding="14,10,14,6"
                             Cursor="SizeAll"
                             MouseLeftButtonDown="HeaderBar_MouseLeftButtonDown">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- clipboard icon -->
-                            <Grid Grid.Column="0"
-                                  Width="16"
-                                  Height="18"
-                                  VerticalAlignment="Center"
-                                  Margin="0,0,10,0"
-                                  IsHitTestVisible="False">
-                                <Border Width="11"
-                                        Height="14"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Bottom"
-                                        CornerRadius="2"
-                                        BorderBrush="#8E8E93"
-                                        BorderThickness="1.6"
-                                        Background="Transparent"/>
-                                <Border Width="11"
-                                        Height="14"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Top"
-                                        CornerRadius="2"
-                                        BorderBrush="#8E8E93"
-                                        BorderThickness="1.6"
-                                        Background="#E8E8ED"/>
-                            </Grid>
-
-                            <TextBlock Grid.Column="1"
+                            <TextBlock Grid.Column="0"
                                        Text="Clipboard"
+                                       Margin="4,4,0,0"
                                        FontFamily="Segoe UI Variable Text, Segoe UI"
-                                       FontSize="15"
-                                       FontWeight="Medium"
-                                       Foreground="#3C3C43"
+                                       FontSize="17"
+                                       FontWeight="Bold"
+                                       Foreground="#1C1C1E"
                                        VerticalAlignment="Center"
-                                       Opacity="0.55"
                                        IsHitTestVisible="False"/>
 
-                            <StackPanel Grid.Column="2"
+                            <StackPanel Grid.Column="1"
                                         Orientation="Horizontal"
                                         VerticalAlignment="Center">
 
@@ -123,16 +95,21 @@
                     </Border>
 
                     <Border Grid.Row="1"
-                            Background="#F2F2F7"
+                            Background="Transparent"
                             CornerRadius="0,0,24,24">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto"
-                                      Padding="12,10,12,14">
-                            <StackPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0"
+                                  Margin="22,0,30,4">
                                 <Button Click="ClearAllHistory_Click"
                                         Cursor="Hand"
-                                        HorizontalAlignment="Center"
-                                        Margin="0,0,0,10"
-                                        Padding="10,6"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Bottom"
+                                        Padding="0,2,4,2"
                                         ToolTip="Clear all history"
                                         FontFamily="Segoe UI Variable Text, Segoe UI"
                                         FontSize="12"
@@ -143,9 +120,9 @@
                                         <ControlTemplate TargetType="Button">
                                             <Border x:Name="Bg"
                                                     Background="Transparent"
-                                                    CornerRadius="8"
+                                                    CornerRadius="6"
                                                     Padding="{TemplateBinding Padding}">
-                                                <ContentPresenter HorizontalAlignment="Center"
+                                                <ContentPresenter HorizontalAlignment="Left"
                                                                   VerticalAlignment="Center"/>
                                             </Border>
                                             <ControlTemplate.Triggers>
@@ -160,6 +137,23 @@
                                     </Button.Template>
                                 </Button>
 
+                                <TextBlock x:Name="EntryCountText"
+                                           Text="0"
+                                           HorizontalAlignment="Right"
+                                           VerticalAlignment="Bottom"
+                                           FontFamily="Segoe UI Variable Text, Segoe UI"
+                                           FontSize="30"
+                                           FontWeight="Bold"
+                                           Foreground="#1C1C1E"
+                                           IsHitTestVisible="False"/>
+                            </Grid>
+
+                            <ScrollViewer Grid.Row="1"
+                                      VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled"
+                                      Padding="12,10,22,14"
+                                      Template="{StaticResource SidePanelOverlayScrollViewerTemplate}">
+                            <StackPanel>
                                 <ItemsControl x:Name="HistoryList">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
@@ -168,50 +162,89 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Margin="0,0,0,8"
-                                                    Padding="12,10"
+                                            <Border Padding="4,16"
+                                                    Margin="0,0,10,0"
                                                     Cursor="Hand"
-                                                    Background="#FFFFFF"
-                                                    BorderBrush="#14000000"
-                                                    BorderThickness="1"
-                                                    CornerRadius="12"
+                                                    Background="Transparent"
+                                                    BorderBrush="#1C000000"
+                                                    BorderThickness="0,0,0,1"
                                                     MouseLeftButtonUp="HistoryItem_Click"
-                                                    Tag="{Binding}">
+                                                    Tag="{Binding Entry}">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="Transparent"/>
                                                         <Style.Triggers>
                                                             <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter Property="Background" Value="#F8F8FA"/>
+                                                                <Setter Property="Background" Value="#08000000"/>
                                                             </Trigger>
                                                         </Style.Triggers>
                                                     </Style>
                                                 </Border.Style>
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
                                                         <ColumnDefinition Width="*"/>
                                                         <ColumnDefinition Width="Auto"/>
                                                     </Grid.ColumnDefinitions>
 
-                                                    <TextBlock Grid.Column="0"
+                                                    <Image Grid.Column="0"
+                                                           Source="{Binding Icon}"
+                                                           Width="18"
+                                                           Height="18"
+                                                           Margin="0,0,10,0"
+                                                           VerticalAlignment="Center"
+                                                           IsHitTestVisible="False"/>
+
+                                                    <TextBlock Grid.Column="1"
                                                                Text="{Binding Text}"
                                                                TextTrimming="CharacterEllipsis"
                                                                MaxHeight="40"
                                                                TextWrapping="Wrap"
                                                                VerticalAlignment="Center"
-                                                               Margin="2,0,10,0"
+                                                               Margin="0,0,10,0"
                                                                FontFamily="Segoe UI Variable Text, Segoe UI"
                                                                FontSize="13"
                                                                Foreground="#3C3C43"/>
 
                                                     <!-- trash -->
-                                                    <Button Grid.Column="1"
+                                                    <Button Grid.Column="2"
                                                             Click="DeleteHistoryItem_Click"
-                                                            Tag="{Binding}"
+                                                            Tag="{Binding Entry}"
                                                             Width="28"
                                                             Height="28"
                                                             Cursor="Hand"
                                                             ToolTip="Delete"
                                                             VerticalAlignment="Center">
+                                                        <Button.Style>
+                                                            <Style TargetType="Button">
+                                                                <Setter Property="Opacity" Value="0"/>
+                                                                <Setter Property="IsHitTestVisible" Value="False"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Border}}"
+                                                                                 Value="True">
+                                                                        <Setter Property="IsHitTestVisible" Value="True"/>
+                                                                        <DataTrigger.EnterActions>
+                                                                            <BeginStoryboard>
+                                                                                <Storyboard>
+                                                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                                                                     To="1"
+                                                                                                     Duration="0:0:0.08"/>
+                                                                                </Storyboard>
+                                                                            </BeginStoryboard>
+                                                                        </DataTrigger.EnterActions>
+                                                                        <DataTrigger.ExitActions>
+                                                                            <BeginStoryboard>
+                                                                                <Storyboard>
+                                                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                                                                     To="0"
+                                                                                                     Duration="0:0:0.06"/>
+                                                                                </Storyboard>
+                                                                            </BeginStoryboard>
+                                                                        </DataTrigger.ExitActions>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
                                                         <Button.Template>
                                                             <ControlTemplate TargetType="Button">
                                                                 <Border x:Name="Bg"
@@ -249,6 +282,7 @@
                                 </ItemsControl>
                             </StackPanel>
                         </ScrollViewer>
+                        </Grid>
                     </Border>
 
                     <!-- "Copied" toast -->

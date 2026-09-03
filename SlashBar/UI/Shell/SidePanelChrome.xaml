@@ -102,7 +102,7 @@
     </Style>
 
     <ControlTemplate x:Key="SidePanelThinVerticalScrollBarTemplate" TargetType="ScrollBar">
-        <Grid Width="4" Background="Transparent">
+        <Grid Width="6" Background="Transparent">
             <Track x:Name="PART_Track" IsDirectionReversed="True">
                 <Track.DecreaseRepeatButton>
                     <RepeatButton Command="ScrollBar.PageUpCommand"
@@ -113,9 +113,18 @@
                     <Thumb>
                         <Thumb.Template>
                             <ControlTemplate TargetType="Thumb">
-                                <Border Background="#338E8E93"
-                                        CornerRadius="2"
-                                        MinHeight="24"/>
+                                <Border x:Name="ThumbBg"
+                                        Background="#3D000000"
+                                        CornerRadius="3"
+                                        MinHeight="32"/>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="ThumbBg" Property="Background" Value="#66000000"/>
+                                    </Trigger>
+                                    <Trigger Property="IsDragging" Value="True">
+                                        <Setter TargetName="ThumbBg" Property="Background" Value="#80000000"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
                             </ControlTemplate>
                         </Thumb.Template>
                     </Thumb>
@@ -130,13 +139,41 @@
     </ControlTemplate>
 
     <Style x:Key="SidePanelThinScrollBar" TargetType="ScrollBar">
-        <Setter Property="Width" Value="4"/>
-        <Setter Property="MinWidth" Value="4"/>
+        <Setter Property="Width" Value="6"/>
+        <Setter Property="MinWidth" Value="6"/>
         <Style.Triggers>
             <Trigger Property="Orientation" Value="Vertical">
                 <Setter Property="Template" Value="{StaticResource SidePanelThinVerticalScrollBarTemplate}"/>
             </Trigger>
         </Style.Triggers>
     </Style>
+
+    <ControlTemplate x:Key="SidePanelOverlayScrollViewerTemplate" TargetType="ScrollViewer">
+        <Grid>
+            <ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
+                                    Margin="{TemplateBinding Padding}"
+                                    CanContentScroll="{TemplateBinding CanContentScroll}"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"/>
+            <ScrollBar x:Name="PART_VerticalScrollBar"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Stretch"
+                       Orientation="Vertical"
+                       Width="6"
+                       Margin="0,8,8,8"
+                       Minimum="0"
+                       Maximum="{TemplateBinding ScrollableHeight}"
+                       ViewportSize="{TemplateBinding ViewportHeight}"
+                       Value="{TemplateBinding VerticalOffset}"
+                       Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                       Style="{StaticResource SidePanelThinScrollBar}"/>
+            <ScrollBar x:Name="PART_HorizontalScrollBar"
+                       Orientation="Horizontal"
+                       Visibility="Collapsed"
+                       Maximum="{TemplateBinding ScrollableWidth}"
+                       ViewportSize="{TemplateBinding ViewportWidth}"
+                       Value="{TemplateBinding HorizontalOffset}"/>
+        </Grid>
+    </ControlTemplate>
 
 </ResourceDictionary>

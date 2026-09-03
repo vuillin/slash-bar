@@ -39,7 +39,7 @@ public static class WeatherLocationStore {
             return null;
 
         return new StoredGeocode {
-            CityQuery = geocode.CityQuery.Trim(),
+            CityQuery = geocode.CityQuery?.Trim() ?? "",
             Latitude = geocode.Latitude,
             Longitude = geocode.Longitude,
             Label = geocode.Label?.Trim() ?? ""

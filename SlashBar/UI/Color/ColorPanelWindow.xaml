@@ -64,23 +64,6 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <StackPanel Grid.Column="0"
-                                        Orientation="Horizontal"
-                                        VerticalAlignment="Center"
-                                        IsHitTestVisible="False">
-                                <Image Source="{StaticResource IconColorMuted}"
-                                       Width="15"
-                                       Height="15"
-                                       Margin="0,0,6,0"
-                                       VerticalAlignment="Center"/>
-                                <TextBlock Text="Color picker"
-                                           FontFamily="Segoe UI Variable Text, Segoe UI"
-                                           FontSize="15"
-                                           FontWeight="Medium"
-                                           Foreground="#B8B8BD"
-                                           VerticalAlignment="Center"/>
-                            </StackPanel>
-
                             <StackPanel Grid.Column="1"
                                         Orientation="Horizontal"
                                         VerticalAlignment="Center">
@@ -356,6 +339,14 @@
                                                         </Style.Triggers>
                                                     </Style>
                                                 </Border.Style>
+                                                <TextBlock Text="{Binding Hex}"
+                                                           FontFamily="SF Mono, Cascadia Mono, Consolas, Segoe UI"
+                                                           FontSize="9"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{Binding HexForeground}"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           IsHitTestVisible="False"/>
                                             </Border>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>

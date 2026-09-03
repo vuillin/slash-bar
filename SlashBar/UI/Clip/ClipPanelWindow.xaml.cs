@@ -6,7 +6,7 @@ namespace SlashBar;
 
 public partial class ClipPanelWindow : DockedSidePanelWindow {
 
-    protected override double PanelContentWidth => 340;
+    protected override double PanelContentWidth => 372;
 
     private static ClipPanelWindow? _instance;
 
