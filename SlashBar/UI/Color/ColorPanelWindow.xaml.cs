@@ -9,6 +9,8 @@ public partial class ColorPanelWindow : DockedSidePanelWindow {
 
     protected override double PanelContentWidth => 390;
 
+    public override string DockShelfKey => "color";
+
     protected override double DockedHeight(double workAreaHeight) =>
         ColorHistory.Store.GetAll().Count > 0 ? 338 : 268;
 
@@ -46,27 +48,13 @@ public partial class ColorPanelWindow : DockedSidePanelWindow {
 
     public static void Toggle() {
         _instance ??= new ColorPanelWindow();
-
-        if (_instance.IsVisible) {
-            _instance.AnimateClose();
-        } else {
-            SidePanelCoordinator.CloseOthersExcept(typeof(ColorPanelWindow));
-            _instance.AnimateOpen();
-        }
-    }
-
-    public static void CloseIfOpen() {
-        if (_instance is { IsVisible: true })
-            _instance.AnimateClose();
-    }
-
-    static ColorPanelWindow() {
-        SidePanelCoordinator.Register(typeof(ColorPanelWindow), CloseIfOpen);
+        _instance.ToggleVisibility();
     }
 
 
     protected override void OnPanelOpening() {
         _colorLocked = false;
+        EyedropperToggle.IsChecked = true;
         EnablePickMode();
         SubscribeHistory();
         RefreshHistory();
@@ -78,8 +66,13 @@ public partial class ColorPanelWindow : DockedSidePanelWindow {
     protected override void OnPanelClosing() =>
         DisablePickMode();
 
-    protected override void OnResetToDockCompleted() {
-        if (!_pickModeActive)
+    private void EyedropperToggle_Changed(object sender, RoutedEventArgs e) {
+        if (!IsVisible)
+            return;
+
+        if (EyedropperToggle.IsChecked == true)
             EnablePickMode();
+        else
+            DisablePickMode();
     }
 }

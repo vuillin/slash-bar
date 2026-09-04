@@ -31,15 +31,11 @@ public partial class ColorPanelWindow {
 
     private void EnablePickMode() {
         _pickModeActive = true;
+        EnsureMagnifier();
         ShowOverlay();
-        ShowMagnifier();
         Owner = _overlay;
-
-        // After panel Show/Activate, IsMouseOver can flip for one tick
-        Dispatcher.BeginInvoke(() => {
-            if (_pickModeActive)
-                SyncMagnifierVisibility();
-        });
+        Activate();
+        SyncMagnifierVisibility();
     }
 
 
@@ -58,7 +54,7 @@ public partial class ColorPanelWindow {
         if (!_pickModeActive || _magnifier == null)
             return;
 
-        if (IsMouseOver) {
+        if (IsCursorOverPanel()) {
             _magnifier.Hide();
             return;
         }
@@ -68,11 +64,23 @@ public partial class ColorPanelWindow {
     }
 
 
-    private void ShowMagnifier() {
-        if (_magnifier != null) {
-            _magnifier.Show();
+    private bool IsCursorOverPanel() {
+        if (!IsVisible || ActualWidth <= 0 || ActualHeight <= 0)
+            return false;
+
+        var screenPos = System.Windows.Forms.Cursor.Position;
+        var dpi = VisualTreeHelper.GetDpi(this);
+        var x = screenPos.X / dpi.DpiScaleX;
+        var y = screenPos.Y / dpi.DpiScaleY;
+
+        return x >= Left && x < Left + ActualWidth
+            && y >= Top && y < Top + ActualHeight;
+    }
+
+
+    private void EnsureMagnifier() {
+        if (_magnifier != null)
             return;
-        }
 
         _sampler = new ScreenColorSampler(SampleSize);
         _sampleBuffer = new byte[SampleSize * SampleSize * 4];
@@ -131,8 +139,6 @@ public partial class ColorPanelWindow {
             _magnifierUpdatePending = false;
             UpdateMagnifier(System.Windows.Forms.Cursor.Position, force: false);
         };
-
-        _magnifier.Show();
     }
 
 
@@ -183,10 +189,11 @@ public partial class ColorPanelWindow {
         if (!_pickModeActive)
             return;
 
-        RequestMagnifierUpdate();
+        SyncMagnifierVisibility();
+        if (IsCursorOverPanel())
+            return;
 
-        if (!IsMouseOver)
-            _magnifier?.Show();
+        RequestMagnifierUpdate();
     }
 
 

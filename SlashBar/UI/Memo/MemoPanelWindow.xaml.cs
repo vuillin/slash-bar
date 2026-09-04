@@ -8,6 +8,8 @@ public partial class MemoPanelWindow : DockedSidePanelWindow {
 
     protected override double PanelContentWidth => 380;
 
+    public override string DockShelfKey => "memo";
+
     protected override double DockedHeight(double workAreaHeight) => 420;
 
     private static MemoPanelWindow? _instance;
@@ -28,21 +30,6 @@ public partial class MemoPanelWindow : DockedSidePanelWindow {
 
     public static void Toggle() {
         _instance ??= new MemoPanelWindow();
-
-        if (_instance.IsVisible) {
-            _instance.AnimateClose();
-        } else {
-            SidePanelCoordinator.CloseOthersExcept(typeof(MemoPanelWindow));
-            _instance.AnimateOpen();
-        }
-    }
-
-    public static void CloseIfOpen() {
-        if (_instance is { IsVisible: true })
-            _instance.AnimateClose();
-    }
-
-    static MemoPanelWindow() {
-        SidePanelCoordinator.Register(typeof(MemoPanelWindow), CloseIfOpen);
+        _instance.ToggleVisibility();
     }
 }

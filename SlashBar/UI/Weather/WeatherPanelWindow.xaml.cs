@@ -10,6 +10,7 @@ namespace SlashBar;
 public partial class WeatherPanelWindow : DockedSidePanelWindow {
 
     protected override double PanelContentWidth => 400;
+    public override string DockShelfKey => "weather";
     protected override double DockedHeight(double workAreaHeight) => 198;
 
     protected override double DockedTop(System.Drawing.Rectangle workArea, double height) =>
@@ -37,24 +38,7 @@ public partial class WeatherPanelWindow : DockedSidePanelWindow {
 
     public static void Toggle() {
         _instance ??= new WeatherPanelWindow();
-
-        if (_instance.IsVisible) {
-            _instance.AnimateClose();
-        } else {
-            SidePanelCoordinator.CloseOthersExcept(typeof(WeatherPanelWindow));
-            _instance.AnimateOpen();
-        }
-    }
-
-
-    public static void CloseIfOpen() {
-        if (_instance is { IsVisible: true })
-            _instance.AnimateClose();
-    }
-
-
-    static WeatherPanelWindow() {
-        SidePanelCoordinator.Register(typeof(WeatherPanelWindow), CloseIfOpen);
+        _instance.ToggleVisibility();
     }
 
 

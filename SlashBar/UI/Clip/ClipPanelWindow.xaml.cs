@@ -8,6 +8,8 @@ public partial class ClipPanelWindow : DockedSidePanelWindow {
 
     protected override double PanelContentWidth => 372;
 
+    public override string DockShelfKey => "clip";
+
     private static ClipPanelWindow? _instance;
 
     private bool _historySubscribed;
@@ -23,22 +25,7 @@ public partial class ClipPanelWindow : DockedSidePanelWindow {
 
     public static void Toggle() {
         _instance ??= new ClipPanelWindow();
-
-        if (_instance.IsVisible) {
-            _instance.AnimateClose();
-        } else {
-            SidePanelCoordinator.CloseOthersExcept(typeof(ClipPanelWindow));
-            _instance.AnimateOpen();
-        }
-    }
-
-    public static void CloseIfOpen() {
-        if (_instance is { IsVisible: true })
-            _instance.AnimateClose();
-    }
-
-    static ClipPanelWindow() {
-        SidePanelCoordinator.Register(typeof(ClipPanelWindow), CloseIfOpen);
+        _instance.ToggleVisibility();
     }
 
     protected override void OnPanelOpening() {

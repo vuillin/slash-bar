@@ -95,15 +95,14 @@
                                         Orientation="Horizontal"
                                         VerticalAlignment="Center">
 
-                                <Button x:Name="ResetButton"
-                                        Click="ResetButton_Click"
+                                <Button x:Name="MinimizeButton"
+                                        Click="MinimizeButton_Click"
                                         Width="19"
                                         Height="19"
                                         Cursor="Hand"
-                                        ToolTip="Reset position"
+                                        ToolTip="Minimize"
                                         Margin="0,0,8,0"
-                                        Visibility="Collapsed"
-                                        Template="{StaticResource SidePanelResetButtonTemplate}"/>
+                                        Template="{StaticResource SidePanelMinimizeButtonTemplate}"/>
 
                                 <Button Click="CloseButton_Click"
                                         Width="19"

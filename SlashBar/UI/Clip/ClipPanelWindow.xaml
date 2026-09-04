@@ -71,15 +71,14 @@
                                         VerticalAlignment="Center">
 
                                 <!-- orange light: reset position -->
-                                <Button x:Name="ResetButton"
-                                        Click="ResetButton_Click"
+                                <Button x:Name="MinimizeButton"
+                                        Click="MinimizeButton_Click"
                                         Width="19"
                                         Height="19"
                                         Cursor="Hand"
-                                        ToolTip="Reset position"
+                                        ToolTip="Minimize"
                                         Margin="0,0,8,0"
-                                        Visibility="Collapsed"
-                                        Template="{StaticResource SidePanelResetButtonTemplate}"/>
+                                        Template="{StaticResource SidePanelMinimizeButtonTemplate}"/>
 
                                 <!-- red light: close -->
                                 <Button Click="CloseButton_Click"
