@@ -102,6 +102,27 @@ public static class ShortcutCatalog {
     public static IReadOnlyList<ShortcutSlot> CreateRightRail() =>
         CreateRail(RightFromBar, mirrored: false);
 
+    public static bool TryGetDockVisual(
+        string prefix,
+        out System.Windows.Media.ImageSource? icon,
+        out WpfBrush background,
+        out string label) {
+        icon = null;
+        background = ShortcutTileBackgrounds.EmptyTileBackground;
+        label = Labels.TryGetValue(prefix, out var name) ? name : prefix;
+
+        if (!IconKeys.TryGetValue(prefix, out var iconKey))
+            return false;
+
+        if (System.Windows.Application.Current?.TryFindResource(iconKey)
+            is System.Windows.Media.ImageSource found)
+            icon = found;
+
+        background = ShortcutTileBackgrounds.ForPrefix(prefix)
+            ?? ShortcutTileBackgrounds.EmptyTileBackground;
+        return true;
+    }
+
     private static IReadOnlyList<ShortcutSlot> CreateRail(string?[] pinsFromBar, bool mirrored) {
         return Enumerable.Range(0, SlotCount)
             .Select(i => {

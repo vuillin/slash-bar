@@ -6,14 +6,17 @@ using System.Windows.Media.Animation;
 namespace SlashBar.UI.Shell;
 
 /// <summary>
-/// Shared shell for docked side panels (slide, traffic lights, detach).
-/// Derived windows must expose SlideTransform and ResetButton.
+/// Shared shell for docked side panels (slide, traffic lights, detach, minimize).
+/// Derived windows must expose SlideTransform and MinimizeButton.
 /// </summary>
 public abstract class DockedSidePanelWindow : Window {
 
     protected const double LeftMargin = 14;
 
     protected abstract double PanelContentWidth { get; }
+
+    /// <summary>Shortcut catalog prefix used for the bottom-left dock icon.</summary>
+    public abstract string DockShelfKey { get; }
 
     protected virtual double DockedHeight(double workAreaHeight) => workAreaHeight * 0.5;
 
@@ -35,33 +38,39 @@ public abstract class DockedSidePanelWindow : Window {
     private TranslateTransform Slide =>
         (TranslateTransform)FindName("SlideTransform")!;
 
-    private System.Windows.Controls.Button ResetBtn =>
-        (System.Windows.Controls.Button)FindName("ResetButton")!;
-
 
     protected virtual void OnPanelOpening() { }
     protected virtual void OnPanelOpened() { }
     protected virtual void OnPanelClosing() { }
-    protected virtual void OnResetToDockCompleted() { }
 
 
     protected void CloseButton_Click(object sender, RoutedEventArgs e) =>
         AnimateClose();
 
-    protected void ResetButton_Click(object sender, RoutedEventArgs e) =>
-        ResetToDock();
+    protected void MinimizeButton_Click(object sender, RoutedEventArgs e) =>
+        MinimizeToShelf();
 
     protected void HeaderBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
         if (IsAnimating)
             return;
 
-        if (VisualTreeExtensions.FindAncestor<System.Windows.Controls.Button>(e.OriginalSource as DependencyObject) != null)
+        if (VisualTreeExtensions.FindAncestor<System.Windows.Controls.Primitives.ButtonBase>(e.OriginalSource as DependencyObject) != null)
             return;
 
         if (!IsDetached)
             EnterDetachedMode();
 
         DragMove();
+    }
+
+
+    public void ToggleVisibility() {
+        if (IsVisible)
+            AnimateClose();
+        else if (SidePanelDockShelf.Contains(this))
+            SidePanelDockShelf.Restore(this);
+        else
+            AnimateOpen();
     }
 
 
@@ -83,14 +92,16 @@ public abstract class DockedSidePanelWindow : Window {
         if (IsAnimating)
             return;
 
+        SidePanelDockShelf.Remove(this);
+
         IsAnimating = true;
         IsDetached = false;
-        ResetBtn.Visibility = Visibility.Collapsed;
 
         PositionLeft();
         OnPanelOpening();
 
         Slide.X = HiddenX;
+        Opacity = 1;
         Show();
         Activate();
 
@@ -102,7 +113,12 @@ public abstract class DockedSidePanelWindow : Window {
 
 
     protected void AnimateClose() {
-        if (IsAnimating || !IsVisible)
+        if (IsAnimating || (!IsVisible && !SidePanelDockShelf.Contains(this)))
+            return;
+
+        SidePanelDockShelf.Remove(this);
+
+        if (!IsVisible)
             return;
 
         IsAnimating = true;
@@ -116,7 +132,6 @@ public abstract class DockedSidePanelWindow : Window {
                 Hide();
                 IsDetached = false;
                 IsAnimating = false;
-                ResetBtn.Visibility = Visibility.Collapsed;
             };
             BeginAnimation(OpacityProperty, fade);
             return;
@@ -133,6 +148,51 @@ public abstract class DockedSidePanelWindow : Window {
     }
 
 
+    protected void MinimizeToShelf() {
+        if (IsAnimating || !IsVisible)
+            return;
+
+        if (!SidePanelDockShelf.Minimize(this))
+            return;
+
+        IsAnimating = true;
+        OnPanelClosing();
+
+        var fade = new DoubleAnimation(Opacity, 0, TimeSpan.FromMilliseconds(160));
+        fade.Completed += (_, _) => {
+            BeginAnimation(OpacityProperty, null);
+            Opacity = 1;
+            Hide();
+            IsAnimating = false;
+        };
+        BeginAnimation(OpacityProperty, fade);
+    }
+
+
+    internal void RestoreFromShelf() {
+        if (IsAnimating || IsVisible)
+            return;
+
+        IsAnimating = true;
+        OnPanelOpening();
+
+        Slide.BeginAnimation(TranslateTransform.XProperty, null);
+        Slide.X = 0;
+        Opacity = 0;
+        Show();
+        Activate();
+
+        var fade = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(180));
+        fade.Completed += (_, _) => {
+            BeginAnimation(OpacityProperty, null);
+            Opacity = 1;
+            IsAnimating = false;
+            OnPanelOpened();
+        };
+        BeginAnimation(OpacityProperty, fade);
+    }
+
+
     protected void AnimateSlide(double from, double to, int ms, EasingMode mode, Action onDone) {
         var anim = new DoubleAnimation(from, to, TimeSpan.FromMilliseconds(ms)) {
             EasingFunction = new QuadraticEase { EasingMode = mode }
@@ -144,50 +204,5 @@ public abstract class DockedSidePanelWindow : Window {
 
     protected void EnterDetachedMode() {
         IsDetached = true;
-        ResetBtn.Visibility = Visibility.Visible;
-    }
-
-
-    protected void ResetToDock() {
-        if (IsAnimating)
-            return;
-
-        IsAnimating = true;
-        IsDetached = false;
-
-        var screen = System.Windows.Forms.Screen.PrimaryScreen
-            ?? System.Windows.Forms.Screen.AllScreens[0];
-        var area = screen.WorkingArea;
-        var height = DockedHeight(area.Height);
-        var pad = ShadowMargin;
-        var targetLeft = area.Left - pad.Left;
-        var targetTop = DockedTop(area, height) - pad.Top;
-        var targetHeight = height + pad.Top + pad.Bottom;
-
-        Slide.BeginAnimation(TranslateTransform.XProperty, null);
-        Slide.X = 0;
-
-        var ease = new QuadraticEase { EasingMode = EasingMode.EaseInOut };
-        var animL = new DoubleAnimation(Left, targetLeft, TimeSpan.FromMilliseconds(280)) { EasingFunction = ease };
-        var animT = new DoubleAnimation(Top, targetTop, TimeSpan.FromMilliseconds(280)) { EasingFunction = ease };
-        var animH = new DoubleAnimation(Height, targetHeight, TimeSpan.FromMilliseconds(280)) { EasingFunction = ease };
-
-        animL.Completed += (_, _) => {
-            Left = targetLeft;
-            Top = targetTop;
-            Height = targetHeight;
-            Width = ShellWidth;
-            BeginAnimation(LeftProperty, null);
-            BeginAnimation(TopProperty, null);
-            BeginAnimation(HeightProperty, null);
-
-            ResetBtn.Visibility = Visibility.Collapsed;
-            IsAnimating = false;
-            OnResetToDockCompleted();
-        };
-
-        BeginAnimation(LeftProperty, animL);
-        BeginAnimation(TopProperty, animT);
-        BeginAnimation(HeightProperty, animH);
     }
 }

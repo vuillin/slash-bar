@@ -1,7 +1,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <ControlTemplate x:Key="SidePanelResetButtonTemplate" TargetType="Button">
+    <ControlTemplate x:Key="SidePanelMinimizeButtonTemplate" TargetType="Button">
         <Border x:Name="Bg"
                 Background="#FEBC2E"
                 CornerRadius="9.5"

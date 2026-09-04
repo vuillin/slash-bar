@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Color panel: eyedropper toggle in the header (on by default)
+- Side panel minimize: yellow traffic-light sends a panel to a bottom-left icon shelf; click the icon to restore it
+
+### Changed
+
+- Side panels can stay open together; opening one no longer closes the others
+- Yellow traffic-light no longer re-docks a detached panel
+
 ## [1.2.0] - 2026-09-04
 
 ### Added
