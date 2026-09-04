@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-04
+
+### Added
+
+- Clipboard history: content-type icons (color, code, file path, URL, email, long text, other)
+- Refreshed Color, Clipboard, and Memo panel layouts and shortcut icons
+
+### Changed
+
+- Side panels no longer collapse to a dock tab; drag to detach and reset to dock remain
+- Side panel chrome simplified (removed collapse / chevron controls)
+- README updated for panel behavior
+
+### Removed
+
+- Panel collapse / expand (dock tab) on side panels
+
 ## [1.1.0] - 2026-09-01
 
 ### Added
@@ -46,6 +63,7 @@ First public release.
 - Dev launcher (`run.ps1`) uses `dotnet` from PATH / `DOTNET_ROOT` instead of a machine-specific SDK path
 - Full English UI, module messages, and in-code comments
 
-[Unreleased]: https://github.com/vuillin/slash-bar/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/vuillin/slash-bar/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/vuillin/slash-bar/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/vuillin/slash-bar/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/vuillin/slash-bar/releases/tag/v1.0.0

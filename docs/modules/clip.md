@@ -16,6 +16,8 @@ clip
 | Trash icon | Delete the entry |
 | Clear all | Empty the history |
 
+Each entry shows an icon based on content type (color, code, file path, URL, email, long text, or other).
+
 History is persisted at `%LocalAppData%/SlashBar/clipboard-history.json`.
 
 ## Examples

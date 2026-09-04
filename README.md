@@ -20,9 +20,9 @@ Press `Ctrl+Space` to show the bar at the bottom of the screen.
 - left: Memo, Weather
 - right: Color Picker, Clipboard
 
-**Panels** — Memo, Color, Clip, and Weather open as docked side panels (only one at a time). You can collapse, detach, or close them. They also open via command (`memo`, `color`, `clip`, `weather`).
+**Panels** — Memo, Color, Clip, and Weather open as docked side panels (only one at a time). Drag the header to detach, use reset to re-dock, or close them. They also open via command (`memo`, `color`, `clip`, `weather`).
 
-**History** — clipboard and picked colors keep a history in their panels; bar commands can be replayed with the arrow keys.
+**History** — clipboard and picked colors keep a history in their panels (clipboard entries show a content-type icon). Bar commands can be replayed with the arrow keys.
 
 ## Shortcuts
 
