@@ -22,7 +22,6 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="14"/>
                 <ColumnDefinition Width="390"/>
-                <ColumnDefinition Width="32"/>
             </Grid.ColumnDefinitions>
 
             <Border x:Name="RootBorder"
@@ -378,28 +377,6 @@
                     </Border>
                 </Grid>
             </Border>
-
-            <Button x:Name="DockButton"
-                    Grid.Column="2"
-                    Click="DockButton_Click"
-                    Width="34"
-                    Height="100"
-                    Margin="-2,0,0,0"
-                    Cursor="Hand"
-                    VerticalAlignment="Center"
-                    ToolTip="Collapse / Expand"
-                    Template="{StaticResource SidePanelDockButtonTemplate}">
-                <Path x:Name="Chevron"
-                      Stroke="#8E8E93"
-                      StrokeThickness="2.2"
-                      StrokeStartLineCap="Round"
-                      StrokeEndLineCap="Round"
-                      StrokeLineJoin="Round"
-                      Width="10"
-                      Height="14"
-                      Stretch="Uniform"
-                      Data="M 6,0 L 1,6 L 6,12"/>
-            </Button>
         </Grid>
     </Border>
 </shell:DockedSidePanelWindow>

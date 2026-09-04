@@ -7,7 +7,7 @@ namespace SlashBar;
 
 public partial class ColorPanelWindow : DockedSidePanelWindow {
 
-    protected override double PanelContentWidth => 382;
+    protected override double PanelContentWidth => 390;
 
     protected override double DockedHeight(double workAreaHeight) =>
         ColorHistory.Store.GetAll().Count > 0 ? 338 : 268;
@@ -77,15 +77,6 @@ public partial class ColorPanelWindow : DockedSidePanelWindow {
 
     protected override void OnPanelClosing() =>
         DisablePickMode();
-
-    protected override void OnPanelCollapsed() =>
-        DisablePickMode();
-
-    protected override void OnPanelExpanding() =>
-        EnablePickMode();
-
-    protected override void OnPanelExpanded() =>
-        SyncMagnifierVisibility();
 
     protected override void OnResetToDockCompleted() {
         if (!_pickModeActive)

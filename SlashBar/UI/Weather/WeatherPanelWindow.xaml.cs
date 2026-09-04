@@ -10,7 +10,6 @@ namespace SlashBar;
 public partial class WeatherPanelWindow : DockedSidePanelWindow {
 
     protected override double PanelContentWidth => 400;
-    protected override bool ShowsDockTab => false;
     protected override double DockedHeight(double workAreaHeight) => 198;
 
     protected override double DockedTop(System.Drawing.Rectangle workArea, double height) =>

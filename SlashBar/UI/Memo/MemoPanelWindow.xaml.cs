@@ -8,6 +8,8 @@ public partial class MemoPanelWindow : DockedSidePanelWindow {
 
     protected override double PanelContentWidth => 380;
 
+    protected override double DockedHeight(double workAreaHeight) => 420;
+
     private static MemoPanelWindow? _instance;
 
     private MemoPanelWindow() {

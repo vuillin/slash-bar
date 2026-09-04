@@ -14,9 +14,9 @@ internal static class ShortcutTileBackgrounds {
         (0x00, 0x47, 0xAB));
 
     private static readonly WpfBrush Memo = CreateLinear(
-        (0xFF, 0xD6, 0x60),
-        (0xFF, 0x9F, 0x0A),
-        (0xC7, 0x77, 0x00));
+        (0x6E, 0xA8, 0xFF),
+        (0x3E, 0x8D, 0xFC),
+        (0x1E, 0x5C, 0xC8));
 
     private static readonly WpfBrush Color = CreateLinear(
         (0xFF, 0x69, 0x61),
@@ -77,8 +77,8 @@ public static class ShortcutCatalog {
     private const double AlignNudge = 17;
 
     // Near the bar → outward. null = empty slot.
-    private static readonly string?[] LeftFromBar = ["memo", "weather", null, null, null];
-    private static readonly string?[] RightFromBar = ["color", "clip", null, null, null];
+    private static readonly string?[] LeftFromBar = ["color", "weather", null, null, null];
+    private static readonly string?[] RightFromBar = ["memo", "clip", null, null, null];
 
     private static readonly Dictionary<string, string> Glyphs = new(StringComparer.OrdinalIgnoreCase);
 

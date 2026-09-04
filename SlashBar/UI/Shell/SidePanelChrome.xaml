@@ -57,25 +57,6 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <ControlTemplate x:Key="SidePanelDockButtonTemplate" TargetType="Button">
-        <Border x:Name="TabBg"
-                Background="#E8E8ED"
-                BorderBrush="#1A000000"
-                BorderThickness="0,1,1,1"
-                CornerRadius="0,14,14,0">
-            <ContentPresenter HorizontalAlignment="Center"
-                              VerticalAlignment="Center"/>
-        </Border>
-        <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter TargetName="TabBg" Property="Background" Value="#DEDEE3"/>
-            </Trigger>
-            <Trigger Property="IsPressed" Value="True">
-                <Setter TargetName="TabBg" Property="Background" Value="#D1D1D6"/>
-            </Trigger>
-        </ControlTemplate.Triggers>
-    </ControlTemplate>
-
     <Thickness x:Key="SidePanelShadowMargin">0,32,24,32</Thickness>
 
     <Style x:Key="SidePanelCopiedToastStyle" TargetType="Border">

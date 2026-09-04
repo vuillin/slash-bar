@@ -58,7 +58,7 @@ public partial class ColorPanelWindow {
         if (!_pickModeActive || _magnifier == null)
             return;
 
-        if (IsMouseOver || IsCollapsed) {
+        if (IsMouseOver) {
             _magnifier.Hide();
             return;
         }
