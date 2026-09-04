@@ -12,6 +12,7 @@ color
 
 | Action | Effect |
 |--------|--------|
+| Eyedropper icon (header) | Toggle screen sampling on/off (on by default) |
 | Mouse outside the panel | Eyedropper + magnifier; live color preview |
 | Click outside the panel | Lock the sampled color |
 | Copy Hex / RGB | Copy to clipboard and add to history (max 5) |

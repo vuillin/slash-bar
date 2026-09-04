@@ -63,19 +63,66 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
+                            <ToggleButton x:Name="EyedropperToggle"
+                                          Grid.Column="0"
+                                          IsChecked="True"
+                                          Width="28"
+                                          Height="28"
+                                          Cursor="Hand"
+                                          ToolTip="Eyedropper"
+                                          HorizontalAlignment="Left"
+                                          VerticalAlignment="Center"
+                                          Margin="4,0,0,0"
+                                          Checked="EyedropperToggle_Changed"
+                                          Unchecked="EyedropperToggle_Changed">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="Bg"
+                                                Background="Transparent"
+                                                CornerRadius="8"
+                                                Width="28"
+                                                Height="28">
+                                            <Image Source="{StaticResource IconEyedropper}"
+                                                   Width="15"
+                                                   Height="15"
+                                                   Stretch="Uniform"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bg" Property="Background" Value="#14000000"/>
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="Bg" Property="Background" Value="#E8E8ED"/>
+                                            </Trigger>
+                                            <MultiTrigger>
+                                                <MultiTrigger.Conditions>
+                                                    <Condition Property="IsChecked" Value="True"/>
+                                                    <Condition Property="IsMouseOver" Value="True"/>
+                                                </MultiTrigger.Conditions>
+                                                <Setter TargetName="Bg" Property="Background" Value="#DDDDE2"/>
+                                            </MultiTrigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="Bg" Property="Background" Value="#DDDDE2"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+
                             <StackPanel Grid.Column="1"
                                         Orientation="Horizontal"
                                         VerticalAlignment="Center">
 
-                                <Button x:Name="ResetButton"
-                                        Click="ResetButton_Click"
+                                <Button x:Name="MinimizeButton"
+                                        Click="MinimizeButton_Click"
                                         Width="19"
                                         Height="19"
                                         Cursor="Hand"
-                                        ToolTip="Reset position"
+                                        ToolTip="Minimize"
                                         Margin="0,0,8,0"
-                                        Visibility="Collapsed"
-                                        Template="{StaticResource SidePanelResetButtonTemplate}"/>
+                                        Template="{StaticResource SidePanelMinimizeButtonTemplate}"/>
 
                                 <Button Click="CloseButton_Click"
                                         Width="19"
