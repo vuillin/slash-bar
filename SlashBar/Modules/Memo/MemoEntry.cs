@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace SlashBar.Modules.Memo;
 
 public sealed class MemoEntry {
@@ -9,4 +11,7 @@ public sealed class MemoEntry {
     public string Value { get; set; } = "";
 
     public DateTimeOffset CreatedAt { get; set; }
+
+    [JsonIgnore]
+    public string NameUpper => Name.ToUpperInvariant();
 }

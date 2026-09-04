@@ -27,7 +27,7 @@
             <Border x:Name="RootBorder"
                     Grid.Column="1"
                     CornerRadius="24"
-                    Background="#F2F2F7"
+                    Background="#FFFFFF"
                     BorderBrush="#1A000000"
                     BorderThickness="1">
                 <Border.Effect>
@@ -46,40 +46,28 @@
 
                     <Border x:Name="HeaderBar"
                             Grid.Row="0"
-                            Background="#E8E8ED"
-                            BorderBrush="#14000000"
-                            BorderThickness="0,0,0,1"
+                            Background="Transparent"
                             CornerRadius="24,24,0,0"
-                            Padding="14,12"
+                            Padding="14,10,14,6"
                             Cursor="SizeAll"
                             MouseLeftButtonDown="HeaderBar_MouseLeftButtonDown">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Column="0"
-                                       Text="&#xE8C8;"
-                                       FontFamily="Segoe MDL2 Assets"
-                                       FontSize="16"
-                                       Foreground="#8E8E93"
-                                       VerticalAlignment="Center"
-                                       Margin="0,0,10,0"
-                                       IsHitTestVisible="False"/>
-
-                            <TextBlock Grid.Column="1"
                                        Text="Memo"
+                                       Margin="4,4,0,0"
                                        FontFamily="Segoe UI Variable Text, Segoe UI"
-                                       FontSize="15"
-                                       FontWeight="Medium"
-                                       Foreground="#3C3C43"
+                                       FontSize="17"
+                                       FontWeight="Bold"
+                                       Foreground="#1C1C1E"
                                        VerticalAlignment="Center"
-                                       Opacity="0.55"
                                        IsHitTestVisible="False"/>
 
-                            <StackPanel Grid.Column="2"
+                            <StackPanel Grid.Column="1"
                                         Orientation="Horizontal"
                                         VerticalAlignment="Center">
 
@@ -105,16 +93,11 @@
                     </Border>
 
                     <Border Grid.Row="1"
-                            Background="#F2F2F7"
+                            Background="Transparent"
                             CornerRadius="0,0,24,24"
                             Padding="16,14,16,18">
                         <StackPanel>
-                            <Border Background="#FFFFFF"
-                                    CornerRadius="16"
-                                    BorderBrush="#0F000000"
-                                    BorderThickness="1"
-                                    Padding="14,14,14,12">
-                                <Grid>
+                            <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="10"/>
@@ -281,20 +264,18 @@
                                         </Button.Template>
                                     </Button>
                                 </Grid>
-                            </Border>
 
                             <Border Margin="0,12,0,0"
-                                    Background="#FFFFFF"
+                                    Background="#F2F2F7"
                                     CornerRadius="12"
-                                    BorderBrush="#0F000000"
-                                    BorderThickness="1"
+                                    BorderThickness="0"
                                     Padding="12,7">
                                 <DockPanel LastChildFill="True">
                                     <TextBlock DockPanel.Dock="Left"
                                                Text="&#xE721;"
                                                FontFamily="Segoe MDL2 Assets"
                                                FontSize="14"
-                                               Foreground="#8E8E93"
+                                               Foreground="#636366"
                                                VerticalAlignment="Center"
                                                Margin="0,0,8,0"
                                                IsHitTestVisible="False"/>
@@ -361,49 +342,81 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <!-- Tag="{Binding}" = the whole MemoEntry is stored on the card -->
-                                            <Border Margin="0,0,0,8"
-                                                    Padding="12,10"
+                                            <Border Padding="0,12"
                                                     Cursor="Hand"
-                                                    Background="#FFFFFF"
-                                                    BorderBrush="#14000000"
-                                                    BorderThickness="1"
-                                                    CornerRadius="12"
                                                     MouseLeftButtonUp="MemoItem_Click"
                                                     Tag="{Binding}">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="Transparent"/>
                                                         <Style.Triggers>
                                                             <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter Property="Background" Value="#F8F8FA"/>
+                                                                <Setter Property="Background" Value="#08000000"/>
                                                             </Trigger>
                                                         </Style.Triggers>
                                                     </Style>
                                                 </Border.Style>
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
                                                         <ColumnDefinition Width="*"/>
                                                         <ColumnDefinition Width="Auto"/>
                                                     </Grid.ColumnDefinitions>
 
-                                                    <StackPanel Grid.Column="0" Margin="2,0,10,0">
-                                                        <TextBlock Text="{Binding Name}"
+                                                    <Border Grid.Column="0"
+                                                            Width="3"
+                                                            CornerRadius="1.5"
+                                                            Background="#3E8DFC"
+                                                            Margin="0,2,12,2"/>
+
+                                                    <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                                                        <TextBlock Text="{Binding NameUpper}"
                                                                 FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
                                                                 FontSize="12"
-                                                                FontWeight="SemiBold"
-                                                                Foreground="#8E8E93"/>
+                                                                FontWeight="Bold"
+                                                                Foreground="#1C1C1E"/>
                                                         <TextBlock Text="{Binding Value}"
                                                                 FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
                                                                 FontSize="13"
                                                                 FontWeight="Medium"
-                                                                Foreground="#1C1C1E"
+                                                                Foreground="#8E8E93"
                                                                 TextTrimming="CharacterEllipsis"
                                                                 Margin="0,2,0,0"/>
                                                     </StackPanel>
 
-                                                    <StackPanel Grid.Column="1"
+                                                    <StackPanel Grid.Column="2"
                                                                 Orientation="Horizontal"
                                                                 VerticalAlignment="Center">
+                                                        <StackPanel.Style>
+                                                            <Style TargetType="StackPanel">
+                                                                <Setter Property="Opacity" Value="0"/>
+                                                                <Setter Property="IsHitTestVisible" Value="False"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Border}}"
+                                                                                 Value="True">
+                                                                        <Setter Property="IsHitTestVisible" Value="True"/>
+                                                                        <DataTrigger.EnterActions>
+                                                                            <BeginStoryboard>
+                                                                                <Storyboard>
+                                                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                                                                     To="1"
+                                                                                                     Duration="0:0:0.08"/>
+                                                                                </Storyboard>
+                                                                            </BeginStoryboard>
+                                                                        </DataTrigger.EnterActions>
+                                                                        <DataTrigger.ExitActions>
+                                                                            <BeginStoryboard>
+                                                                                <Storyboard>
+                                                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                                                                     To="0"
+                                                                                                     Duration="0:0:0.06"/>
+                                                                                </Storyboard>
+                                                                            </BeginStoryboard>
+                                                                        </DataTrigger.ExitActions>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </StackPanel.Style>
 
                                                         <!-- pencil: edit -->
                                                         <Button Click="EditMemo_Click"
@@ -420,21 +433,19 @@
                                                                             CornerRadius="8"
                                                                             Width="28"
                                                                             Height="28">
-                                                                        <TextBlock x:Name="Icon"
-                                                                                   Text="&#xE70F;"
-                                                                                   FontFamily="Segoe MDL2 Assets"
-                                                                                   FontSize="14"
-                                                                                   Foreground="#8E8E93"
-                                                                                   HorizontalAlignment="Center"
-                                                                                   VerticalAlignment="Center"/>
+                                                                        <Image Source="{StaticResource IconMemoEdit}"
+                                                                               Width="15"
+                                                                               Height="15"
+                                                                               Stretch="Uniform"
+                                                                               HorizontalAlignment="Center"
+                                                                               VerticalAlignment="Center"/>
                                                                     </Border>
                                                                     <ControlTemplate.Triggers>
                                                                         <Trigger Property="IsMouseOver" Value="True">
-                                                                            <Setter TargetName="Bg" Property="Background" Value="#1A007AFF"/>
-                                                                            <Setter TargetName="Icon" Property="Foreground" Value="#007AFF"/>
+                                                                            <Setter TargetName="Bg" Property="Background" Value="#1A3E8DFC"/>
                                                                         </Trigger>
                                                                         <Trigger Property="IsPressed" Value="True">
-                                                                            <Setter TargetName="Bg" Property="Background" Value="#33007AFF"/>
+                                                                            <Setter TargetName="Bg" Property="Background" Value="#333E8DFC"/>
                                                                         </Trigger>
                                                                     </ControlTemplate.Triggers>
                                                                 </ControlTemplate>
