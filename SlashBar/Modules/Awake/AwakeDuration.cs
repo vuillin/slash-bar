@@ -15,6 +15,24 @@ public static class AwakeDuration {
     public static bool TryParse(string token, out TimeSpan duration) {
         duration = default;
 
+        if (!TryRead(token, out var value))
+            return false;
+
+        if (value > Max)
+            return false;
+
+        duration = value;
+        return true;
+    }
+
+
+    public static bool IsOverMax(string token) =>
+        TryRead(token, out var value) && value > Max;
+
+
+    private static bool TryRead(string token, out TimeSpan duration) {
+        duration = default;
+
         var m = Pattern.Match(token.Trim());
         if (!m.Success)
             return false;
@@ -28,7 +46,7 @@ public static class AwakeDuration {
             ? TimeSpan.FromHours(n)
             : TimeSpan.FromMinutes(n);
 
-        return duration <= Max;
+        return true;
     }
 
 

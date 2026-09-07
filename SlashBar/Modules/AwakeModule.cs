@@ -71,7 +71,7 @@ public sealed class AwakeModule : IModule {
                 continue;
             }
 
-            if (LooksLikeDuration(token)) {
+            if (AwakeDuration.IsOverMax(token)) {
                 error = "Max 24h";
                 return false;
             }
@@ -81,15 +81,5 @@ public sealed class AwakeModule : IModule {
         }
 
         return true;
-    }
-
-
-    private static bool LooksLikeDuration(string token) {
-        if (token.Length == 0)
-            return false;
-
-        var last = char.ToLowerInvariant(token[^1]);
-        var body = last is 'm' or 'h' ? token[..^1] : token;
-        return body.Length > 0 && body.All(char.IsDigit);
     }
 }
