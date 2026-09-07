@@ -4,6 +4,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using SlashBar.Modules.Awake;
 
 namespace SlashBar;
 
@@ -28,8 +29,26 @@ public partial class AwakeToastWindow : Window {
 
 
     public void ShowIndicator() {
-        if (_showing)
+        ToastText.Text = AwakeSession.Mode == AwakeMode.System
+            ? "Awake · system"
+            : "Awake";
+
+        if (AwakeSession.EndsAt is { } ends) {
+            var left = ends - DateTimeOffset.Now;
+            ToastDuration.Text = $"({AwakeDuration.FormatRemaining(left)})";
+            ToastDuration.Visibility = Visibility.Visible;
+        }
+        else {
+            ToastDuration.Text = "";
+            ToastDuration.Visibility = Visibility.Collapsed;
+        }
+
+        if (_showing) {
+            FitToContent();
+            UpdateLayout();
+            PlaceTopRightOnBarScreen();
             return;
+        }
 
         _showing = true;
         AnimateIn();
@@ -42,6 +61,16 @@ public partial class AwakeToastWindow : Window {
 
         _showing = false;
         AnimateOut();
+    }
+
+
+    private void ToastRoot_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+        if (!_showing)
+            return;
+
+        AwakeSession.Disable();
+        HideIndicator();
+        AppToast.ShowSuccess("Awake off");
     }
 
 

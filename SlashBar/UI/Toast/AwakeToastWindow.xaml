@@ -19,8 +19,10 @@
             Background="#F2FFFFFF"
             BorderBrush="#1A000000"
             BorderThickness="1"
+            Cursor="Hand"
             Opacity="0"
-            RenderTransformOrigin="1,0">
+            RenderTransformOrigin="1,0"
+            MouseLeftButtonUp="ToastRoot_MouseLeftButtonUp">
         <Border.RenderTransform>
             <TranslateTransform x:Name="ToastSlide" X="48"/>
         </Border.RenderTransform>
@@ -38,12 +40,22 @@
                        Foreground="#FF9500"
                        VerticalAlignment="Center"
                        Margin="0,0,10,0"/>
-            <TextBlock Text="Awake"
+            <TextBlock x:Name="ToastText"
+                       Text="Awake"
                        FontFamily="Segoe UI Variable Text, Segoe UI"
                        FontSize="13"
                        FontWeight="Medium"
                        Foreground="#3C3C43"
                        VerticalAlignment="Center"/>
+            <TextBlock x:Name="ToastDuration"
+                       Text=""
+                       FontFamily="Segoe UI Variable Text, Segoe UI"
+                       FontSize="13"
+                       FontWeight="Medium"
+                       Foreground="#8E8E93"
+                       VerticalAlignment="Center"
+                       Margin="6,0,0,0"
+                       Visibility="Collapsed"/>
         </StackPanel>
     </Border>
 </Window>

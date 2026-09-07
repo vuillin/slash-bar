@@ -1,16 +1,17 @@
 using System.Windows;
+using SlashBar.Modules.Awake;
 
 namespace SlashBar;
 
-/// <summary>
-/// Persistent top-right indicator while awake mode is active.
-/// </summary>
 public static class AwakeToast {
 
     private static AwakeToastWindow? _window;
+    private static bool _wired;
 
 
     public static void Show() {
+        EnsureWired();
+
         var app = System.Windows.Application.Current;
         if (app == null)
             return;
@@ -38,5 +39,22 @@ public static class AwakeToast {
             HideCore();
         else
             app.Dispatcher.Invoke(HideCore);
+    }
+
+
+    private static void EnsureWired() {
+        if (_wired)
+            return;
+        _wired = true;
+
+        AwakeSession.Changed += () => {
+            if (AwakeSession.IsActive)
+                Show();
+        };
+
+        AwakeSession.Expired += () => {
+            Hide();
+            AppToast.ShowSuccess("Awake off");
+        };
     }
 }
