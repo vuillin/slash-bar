@@ -7,15 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-09-07
+
 ### Added
 
-- Color panel: eyedropper toggle in the header (on by default)
+- `awake` module: keep system (and optionally display) awake; optional duration (`30m`, `2h`, bare minutes); max 24h; sticky toast with countdown; click toast to turn off
 - Side panel minimize: yellow traffic-light sends a panel to a bottom-left icon shelf; click the icon to restore it
+- Color panel: eyedropper toggle in the header (on by default)
 
 ### Changed
 
 - Side panels can stay open together; opening one no longer closes the others
-- Yellow traffic-light no longer re-docks a detached panel
+- Yellow traffic-light minimizes to the shelf instead of re-docking a detached panel
+- README and module docs updated for multi-panel, shelf, and `awake`
 
 ## [1.2.0] - 2026-09-04
 
@@ -73,7 +77,8 @@ First public release.
 - Dev launcher (`run.ps1`) uses `dotnet` from PATH / `DOTNET_ROOT` instead of a machine-specific SDK path
 - Full English UI, module messages, and in-code comments
 
-[Unreleased]: https://github.com/vuillin/slash-bar/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/vuillin/slash-bar/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/vuillin/slash-bar/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/vuillin/slash-bar/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/vuillin/slash-bar/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/vuillin/slash-bar/releases/tag/v1.0.0
