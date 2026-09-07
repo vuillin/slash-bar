@@ -29,6 +29,7 @@ Press `Ctrl+Space` to show the bar at the bottom of the screen.
 | Key | Action |
 |-----|--------|
 | `Ctrl+Space` | Open / close the bar |
+| `Ctrl+Shift+A` | Pin / unpin the foreground window (always on top) |
 | `Ctrl+Shift+Q` | Quit |
 | `Esc` | Close |
 | `Tab` | Complete the selected command or parameter |

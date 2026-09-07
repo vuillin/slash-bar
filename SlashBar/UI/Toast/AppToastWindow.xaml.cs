@@ -12,8 +12,9 @@ public partial class AppToastWindow : Window {
     private const int SwpNoZOrder = 0x0004;
     private const int SwpNoActivate = 0x0010;
     private const int SwpShowWindow = 0x0040;
+    private const int DefaultDurationMs = 1600;
 
-    private readonly DispatcherTimer _hideTimer;
+    private int _showId;
 
 
     [DllImport("user32.dll", SetLastError = true)]
@@ -24,18 +25,10 @@ public partial class AppToastWindow : Window {
 
     public AppToastWindow() {
         InitializeComponent();
-
-        _hideTimer = new DispatcherTimer {
-            Interval = TimeSpan.FromMilliseconds(1600),
-        };
-        _hideTimer.Tick += (_, _) => {
-            _hideTimer.Stop();
-            AnimateOut();
-        };
     }
 
 
-    public void ShowToast(string message, bool success, string? detail = null) {
+    public void ShowToast(string message, bool success, string? detail = null, int durationMs = DefaultDurationMs) {
         ToastText.Text = message;
 
         if (string.IsNullOrWhiteSpace(detail)) {
@@ -61,9 +54,24 @@ public partial class AppToastWindow : Window {
             ToastIcon.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFF, 0x3B, 0x30));
         }
 
+        var id = ++_showId;
         AnimateIn();
-        _hideTimer.Stop();
-        _hideTimer.Start();
+        _ = DismissAfterAsync(id, Math.Max(400, durationMs));
+    }
+
+
+    private async Task DismissAfterAsync(int showId, int durationMs) {
+        try {
+            await Task.Delay(durationMs).ConfigureAwait(true);
+        }
+        catch {
+            return;
+        }
+
+        if (showId != _showId)
+            return;
+
+        AnimateOut(showId);
     }
 
 
@@ -151,7 +159,10 @@ public partial class AppToastWindow : Window {
     }
 
 
-    private void AnimateOut() {
+    private void AnimateOut(int showId) {
+        if (showId != _showId)
+            return;
+
         var ease = new QuadraticEase { EasingMode = EasingMode.EaseIn };
         var fade = new DoubleAnimation(ToastRoot.Opacity, 0, TimeSpan.FromMilliseconds(180)) {
             EasingFunction = ease
@@ -160,7 +171,10 @@ public partial class AppToastWindow : Window {
             EasingFunction = ease
         };
 
-        fade.Completed += (_, _) => Hide();
+        fade.Completed += (_, _) => {
+            if (showId == _showId)
+                Hide();
+        };
 
         ToastRoot.BeginAnimation(OpacityProperty, fade);
         ToastSlide.BeginAnimation(TranslateTransform.XProperty, slide);
@@ -168,7 +182,7 @@ public partial class AppToastWindow : Window {
 
 
     public void CancelAndHide() {
-        _hideTimer.Stop();
+        _showId++;
         ToastRoot.BeginAnimation(OpacityProperty, null);
         ToastSlide.BeginAnimation(TranslateTransform.XProperty, null);
         Hide();

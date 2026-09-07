@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `pin` module: keep windows always on top; `Ctrl+Shift+A` toggles the foreground window; multi-pin; semi-transparent accent border (hides while dragging/resizing); `pin` / `pin off` from the bar; pin toasts ~3.2s
+
+### Changed
+
+- README shortcuts list includes `Ctrl+Shift+A` (pin)
+
 ## [1.3.0] - 2026-09-07
 
 ### Added

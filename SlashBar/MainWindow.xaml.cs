@@ -66,7 +66,7 @@ public partial class MainWindow : Window {
             _commandHistory.Add(command);
 
             if (result.Kind == ModuleResultKind.Success)
-                AppToast.ShowSuccess(result.Message, result.Detail);
+                AppToast.ShowSuccess(result.Message, result.Detail, result.DurationMs ?? 1600);
             else if (result.Kind == ModuleResultKind.Fail)
                 AppToast.ShowError(result.Message);
 

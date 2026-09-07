@@ -11,17 +11,23 @@ public sealed class ModuleResult {
     public ModuleResultKind Kind { get; }
     public string Message { get; }
     public string? Detail { get; }
+    public int? DurationMs { get; }
 
-    private ModuleResult(ModuleResultKind kind, string message, string? detail = null) {
+    private ModuleResult(
+        ModuleResultKind kind,
+        string message,
+        string? detail = null,
+        int? durationMs = null) {
         Kind = kind;
         Message = message;
         Detail = detail;
+        DurationMs = durationMs;
     }
 
     public static ModuleResult None { get; } = new(ModuleResultKind.None, "");
 
-    public static ModuleResult Ok(string message, string? detail = null) =>
-        new(ModuleResultKind.Success, message, detail);
+    public static ModuleResult Ok(string message, string? detail = null, int? durationMs = null) =>
+        new(ModuleResultKind.Success, message, detail, durationMs);
 
     public static ModuleResult Copied(string value) =>
         Ok("Copied", value);

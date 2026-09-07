@@ -13,3 +13,4 @@
 | `calc` | Calculator | [calc.md](modules/calc.md) |
 | `weather` | Weather | [weather.md](modules/weather.md) |
 | `awake` | Keep awake | [awake.md](modules/awake.md) |
+| `pin` | Pin (always on top) | [pin.md](modules/pin.md) |

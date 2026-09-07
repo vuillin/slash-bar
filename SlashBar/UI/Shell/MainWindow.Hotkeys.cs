@@ -1,8 +1,9 @@
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Interop;
+using SlashBar.Modules;
 using SlashBar.Modules.Clipboard;
+using SlashBar.Modules.Pin;
 
 namespace SlashBar;
 
@@ -10,12 +11,14 @@ public partial class MainWindow {
 
     private const int HotkeyId = 9000;
     private const int QuitHotkeyId = 9001;
+    private const int PinHotkeyId = 9002;
 
     private const uint MOD_CONTROL = 0x0002;
     private const uint MOD_SHIFT = 0x0004;
 
     private const uint VK_SPACE = 0x20;
     private const uint VK_Q = 0x51;
+    private const uint VK_A = 0x41;
     private const int WM_HOTKEY = 0x0312;
 
     private bool _hotkeysRegistered;
@@ -54,13 +57,18 @@ public partial class MainWindow {
             MOD_CONTROL | MOD_SHIFT,
             VK_Q);
 
-        if (!okSearch || !okQuit) {
+        bool okPin = RegisterHotKey(
+            helper.Handle,
+            PinHotkeyId,
+            MOD_CONTROL | MOD_SHIFT,
+            VK_A);
+
+        if (!okSearch || !okQuit || !okPin) {
             System.Windows.MessageBox.Show(
                 this,
-                "Could not register Ctrl+Space or Ctrl+Shift+Q.\n" +
+                "Could not register Ctrl+Space, Ctrl+Shift+Q, or Ctrl+Shift+A.\n" +
                 "Another app may already use this shortcut.",
                 "SlashBar");
-            return;
         }
 
         var source = HwndSource.FromHwnd(helper.Handle);
@@ -81,8 +89,24 @@ public partial class MainWindow {
             System.Windows.Application.Current.Shutdown();
             handled = true;
         }
+        else if (id == PinHotkeyId) {
+            TogglePinForeground();
+            handled = true;
+        }
 
         return IntPtr.Zero;
+    }
+
+    private static void TogglePinForeground() {
+        var result = PinSession.ToggleForeground();
+        if (result is null)
+            return;
+
+        var (pinned, title) = result.Value;
+        if (pinned)
+            AppToast.ShowSuccess("Pinned", title, PinModule.ToastDurationMs);
+        else
+            AppToast.ShowSuccess("Unpinned", title, PinModule.ToastDurationMs);
     }
 
     protected override void OnClosed(EventArgs e) {
@@ -90,6 +114,7 @@ public partial class MainWindow {
         if (helper.Handle != IntPtr.Zero) {
             UnregisterHotKey(helper.Handle, HotkeyId);
             UnregisterHotKey(helper.Handle, QuitHotkeyId);
+            UnregisterHotKey(helper.Handle, PinHotkeyId);
         }
 
         System.Windows.Application.Current.Shutdown();
