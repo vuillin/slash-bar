@@ -7,13 +7,13 @@ using System.Windows.Threading;
 
 namespace SlashBar;
 
-public partial class AppToastWindow : Window {
+public partial class AwakeToastWindow : Window {
 
     private const int SwpNoZOrder = 0x0004;
     private const int SwpNoActivate = 0x0010;
     private const int SwpShowWindow = 0x0040;
 
-    private readonly DispatcherTimer _hideTimer;
+    private bool _showing;
 
 
     [DllImport("user32.dll", SetLastError = true)]
@@ -22,48 +22,26 @@ public partial class AppToastWindow : Window {
         int X, int Y, int cx, int cy, uint uFlags);
 
 
-    public AppToastWindow() {
+    public AwakeToastWindow() {
         InitializeComponent();
-
-        _hideTimer = new DispatcherTimer {
-            Interval = TimeSpan.FromMilliseconds(1600),
-        };
-        _hideTimer.Tick += (_, _) => {
-            _hideTimer.Stop();
-            AnimateOut();
-        };
     }
 
 
-    public void ShowToast(string message, bool success, string? detail = null) {
-        ToastText.Text = message;
+    public void ShowIndicator() {
+        if (_showing)
+            return;
 
-        if (string.IsNullOrWhiteSpace(detail)) {
-            ToastDetail.Text = "";
-            ToastDetail.Visibility = Visibility.Collapsed;
-        }
-        else {
-            // single line for ellipsis; spaces / newlines → space
-            var flat = string.Join(' ',
-                detail.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
-            ToastDetail.Text = flat;
-            ToastDetail.Visibility = Visibility.Visible;
-        }
-
-        if (success) {
-            ToastIcon.Text = "✓";
-            ToastIcon.FontFamily = new System.Windows.Media.FontFamily("Segoe UI Variable Text, Segoe UI");
-            ToastIcon.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x34, 0xC7, 0x59));
-        }
-        else {
-            ToastIcon.Text = "!";
-            ToastIcon.FontFamily = new System.Windows.Media.FontFamily("Segoe UI Variable Text, Segoe UI");
-            ToastIcon.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFF, 0x3B, 0x30));
-        }
-
+        _showing = true;
         AnimateIn();
-        _hideTimer.Stop();
-        _hideTimer.Start();
+    }
+
+
+    public void HideIndicator() {
+        if (!_showing)
+            return;
+
+        _showing = false;
+        AnimateOut();
     }
 
 
@@ -77,12 +55,11 @@ public partial class AppToastWindow : Window {
 
     private void PlaceTopRightOnBarScreen() {
         var screen = GetBarScreen();
-        var area = screen.WorkingArea; // absolute pixels on the virtual desktop
+        var area = screen.WorkingArea;
 
         var hwnd = new WindowInteropHelper(this).EnsureHandle();
         UpdateLayout();
 
-        // size in pixels (DIPs → device)
         var source = PresentationSource.FromVisual(this);
         var toDevice = source?.CompositionTarget?.TransformToDevice ?? Matrix.Identity;
         var sizePx = toDevice.Transform(new System.Windows.Point(ActualWidth, ActualHeight));
@@ -100,7 +77,6 @@ public partial class AppToastWindow : Window {
     }
 
 
-    /// <summary>Screen that contains the SlashBar window.</summary>
     private static System.Windows.Forms.Screen GetBarScreen() {
         var bar = System.Windows.Application.Current?.MainWindow
             ?? System.Windows.Application.Current?.Windows.OfType<MainWindow>().FirstOrDefault();
@@ -109,7 +85,6 @@ public partial class AppToastWindow : Window {
             var source = PresentationSource.FromVisual(bar);
             var toDevice = source?.CompositionTarget?.TransformToDevice ?? Matrix.Identity;
 
-            // bar center in screen pixels
             var centerDip = new System.Windows.Point(
                 bar.Left + bar.ActualWidth / 2,
                 bar.Top + Math.Max(bar.ActualHeight / 2, 1));
@@ -136,7 +111,7 @@ public partial class AppToastWindow : Window {
         PlaceTopRightOnBarScreen();
 
         Dispatcher.BeginInvoke(() => {
-            if (!IsVisible)
+            if (!_showing || !IsVisible)
                 return;
             FitToContent();
             UpdateLayout();
@@ -164,13 +139,5 @@ public partial class AppToastWindow : Window {
 
         ToastRoot.BeginAnimation(OpacityProperty, fade);
         ToastSlide.BeginAnimation(TranslateTransform.XProperty, slide);
-    }
-
-
-    public void CancelAndHide() {
-        _hideTimer.Stop();
-        ToastRoot.BeginAnimation(OpacityProperty, null);
-        ToastSlide.BeginAnimation(TranslateTransform.XProperty, null);
-        Hide();
     }
 }
