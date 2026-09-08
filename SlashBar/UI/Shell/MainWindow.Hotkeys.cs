@@ -1,8 +1,8 @@
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using SlashBar.Modules;
 using SlashBar.Modules.Clipboard;
+using SlashBar.Modules.Native;
 using SlashBar.Modules.Pin;
 
 namespace SlashBar;
@@ -12,14 +12,6 @@ public partial class MainWindow {
     private const int HotkeyId = 9000;
     private const int QuitHotkeyId = 9001;
     private const int PinHotkeyId = 9002;
-
-    private const uint MOD_CONTROL = 0x0002;
-    private const uint MOD_SHIFT = 0x0004;
-
-    private const uint VK_SPACE = 0x20;
-    private const uint VK_Q = 0x51;
-    private const uint VK_A = 0x41;
-    private const int WM_HOTKEY = 0x0312;
 
     private bool _hotkeysRegistered;
 
@@ -45,23 +37,23 @@ public partial class MainWindow {
         var helper = new WindowInteropHelper(this);
         helper.EnsureHandle();
 
-        bool okSearch = RegisterHotKey(
+        bool okSearch = HotkeyNative.Register(
             helper.Handle,
             HotkeyId,
-            MOD_CONTROL,
-            VK_SPACE);
+            HotkeyNative.ModControl,
+            HotkeyNative.VkSpace);
 
-        bool okQuit = RegisterHotKey(
+        bool okQuit = HotkeyNative.Register(
             helper.Handle,
             QuitHotkeyId,
-            MOD_CONTROL | MOD_SHIFT,
-            VK_Q);
+            HotkeyNative.ModControl | HotkeyNative.ModShift,
+            HotkeyNative.VkQ);
 
-        bool okPin = RegisterHotKey(
+        bool okPin = HotkeyNative.Register(
             helper.Handle,
             PinHotkeyId,
-            MOD_CONTROL | MOD_SHIFT,
-            VK_A);
+            HotkeyNative.ModControl | HotkeyNative.ModShift,
+            HotkeyNative.VkA);
 
         if (!okSearch || !okQuit || !okPin) {
             System.Windows.MessageBox.Show(
@@ -76,7 +68,7 @@ public partial class MainWindow {
     }
 
     private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) {
-        if (msg != WM_HOTKEY)
+        if (msg != HotkeyNative.WmHotkey)
             return IntPtr.Zero;
 
         int id = wParam.ToInt32();
@@ -112,18 +104,12 @@ public partial class MainWindow {
     protected override void OnClosed(EventArgs e) {
         var helper = new WindowInteropHelper(this);
         if (helper.Handle != IntPtr.Zero) {
-            UnregisterHotKey(helper.Handle, HotkeyId);
-            UnregisterHotKey(helper.Handle, QuitHotkeyId);
-            UnregisterHotKey(helper.Handle, PinHotkeyId);
+            HotkeyNative.Unregister(helper.Handle, HotkeyId);
+            HotkeyNative.Unregister(helper.Handle, QuitHotkeyId);
+            HotkeyNative.Unregister(helper.Handle, PinHotkeyId);
         }
 
         System.Windows.Application.Current.Shutdown();
         base.OnClosed(e);
     }
-
-    [DllImport("user32.dll")]
-    private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
-
-    [DllImport("user32.dll")]
-    private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 }

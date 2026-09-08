@@ -1,18 +1,11 @@
-using System.Runtime.InteropServices;
 using System.Windows.Threading;
+using SlashBar.Modules.Native;
 
 namespace SlashBar.Modules.Awake;
 
 public static class AwakeSession {
 
-    private const uint EsContinuous = 0x80000000;
-    private const uint EsSystemRequired = 0x00000001;
-    private const uint EsDisplayRequired = 0x00000002;
-
     private static DispatcherTimer? _timer;
-
-    [DllImport("kernel32.dll")]
-    private static extern uint SetThreadExecutionState(uint esFlags);
 
 
     public static bool IsActive { get; private set; }
@@ -25,10 +18,10 @@ public static class AwakeSession {
 
     public static void Enable(AwakeMode mode, TimeSpan? duration = null) {
         var flags = mode == AwakeMode.System
-            ? EsContinuous | EsSystemRequired
-            : EsContinuous | EsSystemRequired | EsDisplayRequired;
+            ? ExecutionStateNative.Continuous | ExecutionStateNative.SystemRequired
+            : ExecutionStateNative.Continuous | ExecutionStateNative.SystemRequired | ExecutionStateNative.DisplayRequired;
 
-        SetThreadExecutionState(flags);
+        ExecutionStateNative.Set(flags);
         Mode = mode;
         IsActive = true;
 
@@ -52,7 +45,7 @@ public static class AwakeSession {
         if (!IsActive && _timer is null)
             return;
 
-        SetThreadExecutionState(EsContinuous);
+        ExecutionStateNative.Set(ExecutionStateNative.Continuous);
         IsActive = false;
         EndsAt = null;
         StopTimer();

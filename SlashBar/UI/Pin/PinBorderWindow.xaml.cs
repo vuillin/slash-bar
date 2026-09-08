@@ -1,47 +1,20 @@
-using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
+using SlashBar.Modules.Native;
 
 namespace SlashBar;
 
 public partial class PinBorderWindow : Window {
 
-    private const int GwlExstyle = -20;
-    private const int WsExTransparent = 0x00000020;
-    private const int WsExToolwindow = 0x00000080;
-    private const int WsExNoactivate = 0x08000000;
-    private const int WsExLayered = 0x00080000;
-
-    private const uint SwpNoactivate = 0x0010;
-    private const uint SwpShowWindow = 0x0040;
-    private const int DwmwaExtendedFrameBounds = 9;
-
-    private static readonly IntPtr HwndTopmost = new(-1);
-
-    private const uint EventSystemMovesizeStart = 0x000A;
-    private const uint EventSystemMovesizeEnd = 0x000B;
-    private const uint EventSystemMinimizeStart = 0x0016;
-    private const uint EventSystemMinimizeEnd = 0x0017;
-    private const uint EventObjectDestroy = 0x8001;
-    private const uint EventObjectLocationChange = 0x800B;
-
-    private const int ObjidWindow = 0;
-    private const uint WinEventOutOfContext = 0x0000;
-    private const uint WinEventSkipOwnProcess = 0x0002;
-
-    private readonly WinEventProc _winEventProc;
+    private readonly NativeMethods.WinEventProc _winEventProc;
     private readonly List<IntPtr> _hooks = [];
     private IntPtr _target;
     private bool _clickThroughApplied;
     private bool _moving;
 
     public event Action<IntPtr>? TargetLost;
-
-
-    private delegate void WinEventProc(
-        IntPtr hWinEventHook, uint eventType, IntPtr hwnd,
-        int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
 
 
     public PinBorderWindow() {
@@ -69,26 +42,19 @@ public partial class PinBorderWindow : Window {
 
 
     private void InstallHooks() {
-        GetWindowThreadProcessId(_target, out var pid);
+        var pid = WindowNative.GetProcessId(_target);
 
         uint[] events = [
-            EventObjectLocationChange,
-            EventSystemMovesizeStart,
-            EventSystemMovesizeEnd,
-            EventSystemMinimizeStart,
-            EventSystemMinimizeEnd,
-            EventObjectDestroy,
+            WinEventNative.EventObjectLocationChange,
+            WinEventNative.EventSystemMovesizeStart,
+            WinEventNative.EventSystemMovesizeEnd,
+            WinEventNative.EventSystemMinimizeStart,
+            WinEventNative.EventSystemMinimizeEnd,
+            WinEventNative.EventObjectDestroy,
         ];
 
         foreach (var ev in events) {
-            var hook = SetWinEventHook(
-                ev, ev,
-                IntPtr.Zero,
-                _winEventProc,
-                pid,
-                0,
-                WinEventOutOfContext | WinEventSkipOwnProcess);
-
+            var hook = WinEventNative.Hook(ev, _winEventProc, pid);
             if (hook != IntPtr.Zero)
                 _hooks.Add(hook);
         }
@@ -97,7 +63,7 @@ public partial class PinBorderWindow : Window {
 
     private void RemoveHooks() {
         foreach (var hook in _hooks)
-            UnhookWinEvent(hook);
+            WinEventNative.Unhook(hook);
         _hooks.Clear();
     }
 
@@ -110,7 +76,8 @@ public partial class PinBorderWindow : Window {
             return;
 
         // Location spam includes non-window objects; only the window itself
-        if (eventType == EventObjectLocationChange && (idObject != ObjidWindow || idChild != 0))
+        if (eventType == WinEventNative.EventObjectLocationChange
+            && (idObject != WinEventNative.ObjidWindow || idChild != 0))
             return;
 
         Dispatcher.BeginInvoke(() => HandleEvent(eventType), DispatcherPriority.Send);
@@ -122,31 +89,31 @@ public partial class PinBorderWindow : Window {
             return;
 
         switch (eventType) {
-            case EventSystemMovesizeStart:
+            case WinEventNative.EventSystemMovesizeStart:
                 _moving = true;
                 if (IsVisible)
                     Hide();
                 break;
 
-            case EventSystemMovesizeEnd:
+            case WinEventNative.EventSystemMovesizeEnd:
                 _moving = false;
                 Sync();
                 break;
 
-            case EventSystemMinimizeStart:
+            case WinEventNative.EventSystemMinimizeStart:
                 if (IsVisible)
                     Hide();
                 break;
 
-            case EventSystemMinimizeEnd:
+            case WinEventNative.EventSystemMinimizeEnd:
                 Sync();
                 break;
 
-            case EventObjectDestroy:
+            case WinEventNative.EventObjectDestroy:
                 LostTarget();
                 break;
 
-            case EventObjectLocationChange:
+            case WinEventNative.EventObjectLocationChange:
                 if (!_moving)
                     Sync();
                 break;
@@ -158,22 +125,22 @@ public partial class PinBorderWindow : Window {
         if (_target == IntPtr.Zero)
             return;
 
-        if (!IsWindow(_target)) {
+        if (!WindowNative.IsWindow(_target)) {
             LostTarget();
             return;
         }
 
-        if (_moving || IsIconic(_target) || !IsWindowVisible(_target)) {
+        if (_moving || WindowNative.IsMinimized(_target) || !WindowNative.IsVisible(_target)) {
             if (IsVisible)
                 Hide();
             return;
         }
 
-        if (!TryGetBounds(_target, out var bounds))
+        if (!WindowNative.TryGetBounds(_target, out var bounds))
             return;
 
-        var width = bounds.Right - bounds.Left;
-        var height = bounds.Bottom - bounds.Top;
+        var width = bounds.Width;
+        var height = bounds.Height;
         if (width <= 0 || height <= 0) {
             if (IsVisible)
                 Hide();
@@ -186,14 +153,12 @@ public partial class PinBorderWindow : Window {
         var borderHwnd = new WindowInteropHelper(this).EnsureHandle();
         EnsureClickThrough();
 
-        SetWindowPos(
+        WindowNative.SyncTopmostBounds(
             borderHwnd,
-            HwndTopmost,
             bounds.Left,
             bounds.Top,
             width,
-            height,
-            SwpNoactivate | SwpShowWindow);
+            height);
     }
 
 
@@ -202,9 +167,7 @@ public partial class PinBorderWindow : Window {
             return;
 
         var hwnd = new WindowInteropHelper(this).EnsureHandle();
-        var style = GetWindowLongPtr(hwnd, GwlExstyle);
-        var next = (nint)style | WsExTransparent | WsExToolwindow | WsExNoactivate | WsExLayered;
-        SetWindowLongPtr(hwnd, GwlExstyle, (IntPtr)next);
+        WindowNative.EnableClickThrough(hwnd);
         _clickThroughApplied = true;
     }
 
@@ -221,60 +184,4 @@ public partial class PinBorderWindow : Window {
 
         TargetLost?.Invoke(hwnd);
     }
-
-
-    private static bool TryGetBounds(IntPtr hwnd, out WinRect bounds) {
-        if (DwmGetWindowAttribute(hwnd, DwmwaExtendedFrameBounds, out bounds, Marshal.SizeOf<WinRect>()) == 0)
-            return true;
-
-        return GetWindowRect(hwnd, out bounds);
-    }
-
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct WinRect {
-        public int Left;
-        public int Top;
-        public int Right;
-        public int Bottom;
-    }
-
-
-    [DllImport("user32.dll")]
-    private static extern bool SetWindowPos(
-        IntPtr hWnd, IntPtr hWndInsertAfter,
-        int X, int Y, int cx, int cy, uint uFlags);
-
-    [DllImport("user32.dll")]
-    private static extern bool IsWindow(IntPtr hWnd);
-
-    [DllImport("user32.dll")]
-    private static extern bool IsWindowVisible(IntPtr hWnd);
-
-    [DllImport("user32.dll")]
-    private static extern bool IsIconic(IntPtr hWnd);
-
-    [DllImport("user32.dll")]
-    private static extern bool GetWindowRect(IntPtr hWnd, out WinRect lpRect);
-
-    [DllImport("user32.dll")]
-    private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
-    [DllImport("dwmapi.dll")]
-    private static extern int DwmGetWindowAttribute(
-        IntPtr hwnd, int dwAttribute, out WinRect pvAttribute, int cbAttribute);
-
-    [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr")]
-    private static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
-
-    [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
-    private static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr SetWinEventHook(
-        uint eventMin, uint eventMax, IntPtr hmodWinEventProc,
-        WinEventProc lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
-
-    [DllImport("user32.dll")]
-    private static extern bool UnhookWinEvent(IntPtr hWinEventHook);
 }

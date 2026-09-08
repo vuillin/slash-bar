@@ -1,26 +1,17 @@
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using SlashBar.Modules.Native;
 
 namespace SlashBar;
 
 public partial class AppToastWindow : Window {
 
-    private const int SwpNoZOrder = 0x0004;
-    private const int SwpNoActivate = 0x0010;
-    private const int SwpShowWindow = 0x0040;
     private const int DefaultDurationMs = 1600;
 
     private int _showId;
-
-
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern bool SetWindowPos(
-        IntPtr hWnd, IntPtr hWndInsertAfter,
-        int X, int Y, int cx, int cy, uint uFlags);
 
 
     public AppToastWindow() {
@@ -84,53 +75,19 @@ public partial class AppToastWindow : Window {
 
 
     private void PlaceTopRightOnBarScreen() {
-        var screen = GetBarScreen();
+        var screen = ScreenNative.GetBarScreen();
         var area = screen.WorkingArea; // absolute pixels on the virtual desktop
 
         var hwnd = new WindowInteropHelper(this).EnsureHandle();
         UpdateLayout();
 
-        // size in pixels (DIPs → device)
-        var source = PresentationSource.FromVisual(this);
-        var toDevice = source?.CompositionTarget?.TransformToDevice ?? Matrix.Identity;
-        var sizePx = toDevice.Transform(new System.Windows.Point(ActualWidth, ActualHeight));
+        var sizePx = ScreenNative.DipToDevice(this, new System.Windows.Point(ActualWidth, ActualHeight));
 
         const int margin = 20;
         var x = area.Right - (int)Math.Ceiling(sizePx.X) - margin;
         var y = area.Top + margin;
 
-        SetWindowPos(
-            hwnd,
-            IntPtr.Zero,
-            x, y,
-            0, 0,
-            SwpNoZOrder | SwpNoActivate | SwpShowWindow | 0x0001 /* SWP_NOSIZE */);
-    }
-
-
-    /// <summary>Screen that contains the SlashBar window.</summary>
-    private static System.Windows.Forms.Screen GetBarScreen() {
-        var bar = System.Windows.Application.Current?.MainWindow
-            ?? System.Windows.Application.Current?.Windows.OfType<MainWindow>().FirstOrDefault();
-
-        if (bar != null) {
-            var source = PresentationSource.FromVisual(bar);
-            var toDevice = source?.CompositionTarget?.TransformToDevice ?? Matrix.Identity;
-
-            // bar center in screen pixels
-            var centerDip = new System.Windows.Point(
-                bar.Left + bar.ActualWidth / 2,
-                bar.Top + Math.Max(bar.ActualHeight / 2, 1));
-            var centerPx = toDevice.Transform(centerDip);
-
-            return System.Windows.Forms.Screen.FromPoint(
-                new System.Drawing.Point(
-                    (int)Math.Round(centerPx.X),
-                    (int)Math.Round(centerPx.Y)));
-        }
-
-        return System.Windows.Forms.Screen.PrimaryScreen
-            ?? System.Windows.Forms.Screen.AllScreens[0];
+        WindowNative.MoveNoActivate(hwnd, x, y);
     }
 
 

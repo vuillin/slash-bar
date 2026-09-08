@@ -1,14 +1,11 @@
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
+using SlashBar.Modules.Native;
 
 namespace SlashBar.Modules.Clipboard;
 
 public sealed class ClipboardWatcher {
-
-    private const int WM_CLIPBOARDUPDATE = 0x031D;
-    private static readonly IntPtr HwndMessage = new(-3);
 
     private readonly ClipboardHistoryStore _store;
     private HwndSource? _source;
@@ -22,7 +19,7 @@ public sealed class ClipboardWatcher {
 
 
     public void Start() {
-        
+
         if (_source != null)
             return;
 
@@ -30,13 +27,13 @@ public sealed class ClipboardWatcher {
             Width = 0,
             Height = 0,
             WindowStyle = 0,
-            ParentWindow = HwndMessage
+            ParentWindow = ClipboardNative.HwndMessage
         };
 
         _source = new HwndSource(parameters);
         _source.AddHook(WndProc);
 
-        AddClipboardFormatListener(_source.Handle);
+        ClipboardNative.AddFormatListener(_source.Handle);
     }
 
 
@@ -45,7 +42,7 @@ public sealed class ClipboardWatcher {
         if (_source == null)
             return;
 
-        RemoveClipboardFormatListener(_source.Handle);
+        ClipboardNative.RemoveFormatListener(_source.Handle);
         _source.RemoveHook(WndProc);
         _source.Dispose();
         _source = null;
@@ -62,11 +59,11 @@ public sealed class ClipboardWatcher {
         IntPtr lParam,
         ref bool handled) {
 
-            if (msg == WM_CLIPBOARDUPDATE) {
-                Dispatcher.CurrentDispatcher.BeginInvoke(
-                    DispatcherPriority.Background,
-                    Capture);
-            }
+        if (msg == ClipboardNative.WmClipboardUpdate) {
+            Dispatcher.CurrentDispatcher.BeginInvoke(
+                DispatcherPriority.Background,
+                Capture);
+        }
 
         return IntPtr.Zero;
     }
@@ -91,19 +88,11 @@ public sealed class ClipboardWatcher {
                 _ignoreNext = false;
                 return;
             }
-            
+
             _store.Add(text);
         }
         catch {
             // clipboard sometimes still locked despite BeginInvoke.
         }
     }
-
-
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern bool AddClipboardFormatListener(IntPtr hwnd);
-
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern bool RemoveClipboardFormatListener(IntPtr hwnd);
-
 }

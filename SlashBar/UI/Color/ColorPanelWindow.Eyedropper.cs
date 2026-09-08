@@ -4,6 +4,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using SlashBar.Modules.Color;
+using SlashBar.Modules.Native;
 
 namespace SlashBar;
 
@@ -181,10 +182,6 @@ public partial class ColorPanelWindow {
     }
 
 
-    [System.Runtime.InteropServices.DllImport("user32.dll")]
-    private static extern bool SetCursorPos(int x, int y);
-
-
     private void Overlay_MouseMove(object sender, System.Windows.Input.MouseEventArgs e) {
         if (!_pickModeActive)
             return;
@@ -254,7 +251,7 @@ public partial class ColorPanelWindow {
             return;
 
         var p = System.Windows.Forms.Cursor.Position;
-        SetCursorPos(p.X + dx, p.Y + dy);
+        WindowNative.SetCursorPos(p.X + dx, p.Y + dy);
 
         UpdateMagnifier(System.Windows.Forms.Cursor.Position, force: true);
         SyncMagnifierVisibility();

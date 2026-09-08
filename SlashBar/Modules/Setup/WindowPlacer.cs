@@ -1,23 +1,9 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Text;
+using SlashBar.Modules.Native;
 
 namespace SlashBar.Modules.Setup;
 
 public static class WindowPlacer {
-
-    private const int SwMaximize = 3;
-    private const int SwShowMinimized = 2;
-    private const int SwRestore = 9;
-    private const int SwpNoZOrder = 0x0004;
-    private const int SwpShowWindow = 0x0040;
-    private const int SwpFrameChanged = 0x0020;
-
-    [DllImport("user32.dll")]
-    private static extern bool SetWindowPos(
-        IntPtr hWnd, IntPtr hWndInsertAfter,
-        int X, int Y, int cx, int cy, uint uFlags);
-
 
     public static async Task ApplyAsync(IntPtr hwnd, WindowLayout layout) {
 
@@ -32,18 +18,18 @@ public static class WindowPlacer {
         switch (layout) {
 
             case WindowLayout.Maximize:
-                ShowWindow(hwnd, SwMaximize);
-                SetForegroundWindow(hwnd);
+                WindowNative.Show(hwnd, WindowNative.SwMaximize);
+                WindowNative.SetForeground(hwnd);
                 break;
 
             case WindowLayout.Minimized:
-                ShowWindow(hwnd, SwShowMinimized); // 2
+                WindowNative.Show(hwnd, WindowNative.SwShowMinimized);
                 break;
 
             case WindowLayout.RightMonitor:
                 await PlaceAsync(hwnd, rightScreen.Left, rightScreen.Top, rightScreen.Width, rightScreen.Height);
-                ShowWindow(hwnd, SwMaximize);
-                SetForegroundWindow(hwnd);
+                WindowNative.Show(hwnd, WindowNative.SwMaximize);
+                WindowNative.SetForeground(hwnd);
                 break;
 
             case WindowLayout.LeftHalf: {
@@ -62,27 +48,22 @@ public static class WindowPlacer {
 
 
     private static async Task PlaceAsync(IntPtr hwnd, int x, int y, int width, int height) {
-
-        var flags = (uint)(SwpNoZOrder | SwpShowWindow | SwpFrameChanged);
-        ShowWindow(hwnd, SwRestore);
-        SetWindowPos(hwnd, IntPtr.Zero, x, y, width, height, flags);
+        WindowNative.Show(hwnd, WindowNative.SwRestore);
+        WindowNative.Place(hwnd, x, y, width, height);
         await Task.Delay(200);
-        SetWindowPos(hwnd, IntPtr.Zero, x, y, width, height, flags);
-        SetForegroundWindow(hwnd);
+        WindowNative.Place(hwnd, x, y, width, height);
+        WindowNative.SetForeground(hwnd);
     }
 
 
     public static HashSet<IntPtr> SnapshotWindows(string processName) {
-
         var result = new HashSet<IntPtr>();
 
-        EnumWindows((hwnd, _) => {
-
+        WindowNative.EnumWindows((hwnd, _) => {
             if (MatchesProcessWindow(hwnd, processName))
                 result.Add(hwnd);
-
             return true;
-        }, IntPtr.Zero);
+        });
 
         return result;
     }
@@ -108,7 +89,10 @@ public static class WindowPlacer {
     }
 
 
-    public static async Task<IntPtr> WaitForMainWindowAsync(Process process, string? processName = null, int timeoutMs = 10000) {
+    public static async Task<IntPtr> WaitForMainWindowAsync(
+        Process process,
+        string? processName = null,
+        int timeoutMs = 10000) {
 
         var name = processName ?? process.ProcessName;
         var sw = Stopwatch.StartNew();
@@ -131,28 +115,25 @@ public static class WindowPlacer {
 
 
     private static IntPtr FindWindowByProcessName(string processName) {
-
         IntPtr found = IntPtr.Zero;
 
-        EnumWindows((hwnd, _) => {
-
+        WindowNative.EnumWindows((hwnd, _) => {
             if (!MatchesProcessWindow(hwnd, processName))
                 return true;
 
             found = hwnd;
             return false;
-        }, IntPtr.Zero);
+        });
 
         return found;
     }
 
 
     private static bool MatchesProcessWindow(IntPtr hwnd, string processName) {
-
-        if (!IsWindowVisible(hwnd))
+        if (!WindowNative.IsVisible(hwnd))
             return false;
 
-        GetWindowThreadProcessId(hwnd, out var pid);
+        var pid = WindowNative.GetProcessId(hwnd);
         try {
             var p = Process.GetProcessById((int)pid);
             if (!p.ProcessName.Equals(processName, StringComparison.OrdinalIgnoreCase))
@@ -162,29 +143,6 @@ public static class WindowPlacer {
             return false;
         }
 
-        var sb = new StringBuilder(256);
-        GetWindowText(hwnd, sb, sb.Capacity);
-        return sb.Length > 0;
+        return WindowNative.GetTitle(hwnd).Length > 0;
     }
-
-
-    private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
-
-    [DllImport("user32.dll")]
-    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-    [DllImport("user32.dll")]
-    private static extern bool SetForegroundWindow(IntPtr hWnd);
-
-    [DllImport("user32.dll")]
-    private static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
-
-    [DllImport("user32.dll")]
-    private static extern bool IsWindowVisible(IntPtr hWnd);
-
-    [DllImport("user32.dll")]
-    private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
-    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-    private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 }
