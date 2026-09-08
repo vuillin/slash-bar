@@ -58,9 +58,10 @@ public partial class MainWindow : Window {
     private void SubmitCommand() =>
         ExecuteShortcut(SearchBox.Text);
 
-    private void ExecuteShortcut(string command) {
+    private async void ExecuteShortcut(string command) {
         try {
-            if (!_modules.TryExecute(command, out var result))
+            var (ok, result) = await _modules.TryExecuteAsync(command);
+            if (!ok)
                 return;
 
             _commandHistory.Add(command);

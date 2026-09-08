@@ -45,7 +45,7 @@ public partial class WeatherPanelWindow : DockedSidePanelWindow {
     protected override async void OnPanelOpening() {
         await WeatherGeolocator.RequestAccessAsync();
 
-        var locationKey = WeatherClient.BuildLocationKey();
+        var locationKey = await WeatherClient.BuildLocationKeyAsync();
         var hasCache = WeatherCacheStore.TryRead(locationKey, out var cached);
 
         if (hasCache) {
@@ -69,31 +69,25 @@ public partial class WeatherPanelWindow : DockedSidePanelWindow {
     }
 
 
-    private void LoadWeather(bool showLoadingOnFailure) {
+    private async void LoadWeather(bool showLoadingOnFailure) {
         var id = ++_loadId;
-        var locationKey = WeatherClient.BuildLocationKey();
 
         if (showLoadingOnFailure)
             ShowStatus("Loading…");
 
-        _ = Task.Run(() => {
-            try {
-                var snapshot = WeatherClient.FetchFresh(locationKey);
-                Dispatcher.Invoke(() => {
-                    if (id != _loadId)
-                        return;
-                    ShowSnapshot(snapshot);
-                });
-            }
-            catch {
-                Dispatcher.Invoke(() => {
-                    if (id != _loadId)
-                        return;
-                    if (showLoadingOnFailure && ContentCard.Visibility != Visibility.Visible)
-                        ShowStatus("Weather unavailable");
-                });
-            }
-        });
+        try {
+            var locationKey = await WeatherClient.BuildLocationKeyAsync();
+            var snapshot = await WeatherClient.FetchFreshAsync(locationKey);
+            if (id != _loadId)
+                return;
+            ShowSnapshot(snapshot);
+        }
+        catch {
+            if (id != _loadId)
+                return;
+            if (showLoadingOnFailure && ContentCard.Visibility != Visibility.Visible)
+                ShowStatus("Weather unavailable");
+        }
     }
 
 

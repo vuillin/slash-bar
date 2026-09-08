@@ -17,7 +17,7 @@ public static class WeatherGeolocator {
     }
 
 
-    public static (double Lat, double Lon)? TryGetPosition() {
+    public static async Task<(double Lat, double Lon)?> TryGetPositionAsync() {
         if (Access != GeolocationAccessStatus.Allowed)
             return null;
 
@@ -27,12 +27,10 @@ public static class WeatherGeolocator {
                 DesiredAccuracyInMeters = 1000
             };
 
-            var pos = locator.GetGeopositionAsync(
+            var pos = await locator.GetGeopositionAsync(
                     TimeSpan.FromMinutes(10),
                     TimeSpan.FromSeconds(8))
-                .AsTask()
-                .GetAwaiter()
-                .GetResult();
+                .AsTask();
 
             var point = pos?.Coordinate?.Point;
             if (point is null)

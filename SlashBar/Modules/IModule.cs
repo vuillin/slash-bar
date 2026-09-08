@@ -10,6 +10,9 @@ public interface IModule
     // "f chatgpt" → argument = "chatgpt"
     ModuleResult Execute(string argument);
 
+    Task<ModuleResult> ExecuteAsync(string argument) =>
+        Task.FromResult(Execute(argument));
+
     // tab / ghost text
     IReadOnlyList<ArgCompletion> SuggestCompletions(string argument) => Array.Empty<ArgCompletion>();
 }

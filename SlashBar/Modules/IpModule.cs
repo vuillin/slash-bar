@@ -17,7 +17,11 @@ public sealed class IpModule : IModule {
     public string Description => "Copy an IP address to the clipboard";
 
 
-    public ModuleResult Execute(string argument) {
+    public ModuleResult Execute(string argument) =>
+        ExecuteAsync(argument).GetAwaiter().GetResult();
+
+
+    public async Task<ModuleResult> ExecuteAsync(string argument) {
         argument = argument.Trim();
 
         try {
@@ -28,7 +32,7 @@ public sealed class IpModule : IModule {
             }
 
             if (argument.Length == 0) {
-                var ip = GetPublicIp();
+                var ip = await GetPublicIpAsync();
                 ClipboardHelper.SetText(ip);
                 return ModuleResult.Copied(ip);
             }
@@ -45,11 +49,10 @@ public sealed class IpModule : IModule {
         ModuleArgs.SuggestFlags(argument, Flags);
 
 
-    private static string GetPublicIp() {
+    private static async Task<string> GetPublicIpAsync() {
         using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
-        return http.GetStringAsync("https://api.ipify.org")
-            .GetAwaiter().GetResult()
-            .Trim();
+        var ip = await http.GetStringAsync("https://api.ipify.org");
+        return ip.Trim();
     }
 
 

@@ -14,12 +14,12 @@ public static class WeatherClient {
     };
 
 
-    public static string BuildLocationKey() {
+    public static async Task<string> BuildLocationKeyAsync() {
         var city = WeatherLocationStore.ReadCity();
         if (city is not null)
             return "city:" + NormalizeLocationToken(city);
 
-        var gps = WeatherGeolocator.TryGetPosition();
+        var gps = await WeatherGeolocator.TryGetPositionAsync();
         if (gps is not null)
             return $"gps:{gps.Value.Lat:F2},{gps.Value.Lon:F2}";
 
@@ -27,9 +27,9 @@ public static class WeatherClient {
     }
 
 
-    public static WeatherSnapshot FetchFresh(string locationKey) {
-        var place = ResolvePlace(locationKey);
-        var forecast = FetchForecast(place.Latitude, place.Longitude);
+    public static async Task<WeatherSnapshot> FetchFreshAsync(string locationKey) {
+        var place = await ResolvePlaceAsync(locationKey);
+        var forecast = await FetchForecastAsync(place.Latitude, place.Longitude);
         var snapshot = BuildSnapshot(place, forecast);
         WeatherCacheStore.Write(locationKey, ToResolvedPlace(place), snapshot);
         return snapshot;
@@ -47,14 +47,14 @@ public static class WeatherClient {
         value.Trim().ToLowerInvariant();
 
 
-    private static PlaceDto ResolvePlace(string locationKey) {
+    private static async Task<PlaceDto> ResolvePlaceAsync(string locationKey) {
         var city = WeatherLocationStore.ReadCity();
         if (city is not null) {
             var stored = WeatherLocationStore.ReadGeocode(city);
             if (stored is not null)
                 return FromStoredGeocode(stored);
 
-            var geocoded = GeocodeCity(city);
+            var geocoded = await GeocodeCityAsync(city);
             var label = FormatPlaceLabel(geocoded.City, geocoded.Country);
             WeatherLocationStore.SaveGeocode(
                 city,
@@ -69,11 +69,11 @@ public static class WeatherClient {
             return FromResolvedPlace(cached.ResolvedPlace);
         }
 
-        var gps = WeatherGeolocator.TryGetPosition();
+        var gps = await WeatherGeolocator.TryGetPositionAsync();
         if (gps is not null)
-            return ReverseGeocode(gps.Value.Lat, gps.Value.Lon);
+            return await ReverseGeocodeAsync(gps.Value.Lat, gps.Value.Lon);
 
-        return FetchPlaceFromIp();
+        return await FetchPlaceFromIpAsync();
     }
 
 
@@ -138,16 +138,14 @@ public static class WeatherClient {
         Latitude = place.Latitude,
         Longitude = place.Longitude
     };
-    private static PlaceDto GeocodeCity(string city) {
+    private static async Task<PlaceDto> GeocodeCityAsync(string city) {
         var url =
             "https://geocoding-api.open-meteo.com/v1/search" +
             $"?name={Uri.EscapeDataString(city)}" +
             "&count=1" +
             "&language=en";
 
-        var json = Http.GetStringAsync(url)
-            .GetAwaiter()
-            .GetResult();
+        var json = await Http.GetStringAsync(url);
 
         var result = JsonSerializer.Deserialize<GeocodingDto>(json, JsonOptions);
         var hit = result?.Results is { Count: > 0 } hits ? hits[0] : null;
@@ -164,7 +162,7 @@ public static class WeatherClient {
     }
 
 
-    private static PlaceDto ReverseGeocode(double lat, double lon) {
+    private static async Task<PlaceDto> ReverseGeocodeAsync(double lat, double lon) {
         var url =
             "https://nominatim.openstreetmap.org/reverse" +
             $"?lat={lat.ToString(CultureInfo.InvariantCulture)}" +
@@ -175,9 +173,7 @@ public static class WeatherClient {
             "&accept-language=en";
 
         try {
-            var json = Http.GetStringAsync(url)
-                .GetAwaiter()
-                .GetResult();
+            var json = await Http.GetStringAsync(url);
 
             var data = JsonSerializer.Deserialize<NominatimDto>(json, JsonOptions);
             var address = data?.Address;
@@ -204,20 +200,18 @@ public static class WeatherClient {
     }
 
 
-private static string? FirstNonEmpty(params string?[] values) {
-    foreach (var value in values) {
-        var trimmed = value?.Trim() ?? "";
-        if (trimmed.Length > 0)
-            return trimmed;
+    private static string? FirstNonEmpty(params string?[] values) {
+        foreach (var value in values) {
+            var trimmed = value?.Trim() ?? "";
+            if (trimmed.Length > 0)
+                return trimmed;
+        }
+        return null;
     }
-    return null;
-}
 
 
-    private static PlaceDto FetchPlaceFromIp() {
-        var json = Http.GetStringAsync("https://ipwho.is/")
-            .GetAwaiter()
-            .GetResult();
+    private static async Task<PlaceDto> FetchPlaceFromIpAsync() {
+        var json = await Http.GetStringAsync("https://ipwho.is/");
 
         var place = JsonSerializer.Deserialize<PlaceDto>(json, JsonOptions);
         if (place is not { Success: true })
@@ -230,7 +224,7 @@ private static string? FirstNonEmpty(params string?[] values) {
     }
 
 
-    private static ForecastDto FetchForecast(double lat, double lon) {
+    private static async Task<ForecastDto> FetchForecastAsync(double lat, double lon) {
         var url =
             "https://api.open-meteo.com/v1/forecast" +
             $"?latitude={lat.ToString(CultureInfo.InvariantCulture)}" +
@@ -242,9 +236,7 @@ private static string? FirstNonEmpty(params string?[] values) {
             "&forecast_hours=12" +
             "&timezone=auto";
 
-        var json = Http.GetStringAsync(url)
-            .GetAwaiter()
-            .GetResult();
+        var json = await Http.GetStringAsync(url);
 
         var forecast = JsonSerializer.Deserialize<ForecastDto>(json, JsonOptions);
         if (forecast?.Current is null)
