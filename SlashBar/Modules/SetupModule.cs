@@ -21,8 +21,17 @@ public sealed class SetupModule : IModule {
         if (profile.Steps.Count == 0)
             return ModuleResult.Error("Profile has no steps");
 
-        SetupRunner.Run(profile);
+        _ = RunInBackground(profile);
         return ModuleResult.Ok("Setup launched");
+    }
+
+    private static async Task RunInBackground(SetupProfile profile) {
+        try {
+            await SetupRunner.RunAsync(profile);
+        }
+        catch {
+            // pas de toast pour le moment
+        }
     }
 
     public IReadOnlyList<ArgCompletion> SuggestCompletions(string argument) {

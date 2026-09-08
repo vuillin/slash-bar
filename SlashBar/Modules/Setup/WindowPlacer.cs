@@ -19,7 +19,7 @@ public static class WindowPlacer {
         int X, int Y, int cx, int cy, uint uFlags);
 
 
-    public static void Apply(IntPtr hwnd, WindowLayout layout) {
+    public static async Task ApplyAsync(IntPtr hwnd, WindowLayout layout) {
 
         if (hwnd == IntPtr.Zero)
             return;
@@ -41,32 +41,32 @@ public static class WindowPlacer {
                 break;
 
             case WindowLayout.RightMonitor:
-                Place(hwnd, rightScreen.Left, rightScreen.Top, rightScreen.Width, rightScreen.Height);
+                await PlaceAsync(hwnd, rightScreen.Left, rightScreen.Top, rightScreen.Width, rightScreen.Height);
                 ShowWindow(hwnd, SwMaximize);
                 SetForegroundWindow(hwnd);
                 break;
 
             case WindowLayout.LeftHalf: {
                 var w = rightScreen.Width / 2;
-                Place(hwnd, rightScreen.Left, rightScreen.Top, w, rightScreen.Height);
+                await PlaceAsync(hwnd, rightScreen.Left, rightScreen.Top, w, rightScreen.Height);
                 break;
             }
 
             case WindowLayout.RightHalf: {
                 var w = rightScreen.Width / 2;
-                Place(hwnd, rightScreen.Left + w, rightScreen.Top, w, rightScreen.Height);
+                await PlaceAsync(hwnd, rightScreen.Left + w, rightScreen.Top, w, rightScreen.Height);
                 break;
             }
         }
     }
 
 
-    private static void Place(IntPtr hwnd, int x, int y, int width, int height) {
+    private static async Task PlaceAsync(IntPtr hwnd, int x, int y, int width, int height) {
 
         var flags = (uint)(SwpNoZOrder | SwpShowWindow | SwpFrameChanged);
         ShowWindow(hwnd, SwRestore);
         SetWindowPos(hwnd, IntPtr.Zero, x, y, width, height, flags);
-        Thread.Sleep(200);
+        await Task.Delay(200);
         SetWindowPos(hwnd, IntPtr.Zero, x, y, width, height, flags);
         SetForegroundWindow(hwnd);
     }
@@ -88,7 +88,7 @@ public static class WindowPlacer {
     }
 
 
-    public static IntPtr WaitForNewWindow(
+    public static async Task<IntPtr> WaitForNewWindowAsync(
         string processName,
         HashSet<IntPtr> existing,
         int timeoutMs = 10000) {
@@ -101,14 +101,14 @@ public static class WindowPlacer {
                     return hwnd;
             }
 
-            Thread.Sleep(150);
+            await Task.Delay(150);
         }
 
         return IntPtr.Zero;
     }
 
 
-    public static IntPtr WaitForMainWindow(Process process, string? processName = null, int timeoutMs = 10000) {
+    public static async Task<IntPtr> WaitForMainWindowAsync(Process process, string? processName = null, int timeoutMs = 10000) {
 
         var name = processName ?? process.ProcessName;
         var sw = Stopwatch.StartNew();
@@ -123,7 +123,7 @@ public static class WindowPlacer {
             if (hwnd != IntPtr.Zero)
                 return hwnd;
 
-            Thread.Sleep(150);
+            await Task.Delay(150);
         }
 
         return IntPtr.Zero;

@@ -4,7 +4,7 @@ namespace SlashBar.Modules.Setup;
 
 public static class SetupRunner {
 
-    public static void Run(SetupProfile profile) {
+    public static async Task RunAsync(SetupProfile profile) {
 
         foreach (var step in profile.Steps) {
 
@@ -25,10 +25,10 @@ public static class SetupRunner {
                 continue;
 
             var hwnd = processName is null
-                ? WindowPlacer.WaitForMainWindow(process)
-                : WindowPlacer.WaitForNewWindow(processName, existing);
+                ? await WindowPlacer.WaitForMainWindowAsync(process)
+                : await WindowPlacer.WaitForNewWindowAsync(processName, existing);
 
-            WindowPlacer.Apply(hwnd, step.Layout);
+            await WindowPlacer.ApplyAsync(hwnd, step.Layout);
         }
     }
 }
