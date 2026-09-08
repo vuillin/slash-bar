@@ -30,7 +30,6 @@ public partial class ClipPanelWindow {
 
     private void HistoryItem_Click(object sender, MouseButtonEventArgs e) {
         if (sender is FrameworkElement { Tag: ClipboardHistoryEntry entry }) {
-            ClipboardHistory.Watcher.IgnoreNext();
             ClipboardHelper.SetText(entry.Text);
             CopiedToastAnimator.Show(CopiedToast, CopiedToastSlide);
         }
