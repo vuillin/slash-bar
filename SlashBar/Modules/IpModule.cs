@@ -17,8 +17,28 @@ public sealed class IpModule : IModule {
     public string Description => "Copy an IP address to the clipboard";
 
 
-    public ModuleResult Execute(string argument) =>
-        ExecuteAsync(argument).GetAwaiter().GetResult();
+    /// <summary>
+    /// Sync-safe paths only (<c>ip local</c>). Public IP requires <see cref="ExecuteAsync"/>.
+    /// </summary>
+    public ModuleResult Execute(string argument) {
+        argument = argument.Trim();
+
+        try {
+            if (argument.Equals("local", StringComparison.OrdinalIgnoreCase)) {
+                var ip = GetLocalIp();
+                ClipboardHelper.SetText(ip);
+                return ModuleResult.Copied(ip);
+            }
+
+            if (argument.Length == 0)
+                return ModuleResult.Error("IP unavailable");
+
+            return ModuleResult.Error("Unknown option");
+        }
+        catch {
+            return ModuleResult.Error("IP unavailable");
+        }
+    }
 
 
     public async Task<ModuleResult> ExecuteAsync(string argument) {

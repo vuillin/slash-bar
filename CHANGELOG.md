@@ -10,10 +10,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `pin` module: keep windows always on top; `Ctrl+Shift+A` toggles the foreground window; multi-pin; semi-transparent accent border (hides while dragging/resizing); `pin` / `pin off` from the bar; pin toasts ~3.2s
+- Shared `Modules/Native` layer for Win32 / DWM (single P/Invoke surface + helpers for windows, hotkeys, clipboard listeners, execution state, DPI screen placement)
+- Unified `ToastHost`: one top-right window with sticky (Awake) and ephemeral (success / error) slots so they stack instead of overlapping
 
 ### Changed
 
 - README shortcuts list includes `Ctrl+Shift+A` (pin)
+- Weather, geolocation, and `ip` run async end-to-end (no `.GetResult()` on the UI thread); `IpModule.Execute` stays sync-safe (`ip local` only) so a sync `TryExecute` cannot re-block on HTTP
+- `setup` launches in the background and returns immediately with a toast; window wait/place uses `Task.Delay` instead of `Thread.Sleep`
+- `setup` process start uses `UseShellExecute = true` so `.lnk` and typical GUI targets open reliably
+- Module commands that copy to the clipboard call `IgnoreNext()` first so SlashBar does not pollute clipboard history
+- `AppToast` / `AwakeToast` are thin facades over `ToastHost` (in-panel Copied toasts unchanged)
+
+### Fixed
+
+- Pin: closing a pinned window fully tears down session state and WinEvent hooks (no ghost “pinned” until the next prune)
+- Toast host: dismissing an ephemeral toast while Awake is sticky no longer makes the Awake card jump
+- `setup`: background failures show an error toast instead of failing silently
 
 ## [1.3.0] - 2026-09-07
 

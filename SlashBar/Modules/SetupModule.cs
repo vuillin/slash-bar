@@ -30,7 +30,7 @@ public sealed class SetupModule : IModule {
             await SetupRunner.RunAsync(profile);
         }
         catch {
-            // pas de toast pour le moment
+            AppToast.ShowError("Setup failed");
         }
     }
 
