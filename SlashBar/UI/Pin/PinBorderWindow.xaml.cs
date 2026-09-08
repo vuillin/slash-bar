@@ -36,6 +36,8 @@ public partial class PinBorderWindow : Window {
     private bool _clickThroughApplied;
     private bool _moving;
 
+    public event Action<IntPtr>? TargetLost;
+
 
     private delegate void WinEventProc(
         IntPtr hWinEventHook, uint eventType, IntPtr hwnd,
@@ -59,6 +61,7 @@ public partial class PinBorderWindow : Window {
 
 
     public void Detach() {
+        TargetLost = null;
         RemoveHooks();
         _target = IntPtr.Zero;
         Close();
@@ -140,7 +143,7 @@ public partial class PinBorderWindow : Window {
                 break;
 
             case EventObjectDestroy:
-                Hide();
+                LostTarget();
                 break;
 
             case EventObjectLocationChange:
@@ -152,8 +155,11 @@ public partial class PinBorderWindow : Window {
 
 
     private void Sync() {
-        if (_target == IntPtr.Zero || !IsWindow(_target)) {
-            Hide();
+        if (_target == IntPtr.Zero)
+            return;
+
+        if (!IsWindow(_target)) {
+            LostTarget();
             return;
         }
 
@@ -180,7 +186,6 @@ public partial class PinBorderWindow : Window {
         var borderHwnd = new WindowInteropHelper(this).EnsureHandle();
         EnsureClickThrough();
 
-        // Same rect, topmost — hidden while the user drags/resizes (no laggy chase)
         SetWindowPos(
             borderHwnd,
             HwndTopmost,
@@ -201,6 +206,20 @@ public partial class PinBorderWindow : Window {
         var next = (nint)style | WsExTransparent | WsExToolwindow | WsExNoactivate | WsExLayered;
         SetWindowLongPtr(hwnd, GwlExstyle, (IntPtr)next);
         _clickThroughApplied = true;
+    }
+
+
+    private void LostTarget() {
+        if (_target == IntPtr.Zero)
+            return;
+
+        var hwnd = _target;
+        RemoveHooks();
+        _target = IntPtr.Zero;
+        if (IsVisible)
+            Hide();
+
+        TargetLost?.Invoke(hwnd);
     }
 
 

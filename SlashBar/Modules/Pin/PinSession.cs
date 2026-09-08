@@ -77,6 +77,7 @@ public static class PinSession {
 
     private static PinBorderWindow CreateBorder(IntPtr hwnd) {
         var border = new PinBorderWindow();
+        border.TargetLost += OnBorderTargetLost;
         border.Attach(hwnd);
         return border;
     }
@@ -142,5 +143,13 @@ public static class PinSession {
         _ = GetWindowText(hwnd, sb, sb.Capacity);
         var title = sb.ToString().Trim();
         return string.IsNullOrEmpty(title) ? "Window" : title;
+    }
+
+
+    private static void OnBorderTargetLost(IntPtr hwnd) {
+        if (!Pinned.Remove(hwnd, out var border))
+            return;
+
+        CloseBorder(border);
     }
 }
