@@ -18,7 +18,7 @@ public static class SetupRunner {
             var process = Process.Start(new ProcessStartInfo {
                 FileName = fileName,
                 Arguments = step.Arguments ?? "",
-                UseShellExecute = false
+                UseShellExecute = true
             });
 
             if (process is null || step.Layout == WindowLayout.Default)
