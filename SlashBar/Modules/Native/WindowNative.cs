@@ -52,6 +52,15 @@ public static class WindowNative {
             SwpNoZOrder | SwpNoActivate | SwpShowWindow | SwpNosize);
 
 
+    /// <summary>Move + resize without activating (toast host layout).</summary>
+    public static bool SetBoundsNoActivate(IntPtr hwnd, int x, int y, int width, int height) =>
+        SetPos(
+            hwnd,
+            IntPtr.Zero,
+            x, y, width, height,
+            SwpNoZOrder | SwpNoActivate | SwpShowWindow);
+
+
     /// <summary>Toggle always-on-top without moving/resizing/activating.</summary>
     public static bool SetTopmost(IntPtr hwnd, bool topmost) =>
         SetPos(

@@ -1,44 +1,31 @@
-using System.Windows;
 using SlashBar.Modules.Awake;
 
 namespace SlashBar;
 
 public static class AwakeToast {
 
-    private static AwakeToastWindow? _window;
     private static bool _wired;
 
 
     public static void Show() {
         EnsureWired();
 
-        var app = System.Windows.Application.Current;
-        if (app == null)
-            return;
+        var title = AwakeSession.Mode == AwakeMode.System
+            ? "Awake · system"
+            : "Awake";
 
-        void ShowCore() {
-            _window ??= new AwakeToastWindow();
-            _window.ShowIndicator();
+        string? detail = null;
+        if (AwakeSession.EndsAt is { } ends) {
+            var left = ends - DateTimeOffset.Now;
+            detail = $"({AwakeDuration.FormatRemaining(left)})";
         }
 
-        if (app.Dispatcher.CheckAccess())
-            ShowCore();
-        else
-            app.Dispatcher.Invoke(ShowCore);
+        ToastHost.ShowSticky(title, detail);
     }
 
 
     public static void Hide() {
-        var app = System.Windows.Application.Current;
-        if (app == null)
-            return;
-
-        void HideCore() => _window?.HideIndicator();
-
-        if (app.Dispatcher.CheckAccess())
-            HideCore();
-        else
-            app.Dispatcher.Invoke(HideCore);
+        ToastHost.HideSticky();
     }
 
 
