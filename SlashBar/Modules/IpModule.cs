@@ -26,6 +26,9 @@ public sealed class IpModule : IModule {
         try {
             if (argument.Equals("local", StringComparison.OrdinalIgnoreCase)) {
                 var ip = GetLocalIp();
+                if (ip is null)
+                    return ModuleResult.Error("IP unavailable");
+
                 ClipboardHelper.SetText(ip);
                 return ModuleResult.Copied(ip);
             }
@@ -47,6 +50,9 @@ public sealed class IpModule : IModule {
         try {
             if (argument.Equals("local", StringComparison.OrdinalIgnoreCase)) {
                 var ip = GetLocalIp();
+                if (ip is null)
+                    return ModuleResult.Error("IP unavailable");
+
                 ClipboardHelper.SetText(ip);
                 return ModuleResult.Copied(ip);
             }
@@ -76,7 +82,7 @@ public sealed class IpModule : IModule {
     }
 
 
-    private static string GetLocalIp() {
+    private static string? GetLocalIp() {
         foreach (var ni in NetworkInterface.GetAllNetworkInterfaces()) {
             if (ni.OperationalStatus != OperationalStatus.Up)
                 continue;
@@ -96,6 +102,6 @@ public sealed class IpModule : IModule {
             }
         }
 
-        return "127.0.0.1";
+        return null;
     }
 }
