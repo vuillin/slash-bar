@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using SlashBar.Modules.Color;
 using SlashBar.UI.Shell;
@@ -17,6 +18,8 @@ public partial class ColorPanelWindow : DockedSidePanelWindow {
     private static ColorPanelWindow? _instance;
 
     private bool _colorLocked;
+
+    private ToggleButton EyedropperToggle => (ToggleButton)PanelHeader.LeadingContent!;
 
 
     private ColorPanelWindow() {

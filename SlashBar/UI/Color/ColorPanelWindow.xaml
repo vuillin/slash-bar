@@ -49,13 +49,13 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <shell:SidePanelHeader Grid.Row="0"
+                    <shell:SidePanelHeader x:Name="PanelHeader"
+                                           Grid.Row="0"
                                            MinimizeClick="MinimizeButton_Click"
                                            CloseClick="CloseButton_Click"
                                            HeaderDrag="HeaderBar_MouseLeftButtonDown">
                         <shell:SidePanelHeader.LeadingContent>
-                            <ToggleButton x:Name="EyedropperToggle"
-                                          IsChecked="True"
+                            <ToggleButton IsChecked="True"
                                           Width="28"
                                           Height="28"
                                           Cursor="Hand"
@@ -63,12 +63,12 @@
                                           HorizontalAlignment="Left"
                                           VerticalAlignment="Center"
                                           Margin="4,0,0,0"
+                                          Background="Transparent"
                                           Checked="EyedropperToggle_Changed"
                                           Unchecked="EyedropperToggle_Changed">
                                 <ToggleButton.Template>
                                     <ControlTemplate TargetType="ToggleButton">
-                                        <Border x:Name="Bg"
-                                                Background="Transparent"
+                                        <Border Background="{TemplateBinding Background}"
                                                 CornerRadius="8"
                                                 Width="28"
                                                 Height="28">
@@ -81,20 +81,20 @@
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="Bg" Property="Background" Value="#14000000"/>
+                                                <Setter Property="Background" Value="#14000000"/>
                                             </Trigger>
                                             <Trigger Property="IsChecked" Value="True">
-                                                <Setter TargetName="Bg" Property="Background" Value="#E8E8ED"/>
+                                                <Setter Property="Background" Value="#E8E8ED"/>
                                             </Trigger>
                                             <MultiTrigger>
                                                 <MultiTrigger.Conditions>
                                                     <Condition Property="IsChecked" Value="True"/>
                                                     <Condition Property="IsMouseOver" Value="True"/>
                                                 </MultiTrigger.Conditions>
-                                                <Setter TargetName="Bg" Property="Background" Value="#DDDDE2"/>
+                                                <Setter Property="Background" Value="#DDDDE2"/>
                                             </MultiTrigger>
                                             <Trigger Property="IsPressed" Value="True">
-                                                <Setter TargetName="Bg" Property="Background" Value="#DDDDE2"/>
+                                                <Setter Property="Background" Value="#DDDDE2"/>
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>

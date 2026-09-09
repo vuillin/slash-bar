@@ -48,15 +48,15 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <shell:SidePanelHeader Grid.Row="0"
+                    <shell:SidePanelHeader x:Name="PanelHeader"
+                                           Grid.Row="0"
                                            HeaderPadding="14,12,14,8"
                                            MinimizeClick="MinimizeButton_Click"
                                            CloseClick="CloseButton_Click"
                                            HeaderDrag="HeaderBar_MouseLeftButtonDown">
                         <shell:SidePanelHeader.LeadingContent>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock x:Name="PlaceText"
-                                           FontFamily="Segoe UI Variable Text, Segoe UI"
+                                <TextBlock FontFamily="Segoe UI Variable Text, Segoe UI"
                                            FontSize="16"
                                            FontWeight="SemiBold"
                                            Foreground="#FFFFFF"
@@ -66,8 +66,7 @@
                                            Margin="0,0,8,0"
                                            IsHitTestVisible="False"/>
 
-                                <Image x:Name="ConditionIcon"
-                                       Width="22"
+                                <Image Width="22"
                                        Height="22"
                                        Stretch="Uniform"
                                        VerticalAlignment="Center"

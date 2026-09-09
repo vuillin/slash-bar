@@ -1,12 +1,10 @@
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 
 namespace SlashBar.UI.Shell;
 
-public partial class SidePanelHeader : UserControl {
+public partial class SidePanelHeader : System.Windows.Controls.UserControl {
 
     public static readonly DependencyProperty TitleProperty =
         DependencyProperty.Register(
@@ -18,9 +16,9 @@ public partial class SidePanelHeader : UserControl {
     public static readonly DependencyProperty TitleBrushProperty =
         DependencyProperty.Register(
             nameof(TitleBrush),
-            typeof(Brush),
+            typeof(System.Windows.Media.Brush),
             typeof(SidePanelHeader),
-            new PropertyMetadata(new SolidColorBrush(Color.FromRgb(0x1C, 0x1C, 0x1E))));
+            new PropertyMetadata(new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x1C, 0x1C, 0x1E))));
 
     public static readonly DependencyProperty TitleVisibilityProperty =
         DependencyProperty.Register(
@@ -58,10 +56,11 @@ public partial class SidePanelHeader : UserControl {
         set => SetValue(TitleProperty, value);
     }
 
-    public Brush TitleBrush {
-        get => (Brush)GetValue(TitleBrushProperty);
+    public System.Windows.Media.Brush TitleBrush {
+        get => (System.Windows.Media.Brush)GetValue(TitleBrushProperty);
         set => SetValue(TitleBrushProperty, value);
     }
+
 
     public Visibility TitleVisibility {
         get => (Visibility)GetValue(TitleVisibilityProperty);
@@ -112,7 +111,7 @@ public partial class SidePanelHeader : UserControl {
 
 
     private void Header_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
-        if (VisualTreeExtensions.FindAncestor<ButtonBase>(e.OriginalSource as DependencyObject) != null)
+        if (VisualTreeExtensions.FindAncestor<System.Windows.Controls.Primitives.ButtonBase>(e.OriginalSource as DependencyObject) != null)
             return;
 
         RaiseEvent(new MouseButtonEventArgs(e.MouseDevice, e.Timestamp, e.ChangedButton) {

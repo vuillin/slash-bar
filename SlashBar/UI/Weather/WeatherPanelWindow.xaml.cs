@@ -21,6 +21,12 @@ public partial class WeatherPanelWindow : DockedSidePanelWindow {
     private readonly DispatcherTimer _refreshTimer;
     private int _loadId;
 
+    private System.Windows.Controls.TextBlock PlaceText =>
+        (System.Windows.Controls.TextBlock)((System.Windows.Controls.StackPanel)PanelHeader.LeadingContent!).Children[0];
+
+    private System.Windows.Controls.Image ConditionIcon =>
+        (System.Windows.Controls.Image)((System.Windows.Controls.StackPanel)PanelHeader.LeadingContent!).Children[1];
+
 
     private WeatherPanelWindow() {
         InitializeComponent();
