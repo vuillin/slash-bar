@@ -14,17 +14,19 @@ public sealed class ColorHistoryStore {
     private readonly string _path;
     private readonly List<ColorHistoryEntry> _entries = [];
     private readonly object _lock = new();
+    private readonly DebouncedSaver _saver;
 
     public event Action? Changed;
 
 
     public ColorHistoryStore() {
-        var dir = Path.Combine (
+        var dir = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "SlashBar");
 
         Directory.CreateDirectory(dir);
         _path = Path.Combine(dir, "color-history.json");
+        _saver = new DebouncedSaver(WriteToDisk);
         Load();
     }
 
@@ -52,15 +54,18 @@ public sealed class ColorHistoryStore {
             while (_entries.Count > MaxEntries)
                 _entries.RemoveAt(_entries.Count - 1);
 
-            Save();
+            _saver.Schedule();
         }
 
         Changed?.Invoke();
     }
 
 
-    public void Add (System.Windows.Media.Color color) => 
+    public void Add(System.Windows.Media.Color color) =>
         Add(color.R, color.G, color.B);
+
+
+    public void Flush() => _saver.Flush();
 
 
     private void Load() {
@@ -76,13 +81,16 @@ public sealed class ColorHistoryStore {
             _entries.Clear();
             _entries.AddRange(data.Entries.Take(MaxEntries));
         } catch {
-            // corrupt file → start empty 
+            // corrupt file → start empty
         }
     }
 
 
-    private void Save() {
-        var json = JsonSerializer.Serialize(new FileModel { Entries = _entries }, JsonOptions);
+    private void WriteToDisk() {
+        string json;
+        lock (_lock)
+            json = JsonSerializer.Serialize(new FileModel { Entries = _entries }, JsonOptions);
+
         var tmp = _path + ".tmp";
         File.WriteAllText(tmp, json);
         File.Copy(tmp, _path, overwrite: true);

@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `setup` launches in the background and returns immediately with a toast; window wait/place uses `Task.Delay` instead of `Thread.Sleep`
 - `setup` process start uses `UseShellExecute = true` so `.lnk` and typical GUI targets open reliably
 - Module commands that copy to the clipboard call `IgnoreNext()` first so SlashBar does not pollute clipboard history
+- Memo / clipboard / color JSON stores debounce disk writes (~400 ms) to avoid sync I/O bursts; pending saves flush on app exit
 - `AppToast` / `AwakeToast` are thin facades over `ToastHost` (in-panel Copied toasts unchanged)
 - `awake` re-asserts `SetThreadExecutionState` every second while active (heartbeat), including when there is no duration
 

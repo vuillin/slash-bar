@@ -10,10 +10,9 @@ public sealed class MemoStore {
     };
 
     private readonly string _path;
-
     private readonly List<MemoEntry> _entries = [];
-
     private readonly object _lock = new();
+    private readonly DebouncedSaver _saver;
 
     public event Action? Changed;
 
@@ -26,6 +25,7 @@ public sealed class MemoStore {
 
         Directory.CreateDirectory(dir);
         _path = Path.Combine(dir, "memos.json");
+        _saver = new DebouncedSaver(WriteToDisk);
         Load();
     }
 
@@ -68,7 +68,7 @@ public sealed class MemoStore {
                 });
             }
 
-            Save();
+            _saver.Schedule();
         }
 
         Changed?.Invoke();
@@ -103,7 +103,7 @@ public sealed class MemoStore {
             entry.CreatedAt = DateTimeOffset.UtcNow;
             _entries.RemoveAt(index);
             _entries.Insert(0, entry);
-            Save();
+            _saver.Schedule();
         }
 
         Changed?.Invoke();
@@ -117,16 +117,32 @@ public sealed class MemoStore {
             return;
 
         lock (_lock) {
-            
+
             var removed = _entries.RemoveAll(e => e.Id == id);
             if (removed == 0)
                 return;
-            Save();
+            _saver.Schedule();
 
         }
 
         Changed?.Invoke();
     }
+
+
+    public MemoEntry? FindByName(string name) {
+
+        name = name.Trim().ToLowerInvariant();
+        if (name.Length == 0)
+            return null;
+
+        lock (_lock) {
+            return _entries.FirstOrDefault(e =>
+                e.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
+
+    public void Flush() => _saver.Flush();
 
 
     private void Load() {
@@ -150,10 +166,11 @@ public sealed class MemoStore {
     }
 
 
-    private void Save() {
+    private void WriteToDisk() {
+        string json;
+        lock (_lock)
+            json = JsonSerializer.Serialize(new FileModel { Entries = _entries }, JsonOptions);
 
-        var json = JsonSerializer.Serialize(new FileModel { Entries = _entries }, JsonOptions);    
-    
         var tmp = _path + ".tmp";
         File.WriteAllText(tmp, json);
         File.Copy(tmp, _path, overwrite: true);
@@ -163,18 +180,5 @@ public sealed class MemoStore {
 
     private sealed class FileModel {
         public List<MemoEntry> Entries { get; set; } = [];
-    }
-
-
-    public MemoEntry? FindByName(string name) {
-        
-        name = name.Trim().ToLowerInvariant();
-        if (name.Length == 0)
-            return null;
-
-        lock (_lock) {
-            return _entries.FirstOrDefault(e =>
-                e.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-        }
     }
 }
