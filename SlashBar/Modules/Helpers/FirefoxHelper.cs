@@ -1,4 +1,6 @@
+using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 
 namespace SlashBar.Modules;
 
@@ -10,11 +12,22 @@ public static class FirefoxHelper {
 
     public static void Start(string args = "") {
 
-        Process.Start(new ProcessStartInfo {
-            FileName = "firefox",
-            Arguments = args,
-            UseShellExecute = true
-        });
+        try {
+            var process = Process.Start(new ProcessStartInfo {
+                FileName = "firefox",
+                Arguments = args,
+                UseShellExecute = true
+            });
+
+            if (process is null)
+                throw new InvalidOperationException("Firefox not found");
+        }
+        catch (Win32Exception) {
+            throw new InvalidOperationException("Firefox not found");
+        }
+        catch (FileNotFoundException) {
+            throw new InvalidOperationException("Firefox not found");
+        }
     }
 
     public static void OpenUrl(string url, bool privateWindow = false) {
