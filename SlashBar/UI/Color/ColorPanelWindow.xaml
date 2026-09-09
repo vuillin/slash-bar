@@ -49,22 +49,12 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <Border x:Name="HeaderBar"
-                            Grid.Row="0"
-                            Background="Transparent"
-                            CornerRadius="24,24,0,0"
-                            Padding="14,10,14,6"
-                            Cursor="SizeAll"
-                            MouseLeftButtonDown="HeaderBar_MouseLeftButtonDown">
-
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-
+                    <shell:SidePanelHeader Grid.Row="0"
+                                           MinimizeClick="MinimizeButton_Click"
+                                           CloseClick="CloseButton_Click"
+                                           HeaderDrag="HeaderBar_MouseLeftButtonDown">
+                        <shell:SidePanelHeader.LeadingContent>
                             <ToggleButton x:Name="EyedropperToggle"
-                                          Grid.Column="0"
                                           IsChecked="True"
                                           Width="28"
                                           Height="28"
@@ -110,30 +100,8 @@
                                     </ControlTemplate>
                                 </ToggleButton.Template>
                             </ToggleButton>
-
-                            <StackPanel Grid.Column="1"
-                                        Orientation="Horizontal"
-                                        VerticalAlignment="Center">
-
-                                <Button x:Name="MinimizeButton"
-                                        Click="MinimizeButton_Click"
-                                        Width="19"
-                                        Height="19"
-                                        Cursor="Hand"
-                                        ToolTip="Minimize"
-                                        Margin="0,0,8,0"
-                                        Template="{StaticResource SidePanelMinimizeButtonTemplate}"/>
-
-                                <Button Click="CloseButton_Click"
-                                        Width="19"
-                                        Height="19"
-                                        Cursor="Hand"
-                                        ToolTip="Close"
-                                        VerticalAlignment="Center"
-                                        Template="{StaticResource SidePanelCloseButtonTemplate}"/>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
+                        </shell:SidePanelHeader.LeadingContent>
+                    </shell:SidePanelHeader>
 
                     <Border Grid.Row="1"
                             Background="Transparent"

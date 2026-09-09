@@ -48,72 +48,41 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <Border x:Name="HeaderBar"
-                            Grid.Row="0"
-                            Background="Transparent"
-                            CornerRadius="24,24,0,0"
-                            Padding="14,12,14,8"
-                            Cursor="SizeAll"
-                            MouseLeftButtonDown="HeaderBar_MouseLeftButtonDown">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+                    <shell:SidePanelHeader Grid.Row="0"
+                                           HeaderPadding="14,12,14,8"
+                                           MinimizeClick="MinimizeButton_Click"
+                                           CloseClick="CloseButton_Click"
+                                           HeaderDrag="HeaderBar_MouseLeftButtonDown">
+                        <shell:SidePanelHeader.LeadingContent>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock x:Name="PlaceText"
+                                           FontFamily="Segoe UI Variable Text, Segoe UI"
+                                           FontSize="16"
+                                           FontWeight="SemiBold"
+                                           Foreground="#FFFFFF"
+                                           VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis"
+                                           MaxWidth="240"
+                                           Margin="0,0,8,0"
+                                           IsHitTestVisible="False"/>
 
-                            <TextBlock x:Name="PlaceText"
-                                       Grid.Column="0"
-                                       FontFamily="Segoe UI Variable Text, Segoe UI"
-                                       FontSize="16"
-                                       FontWeight="SemiBold"
-                                       Foreground="#FFFFFF"
+                                <Image x:Name="ConditionIcon"
+                                       Width="22"
+                                       Height="22"
+                                       Stretch="Uniform"
                                        VerticalAlignment="Center"
-                                       TextTrimming="CharacterEllipsis"
-                                       MaxWidth="240"
-                                       Margin="0,0,8,0"
-                                       IsHitTestVisible="False"/>
-
-                            <Image x:Name="ConditionIcon"
-                                   Grid.Column="1"
-                                   Width="22"
-                                   Height="22"
-                                   Stretch="Uniform"
-                                   VerticalAlignment="Center"
-                                   IsHitTestVisible="False">
-                                <Image.Effect>
-                                    <DropShadowEffect BlurRadius="8"
-                                                      ShadowDepth="2"
-                                                      Direction="270"
-                                                      Opacity="0.32"
-                                                      Color="#000000"/>
-                                </Image.Effect>
-                            </Image>
-
-                            <StackPanel Grid.Column="3"
-                                        Orientation="Horizontal"
-                                        VerticalAlignment="Center">
-
-                                <Button x:Name="MinimizeButton"
-                                        Click="MinimizeButton_Click"
-                                        Width="19"
-                                        Height="19"
-                                        Cursor="Hand"
-                                        ToolTip="Minimize"
-                                        Margin="0,0,8,0"
-                                        Template="{StaticResource SidePanelMinimizeButtonTemplate}"/>
-
-                                <Button Click="CloseButton_Click"
-                                        Width="19"
-                                        Height="19"
-                                        Cursor="Hand"
-                                        ToolTip="Close"
-                                        VerticalAlignment="Center"
-                                        Template="{StaticResource SidePanelCloseButtonTemplate}"/>
+                                       IsHitTestVisible="False">
+                                    <Image.Effect>
+                                        <DropShadowEffect BlurRadius="8"
+                                                          ShadowDepth="2"
+                                                          Direction="270"
+                                                          Opacity="0.32"
+                                                          Color="#000000"/>
+                                    </Image.Effect>
+                                </Image>
                             </StackPanel>
-                        </Grid>
-                    </Border>
+                        </shell:SidePanelHeader.LeadingContent>
+                    </shell:SidePanelHeader>
 
                     <Border Grid.Row="1"
                             Background="Transparent"

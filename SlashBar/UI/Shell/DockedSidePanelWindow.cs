@@ -7,7 +7,7 @@ namespace SlashBar.UI.Shell;
 
 /// <summary>
 /// Shared shell for docked side panels (slide, traffic lights, detach, minimize).
-/// Derived windows must expose SlideTransform and MinimizeButton.
+/// Derived windows must expose SlideTransform.
 /// </summary>
 public abstract class DockedSidePanelWindow : Window {
 

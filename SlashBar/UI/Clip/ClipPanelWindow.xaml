@@ -43,54 +43,11 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <Border x:Name="HeaderBar"
-                            Grid.Row="0"
-                            Background="Transparent"
-                            CornerRadius="24,24,0,0"
-                            Padding="14,10,14,6"
-                            Cursor="SizeAll"
-                            MouseLeftButtonDown="HeaderBar_MouseLeftButtonDown">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock Grid.Column="0"
-                                       Text="Clipboard"
-                                       Margin="4,4,0,0"
-                                       FontFamily="Segoe UI Variable Text, Segoe UI"
-                                       FontSize="17"
-                                       FontWeight="Bold"
-                                       Foreground="#1C1C1E"
-                                       VerticalAlignment="Center"
-                                       IsHitTestVisible="False"/>
-
-                            <StackPanel Grid.Column="1"
-                                        Orientation="Horizontal"
-                                        VerticalAlignment="Center">
-
-                                <!-- orange light: reset position -->
-                                <Button x:Name="MinimizeButton"
-                                        Click="MinimizeButton_Click"
-                                        Width="19"
-                                        Height="19"
-                                        Cursor="Hand"
-                                        ToolTip="Minimize"
-                                        Margin="0,0,8,0"
-                                        Template="{StaticResource SidePanelMinimizeButtonTemplate}"/>
-
-                                <!-- red light: close -->
-                                <Button Click="CloseButton_Click"
-                                        Width="19"
-                                        Height="19"
-                                        Cursor="Hand"
-                                        ToolTip="Close"
-                                        VerticalAlignment="Center"
-                                        Template="{StaticResource SidePanelCloseButtonTemplate}"/>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
+                    <shell:SidePanelHeader Grid.Row="0"
+                                           Title="Clipboard"
+                                           MinimizeClick="MinimizeButton_Click"
+                                           CloseClick="CloseButton_Click"
+                                           HeaderDrag="HeaderBar_MouseLeftButtonDown"/>
 
                     <Border Grid.Row="1"
                             Background="Transparent"
