@@ -8,13 +8,13 @@ A Windows shortcut bar. Type a command and run it — with icon rails, side pane
 2. Extract the folder.
 3. Run `SlashBar.exe`.
 
-No .NET install required (self-contained build). Firefox must be on your PATH for the `f` module.
+No .NET install required (self-contained build).
 
 ## Interface
 
 Press `Ctrl+Space` to show the bar at the bottom of the screen.
 
-**Bar** — type a command (e.g. `calc 2+2`, `f docs`); suggestions appear below. `Tab` completes, `Enter` runs. `↑` / `↓` cycle suggestions / parameters first, then **command history**.
+**Bar** — type a command (e.g. `calc 2+2`, `web docs`); suggestions appear below. `Tab` completes, `Enter` runs. `↑` / `↓` cycle suggestions / parameters first, then **command history**.
 
 **Rails** — icons on each side of the bar open common tools:
 - left: Memo, Weather

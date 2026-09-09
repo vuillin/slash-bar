@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `f` (Firefox search) renamed to `web`: opens / searches in the default browser; `doc` uses the same helper (no Firefox PATH dependency)
+
 ## [1.4.0] - 2026-09-09
 
 ### Added

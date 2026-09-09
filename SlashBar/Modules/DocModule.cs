@@ -26,7 +26,7 @@ public sealed class DocModule : IModule {
             ? string.Format(source.SearchUrl, Uri.EscapeDataString(query))
             : source.HomeUrl;
 
-        FirefoxHelper.OpenNewTab(url);
+        BrowserHelper.OpenNewTab(url);
         return ModuleResult.None;
     }
 

@@ -1,22 +1,22 @@
 namespace SlashBar.Modules;
 
 /// <summary>
-/// Web search or open URLs in Firefox, with private browsing support.
+/// Web search or open URLs in the default browser, with private browsing support.
 /// </summary>
-public sealed class FirefoxSearchModule : IModule {
+public sealed class WebSearchModule : IModule {
 
     private static readonly ArgCompletion[] Flags = [
         new("private", "Search in a private window")
     ];
 
-    public string Prefix => "f";
-    public string Name => "Firefox search";
-    public string Description => "Web search in Firefox";
+    public string Prefix => "web";
+    public string Name => "Web search";
+    public string Description => "Web search in the default browser";
 
     public ModuleResult Execute(string argument) {
         argument = argument.Trim();
         if (argument.Length == 0) {
-            FirefoxHelper.Start();
+            BrowserHelper.Start();
             return ModuleResult.None;
         }
 
@@ -24,19 +24,19 @@ public sealed class FirefoxSearchModule : IModule {
 
         if (argument.Length == 0) {
             if (isPrivate)
-                FirefoxHelper.Start("-private-window");
+                BrowserHelper.Start(privateWindow: true);
             return ModuleResult.None;
         }
 
         if (UrlHelper.TryNormalize(argument, out var url)) {
-            FirefoxHelper.OpenUrl(url, isPrivate);
+            BrowserHelper.OpenUrl(url, isPrivate);
             return ModuleResult.None;
         }
 
         if (isPrivate)
-            FirefoxHelper.SearchPrivate(argument);
+            BrowserHelper.SearchPrivate(argument);
         else
-            FirefoxHelper.Search(argument);
+            BrowserHelper.Search(argument);
 
         return ModuleResult.None;
     }

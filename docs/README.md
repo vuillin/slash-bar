@@ -2,7 +2,7 @@
 
 | Prefix | Module | Documentation |
 |--------|--------|---------------|
-| `f` | Firefox search | [f.md](modules/f.md) |
+| `web` | Web search | [web.md](modules/web.md) |
 | `gen` | Generator | [gen.md](modules/gen.md) |
 | `doc` | Documentation | [doc.md](modules/doc.md) |
 | `setup` | App profiles | [setup.md](modules/setup.md) |
