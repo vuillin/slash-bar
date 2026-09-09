@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `setup` process start uses `UseShellExecute = true` so `.lnk` and typical GUI targets open reliably
 - Module commands that copy to the clipboard call `IgnoreNext()` first so SlashBar does not pollute clipboard history
 - `AppToast` / `AwakeToast` are thin facades over `ToastHost` (in-panel Copied toasts unchanged)
+- `awake` re-asserts `SetThreadExecutionState` every second while active (heartbeat), including when there is no duration
 
 ### Fixed
 

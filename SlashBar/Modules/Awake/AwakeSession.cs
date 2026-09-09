@@ -17,25 +17,22 @@ public static class AwakeSession {
 
 
     public static void Enable(AwakeMode mode, TimeSpan? duration = null) {
-        var flags = mode == AwakeMode.System
-            ? ExecutionStateNative.Continuous | ExecutionStateNative.SystemRequired
-            : ExecutionStateNative.Continuous | ExecutionStateNative.SystemRequired | ExecutionStateNative.DisplayRequired;
-
-        ExecutionStateNative.Set(flags);
         Mode = mode;
         IsActive = true;
+        AssertExecutionState();
 
         StopTimer();
 
         if (duration is { } d) {
             EndsAt = DateTimeOffset.Now + d;
-            _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-            _timer.Tick += OnTick;
-            _timer.Start();
         }
         else {
             EndsAt = null;
         }
+        
+        _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        _timer.Tick += OnTick;
+        _timer.Start();
 
         Changed?.Invoke();
     }
@@ -54,6 +51,11 @@ public static class AwakeSession {
 
 
     private static void OnTick(object? sender, EventArgs e) {
+        if (!IsActive)
+            return;
+
+        AssertExecutionState();
+
         if (EndsAt is null)
             return;
 
@@ -74,4 +76,15 @@ public static class AwakeSession {
         _timer.Tick -= OnTick;
         _timer = null;
     }
+
+
+    private static uint CurrentFlags() =>
+        Mode == AwakeMode.System
+            ? ExecutionStateNative.Continuous | ExecutionStateNative.SystemRequired
+            : ExecutionStateNative.Continuous
+            | ExecutionStateNative.SystemRequired
+            | ExecutionStateNative.DisplayRequired;
+
+    private static void AssertExecutionState() =>
+        ExecutionStateNative.Set(CurrentFlags());
 }
