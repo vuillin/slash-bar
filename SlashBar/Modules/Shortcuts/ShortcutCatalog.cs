@@ -19,6 +19,11 @@ internal static class ShortcutTileBackgrounds {
         (0x1E, 0x5C, 0xC8));
 
     private static readonly WpfBrush Color = CreateLinear(
+        (0xFF, 0xB3, 0x40),
+        (0xFF, 0x9F, 0x0A),
+        (0xC4, 0x6E, 0x00));
+
+    private static readonly WpfBrush Calendar = CreateLinear(
         (0xFF, 0x69, 0x61),
         (0xFF, 0x3B, 0x30),
         (0xC4, 0x1E, 0x16));
@@ -49,6 +54,7 @@ internal static class ShortcutTileBackgrounds {
         "weather" => Weather,
         "memo" => Memo,
         "color" => Color,
+        "calendar" => Calendar,
         "clip" => Clip,
         _ => null,
     };
@@ -77,7 +83,7 @@ public static class ShortcutCatalog {
     private const double AlignNudge = 17;
 
     // Near the bar → outward. null = empty slot.
-    private static readonly string?[] LeftFromBar = ["color", "weather", null, null, null];
+    private static readonly string?[] LeftFromBar = ["color", "weather", "calendar", null, null];
     private static readonly string?[] RightFromBar = ["memo", "clip", null, null, null];
 
     private static readonly Dictionary<string, string> Glyphs = new(StringComparer.OrdinalIgnoreCase);
@@ -87,6 +93,7 @@ public static class ShortcutCatalog {
         ["memo"] = "IconMemo",
         ["clip"] = "IconClip",
         ["weather"] = "IconWeather",
+        ["calendar"] = "IconCalendar",
     };
 
     private static readonly Dictionary<string, string> Labels = new(StringComparer.OrdinalIgnoreCase) {
@@ -94,6 +101,7 @@ public static class ShortcutCatalog {
         ["clip"] = "Clipboard",
         ["color"] = "Color Picker",
         ["weather"] = "Weather",
+        ["calendar"] = "Calendar",
     };
 
     public static IReadOnlyList<ShortcutSlot> CreateLeftRail() =>

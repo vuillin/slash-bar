@@ -13,6 +13,7 @@
                 <ResourceDictionary Source="Assets/Icons/Memo_icon.xaml"/>
                 <ResourceDictionary Source="Assets/Icons/Clip_icon.xaml"/>
                 <ResourceDictionary Source="Assets/Icons/Weather_icon.xaml"/>
+                <ResourceDictionary Source="Assets/Icons/Calendar_icon.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
