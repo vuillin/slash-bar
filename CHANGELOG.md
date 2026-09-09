@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-09
+
 ### Added
 
 - `pin` module: keep windows always on top; `Ctrl+Shift+A` toggles the foreground window; multi-pin; semi-transparent accent border (hides while dragging/resizing); `pin` / `pin off` from the bar; pin toasts ~3.2s
@@ -30,6 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pin: closing a pinned window fully tears down session state and WinEvent hooks (no ghost “pinned” until the next prune)
 - Toast host: dismissing an ephemeral toast while Awake is sticky no longer makes the Awake card jump
 - `setup`: background failures show an error toast instead of failing silently
+- `ip local`: clear error when no LAN address is available (no fake `127.0.0.1` success)
+- Hotkey registration: clearer message when one or more shortcuts fail
+- Firefox launch (`f` / `doc`): clearer error when Firefox is missing
 
 ## [1.3.0] - 2026-09-07
 
@@ -101,7 +106,8 @@ First public release.
 - Dev launcher (`run.ps1`) uses `dotnet` from PATH / `DOTNET_ROOT` instead of a machine-specific SDK path
 - Full English UI, module messages, and in-code comments
 
-[Unreleased]: https://github.com/vuillin/slash-bar/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/vuillin/slash-bar/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/vuillin/slash-bar/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/vuillin/slash-bar/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/vuillin/slash-bar/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/vuillin/slash-bar/compare/v1.0.0...v1.1.0
