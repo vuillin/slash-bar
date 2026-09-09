@@ -55,10 +55,18 @@ public partial class MainWindow {
             HotkeyNative.ModControl | HotkeyNative.ModShift,
             HotkeyNative.VkA);
 
-        if (!okSearch || !okQuit || !okPin) {
+        var failed = new List<string>();
+        if (!okSearch)
+            failed.Add("Ctrl+Space");
+        if (!okQuit)
+            failed.Add("Ctrl+Shift+Q");
+        if (!okPin)
+            failed.Add("Ctrl+Shift+A");
+
+        if (failed.Count > 0) {
             System.Windows.MessageBox.Show(
                 this,
-                "Could not register Ctrl+Space, Ctrl+Shift+Q, or Ctrl+Shift+A.\n" +
+                "Could not register " + string.Join(", ", failed) + ".\n" +
                 "Another app may already use this shortcut.",
                 "SlashBar");
         }
