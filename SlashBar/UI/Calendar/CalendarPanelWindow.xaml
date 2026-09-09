@@ -14,13 +14,13 @@
     <Border Background="Transparent"
             RenderTransformOrigin="0,0.5">
         <Border.RenderTransform>
-            <TranslateTransform x:Name="SlideTransform" X="-386"/>
+            <TranslateTransform x:Name="SlideTransform" X="-832"/>
         </Border.RenderTransform>
 
         <Grid Margin="{StaticResource SidePanelShadowMargin}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="14"/>
-                <ColumnDefinition Width="372"/>
+                <ColumnDefinition Width="818"/>
             </Grid.ColumnDefinitions>
 
             <Border x:Name="RootBorder"
@@ -43,11 +43,173 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <shell:SidePanelHeader Grid.Row="0"
-                                           Title="Calendar"
+                    <shell:SidePanelHeader x:Name="PanelHeader"
+                                           Grid.Row="0"
                                            MinimizeClick="MinimizeButton_Click"
                                            CloseClick="CloseButton_Click"
-                                           HeaderDrag="HeaderBar_MouseLeftButtonDown"/>
+                                           HeaderDrag="HeaderBar_MouseLeftButtonDown">
+                        <shell:SidePanelHeader.LeadingContent>
+                            <TextBlock Margin="4,4,0,0"
+                                       FontFamily="Segoe UI Variable Text, Segoe UI"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="#FF3B30"
+                                       VerticalAlignment="Center"
+                                       IsHitTestVisible="False"/>
+                        </shell:SidePanelHeader.LeadingContent>
+                    </shell:SidePanelHeader>
+
+                    <Grid Grid.Row="1"
+                        Margin="18,10,14,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- gauche : date -->
+                        <TextBlock x:Name="DayNumber"
+                                Grid.Column="0"
+                                Margin="0,-10,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                FontFamily="Segoe UI Variable Text, Segoe UI"
+                                FontSize="23"
+                                Foreground="#1C1C1E"
+                                IsHitTestVisible="False"/>
+
+                        <!-- droite : nav + calendrier -->
+                        <StackPanel Grid.Column="1"
+                                    Width="200"
+                                    VerticalAlignment="Top"
+                                    HorizontalAlignment="Right">
+                            <StackPanel.RenderTransform>
+                                <TranslateTransform X="-20" Y="4"/>
+                            </StackPanel.RenderTransform>
+                            <StackPanel.Resources>
+                                <Style x:Key="MonthDayHeader" TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    <Setter Property="FontFamily" Value="Segoe UI Variable Text, Segoe UI"/>
+                                    <Setter Property="FontSize" Value="13"/>
+                                    <Setter Property="FontWeight" Value="Medium"/>
+                                    <Setter Property="Foreground" Value="#8E8E93"/>
+                                    <Setter Property="IsHitTestVisible" Value="False"/>
+                                </Style>
+
+                                <Style x:Key="MonthNavSquare" TargetType="Button">
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                    <Setter Property="Foreground" Value="#2C2C2E"/>
+                                    <Setter Property="FontFamily" Value="Segoe UI Variable Text, Segoe UI"/>
+                                    <Setter Property="Width" Value="26"/>
+                                    <Setter Property="Height" Value="24"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border x:Name="Bg"
+                                                        Background="#E5E5EA"
+                                                        CornerRadius="13">
+                                                    <ContentPresenter HorizontalAlignment="Center"
+                                                                      VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="Bg" Property="Background" Value="#D8D8DD"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter TargetName="Bg" Property="Background" Value="#C7C7CC"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+
+                                <Style x:Key="MonthNavPill" TargetType="Button">
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                    <Setter Property="Foreground" Value="#2C2C2E"/>
+                                    <Setter Property="FontFamily" Value="Segoe UI Variable Text, Segoe UI"/>
+                                    <Setter Property="FontSize" Value="12"/>
+                                    <Setter Property="FontWeight" Value="Medium"/>
+                                    <Setter Property="Height" Value="24"/>
+                                    <Setter Property="MinWidth" Value="58"/>
+                                    <Setter Property="Padding" Value="10,0"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border x:Name="Bg"
+                                                        Background="#E5E5EA"
+                                                        CornerRadius="13"
+                                                        Padding="{TemplateBinding Padding}">
+                                                    <ContentPresenter HorizontalAlignment="Center"
+                                                                      VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="Bg" Property="Background" Value="#D8D8DD"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter TargetName="Bg" Property="Background" Value="#C7C7CC"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </StackPanel.Resources>
+
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,0,0,8">
+                                <Button x:Name="PrevMonthButton"
+                                        Style="{StaticResource MonthNavSquare}"
+                                        Click="PrevMonthButton_Click">
+                                    <TextBlock Text="‹"
+                                               FontSize="20"
+                                               Margin="0,-4,0,1"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                </Button>
+                                <Button x:Name="MonthLabelButton"
+                                        Style="{StaticResource MonthNavPill}"
+                                        Margin="5,0"
+                                        MinWidth="78"
+                                        Click="MonthLabelButton_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock x:Name="MonthLabel"
+                                                   FontSize="12"
+                                                   FontWeight="Medium"/>
+                                        <TextBlock x:Name="YearLabel"
+                                                   FontSize="12"
+                                                   FontWeight="Normal"
+                                                   Foreground="#8E8E93"
+                                                   Margin="4,0,0,0"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button x:Name="NextMonthButton"
+                                        Style="{StaticResource MonthNavSquare}"
+                                        Click="NextMonthButton_Click">
+                                    <TextBlock Text="›"
+                                               FontSize="20"
+                                               Margin="0,-4,0,1"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                </Button>
+                            </StackPanel>
+
+                            <UniformGrid Columns="7" Margin="0,0,0,2">
+                                <TextBlock Text="S" Style="{StaticResource MonthDayHeader}"/>
+                                <TextBlock Text="M" Style="{StaticResource MonthDayHeader}"/>
+                                <TextBlock Text="T" Style="{StaticResource MonthDayHeader}"/>
+                                <TextBlock Text="W" Style="{StaticResource MonthDayHeader}"/>
+                                <TextBlock Text="T" Style="{StaticResource MonthDayHeader}"/>
+                                <TextBlock Text="F" Style="{StaticResource MonthDayHeader}"/>
+                                <TextBlock Text="S" Style="{StaticResource MonthDayHeader}"/>
+                            </UniformGrid>
+
+                            <UniformGrid x:Name="MonthGrid"
+                                         Columns="7"
+                                         Height="156"/>
+                        </StackPanel>
+                    </Grid>
                 </Grid>
             </Border>
         </Grid>
