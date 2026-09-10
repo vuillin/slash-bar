@@ -270,52 +270,135 @@
                                              Columns="7"
                                              Height="138"/>
 
-                                <Border Margin="0,14,0,0"
+                                <Border Margin="0,24,0,0"
                                         Background="#F2F2F7"
-                                        CornerRadius="10"
-                                        Padding="10,5">
-                                    <TextBox x:Name="EventTitleBox"
-                                             FontFamily="Segoe UI Variable Text, Segoe UI"
-                                             FontSize="13"
-                                             FontWeight="SemiBold"
-                                             Foreground="#1C1C1E"
-                                             Background="Transparent"
-                                             BorderThickness="0"
-                                             CaretBrush="#1C1C1E"
-                                             FocusVisualStyle="{x:Null}">
-                                        <TextBox.Style>
-                                            <Style TargetType="TextBox">
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="TextBox">
-                                                            <Grid>
-                                                                <TextBlock x:Name="Placeholder"
-                                                                           Text="Event"
-                                                                           FontFamily="Segoe UI Variable Text, Segoe UI"
-                                                                           FontSize="13"
-                                                                           FontWeight="Medium"
-                                                                           Foreground="#8E8E93"
-                                                                           VerticalAlignment="Center"
-                                                                           IsHitTestVisible="False"
-                                                                           Visibility="Collapsed"/>
-                                                                <ScrollViewer x:Name="PART_ContentHost"
-                                                                              VerticalAlignment="Center"/>
-                                                            </Grid>
-                                                            <ControlTemplate.Triggers>
-                                                                <MultiTrigger>
-                                                                    <MultiTrigger.Conditions>
-                                                                        <Condition Property="Text" Value=""/>
-                                                                        <Condition Property="IsKeyboardFocused" Value="False"/>
-                                                                    </MultiTrigger.Conditions>
-                                                                    <Setter TargetName="Placeholder" Property="Visibility" Value="Visible"/>
-                                                                </MultiTrigger>
-                                                            </ControlTemplate.Triggers>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </TextBox.Style>
-                                    </TextBox>
+                                        CornerRadius="10">
+                                    <StackPanel>
+                                        <Border Padding="10,9">
+                                            <TextBox x:Name="EventTitleBox"
+                                                     FontFamily="Segoe UI Variable Text, Segoe UI"
+                                                     FontSize="13"
+                                                     FontWeight="SemiBold"
+                                                     Foreground="#1C1C1E"
+                                                     Background="Transparent"
+                                                     BorderThickness="0"
+                                                     CaretBrush="#1C1C1E"
+                                                     FocusVisualStyle="{x:Null}">
+                                                <TextBox.Style>
+                                                    <Style TargetType="TextBox">
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="TextBox">
+                                                                    <Grid>
+                                                                        <TextBlock x:Name="Placeholder"
+                                                                                   Text="Event"
+                                                                                   FontFamily="Segoe UI Variable Text, Segoe UI"
+                                                                                   FontSize="13"
+                                                                                   FontWeight="Medium"
+                                                                                   Foreground="#8E8E93"
+                                                                                   VerticalAlignment="Center"
+                                                                                   IsHitTestVisible="False"
+                                                                                   Visibility="Collapsed"/>
+                                                                        <ScrollViewer x:Name="PART_ContentHost"
+                                                                                      VerticalAlignment="Center"/>
+                                                                    </Grid>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <MultiTrigger>
+                                                                            <MultiTrigger.Conditions>
+                                                                                <Condition Property="Text" Value=""/>
+                                                                                <Condition Property="IsKeyboardFocused" Value="False"/>
+                                                                            </MultiTrigger.Conditions>
+                                                                            <Setter TargetName="Placeholder" Property="Visibility" Value="Visible"/>
+                                                                        </MultiTrigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </TextBox.Style>
+                                            </TextBox>
+                                        </Border>
+
+                                        <Border Height="1"
+                                                Margin="10,0"
+                                                Background="#1A000000"/>
+
+                                        <Button x:Name="RepeatRow"
+                                                Cursor="Hand"
+                                                Click="RepeatRow_Click"
+                                                FocusVisualStyle="{x:Null}">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="Bg"
+                                                            Background="Transparent"
+                                                            Padding="10,10"
+                                                            CornerRadius="0,0,10,10">
+                                                        <ContentPresenter VerticalAlignment="Center"/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Bg" Property="Background" Value="#0D000000"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter TargetName="Bg" Property="Background" Value="#18000000"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Viewbox Grid.Column="0"
+                                                         Width="18"
+                                                         Height="18"
+                                                         Margin="0,0,10,0"
+                                                         VerticalAlignment="Center">
+                                                    <Canvas Width="960" Height="960">
+                                                        <Path Fill="#3C3C43"
+                                                              Data="M286.15-100 140-246.15l146.15-146.16 42.16 43.39-72.77 72.77h430.61v-160h60v219.99H255.54l72.77 72.77L286.15-100Zm-72.3-423.85v-219.99h490.61l-72.77-72.77L673.85-860 820-713.85 673.85-567.69l-42.16-43.39 72.77-72.77H273.85v160h-60Z">
+                                                            <Path.RenderTransform>
+                                                                <TranslateTransform Y="960"/>
+                                                            </Path.RenderTransform>
+                                                        </Path>
+                                                    </Canvas>
+                                                </Viewbox>
+
+                                                <TextBlock Grid.Column="1"
+                                                           Text="Repeat"
+                                                           FontFamily="Segoe UI Variable Text, Segoe UI"
+                                                           FontSize="13"
+                                                           FontWeight="Medium"
+                                                           Foreground="#1C1C1E"
+                                                           VerticalAlignment="Center"/>
+
+                                                <TextBlock x:Name="RepeatValueText"
+                                                           Grid.Column="2"
+                                                           Text="Never"
+                                                           FontFamily="Segoe UI Variable Text, Segoe UI"
+                                                           FontSize="13"
+                                                           Foreground="#3C3C43"
+                                                           VerticalAlignment="Center"/>
+                                            </Grid>
+                                            <Button.ContextMenu>
+                                                <ContextMenu x:Name="RepeatMenu">
+                                                    <MenuItem Header="Never" Click="RepeatMenuItem_Click"/>
+                                                    <MenuItem Header="Every Day" Click="RepeatMenuItem_Click"/>
+                                                    <MenuItem Header="Weekdays" Click="RepeatMenuItem_Click"/>
+                                                    <MenuItem Header="Weekends" Click="RepeatMenuItem_Click"/>
+                                                    <MenuItem Header="Every Week" Click="RepeatMenuItem_Click"/>
+                                                    <MenuItem Header="Every 2 Weeks" Click="RepeatMenuItem_Click"/>
+                                                    <MenuItem Header="Every Month" Click="RepeatMenuItem_Click"/>
+                                                    <MenuItem Header="Every 3 Months" Click="RepeatMenuItem_Click"/>
+                                                    <MenuItem Header="Every 6 Months" Click="RepeatMenuItem_Click"/>
+                                                    <MenuItem Header="Every Year" Click="RepeatMenuItem_Click"/>
+                                                </ContextMenu>
+                                            </Button.ContextMenu>
+                                        </Button>
+                                    </StackPanel>
                                 </Border>
                             </StackPanel>
 

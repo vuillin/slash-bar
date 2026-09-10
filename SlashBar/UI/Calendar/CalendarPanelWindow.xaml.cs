@@ -283,6 +283,23 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
     }
 
 
+    private void RepeatRow_Click(object sender, RoutedEventArgs e) {
+        if (RepeatRow.ContextMenu == null)
+            return;
+
+        RepeatRow.ContextMenu.PlacementTarget = RepeatRow;
+        RepeatRow.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+        RepeatRow.ContextMenu.IsOpen = true;
+    }
+
+    private void RepeatMenuItem_Click(object sender, RoutedEventArgs e) {
+        if (sender is not System.Windows.Controls.MenuItem { Header: string label })
+            return;
+
+        RepeatValueText.Text = label;
+    }
+
+
     private void CalendarPanel_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
         if (!EventTitleBox.IsKeyboardFocusWithin)
             return;
