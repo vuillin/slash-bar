@@ -600,6 +600,30 @@
 
                         </StackPanel>
                     </Grid>
+
+                        <Border x:Name="PanelToast"
+                                Grid.RowSpan="2"
+                                Style="{StaticResource SidePanelCopiedToastStyle}">
+                            <Border.RenderTransform>
+                                <TranslateTransform x:Name="PanelToastSlide" Y="8"/>
+                            </Border.RenderTransform>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Name="ToastIcon"
+                                           Text="✓"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="#34C759"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,8,0"/>
+                                <TextBlock x:Name="ToastText"
+                                           Text="Added"
+                                           FontFamily="Segoe UI Variable Text, Segoe UI"
+                                           FontSize="13"
+                                           FontWeight="Medium"
+                                           Foreground="#3C3C43"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
                     </Grid>
 
                     <Border x:Name="EventsDrawer"

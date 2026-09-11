@@ -17,6 +17,8 @@ calendar          → toggle the panel
 | Right form | Event title, Repeat menu, Add Event |
 | Drawer | **View events** expands a side list with filters and delete |
 
+`Esc` closes the events drawer first if it is open, then closes the panel.
+
 ### Month grid
 
 - Selected day: red circle

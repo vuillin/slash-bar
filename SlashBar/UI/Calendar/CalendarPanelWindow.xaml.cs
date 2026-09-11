@@ -35,6 +35,8 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
     private static readonly SolidColorBrush EventDayBrush = Freeze(0xCA, 0x73, 0xDF);
     private static readonly SolidColorBrush EventDayMutedBrush = Freeze(0xE5, 0xC4, 0xEF);
     private static readonly SolidColorBrush TodayFillBrush = Freeze(0xE5, 0xE5, 0xEA);
+    private static readonly SolidColorBrush ToastSuccessBrush = Freeze(0x34, 0xC7, 0x59);
+    private static readonly SolidColorBrush ToastErrorBrush = Freeze(0xFF, 0x3B, 0x30);
 
     private static CalendarPanelWindow? _instance;
 
@@ -442,13 +444,20 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
 
 
     private void AddEventButton_Click(object sender, RoutedEventArgs e) {
-        var title = EventTitleBox.Text;
+        var title = EventTitleBox.Text.Trim();
         var repeat = RepeatValueText.Text;
         var date = _selectedDate;
+
+        if (title.Length == 0) {
+            ShowPanelToast("!", "Title required", ToastErrorBrush, useMdl2: false);
+            return;
+        }
 
         var ok = CalendarBook.Store.Add(title, date, repeat);
         if (!ok)
             return;
+
+        ShowPanelToast("\uE73E", "Added", ToastSuccessBrush, useMdl2: true);
 
         EventTitleBox.Text = "";
         RepeatValueText.Text = "Never";
@@ -517,6 +526,23 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
             return;
 
         CalendarBook.Store.Remove(entry.Id);
+        ShowPanelToast("\uE711", "Deleted", ToastErrorBrush, useMdl2: true);
+    }
+
+
+    private void ShowPanelToast(
+        string icon,
+        string message,
+        SolidColorBrush iconBrush,
+        bool useMdl2) {
+        ToastIcon.Text = icon;
+        ToastIcon.FontFamily = useMdl2
+            ? new System.Windows.Media.FontFamily("Segoe MDL2 Assets")
+            : new System.Windows.Media.FontFamily("Segoe UI Variable Text, Segoe UI");
+        ToastIcon.FontSize = useMdl2 ? 14 : 13;
+        ToastIcon.Foreground = iconBrush;
+        ToastText.Text = message;
+        CopiedToastAnimator.Show(PanelToast, PanelToastSlide);
     }
 
 
