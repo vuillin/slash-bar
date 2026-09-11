@@ -4,8 +4,9 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using SlashBar.UI.Shell;
 using System.Windows.Threading;
+using SlashBar.Modules.Calendar;
+using SlashBar.UI.Shell;
 
 namespace SlashBar;
 
@@ -24,6 +25,8 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
 
     private static readonly SolidColorBrush TimelineLineBrush = Freeze(0xE5, 0xE5, 0xEA);
     private static readonly SolidColorBrush TimelineHourBrush = Freeze(0x8E, 0x8E, 0x93);
+    private static readonly SolidColorBrush EventDayBrush = Freeze(0xCA, 0x73, 0xDF);
+    private static readonly SolidColorBrush EventDayMutedBrush = Freeze(0xE5, 0xC4, 0xEF);
 
     private static CalendarPanelWindow? _instance;
 
@@ -51,6 +54,11 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
         _nowTimer.Tick += (_, _) => RefreshNowIndicator();
         _nowTimer.Start();
 
+        CalendarBook.Store.Changed += () => Dispatcher.Invoke(() => {
+            RefreshDayEvents();
+            RebuildMonthGrid();
+        });
+
         Width = ShellWidth;
         PreviewMouseLeftButtonDown += CalendarPanel_PreviewMouseLeftButtonDown;
         PreviewKeyDown += (_, e) => {
@@ -68,6 +76,7 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
 
     protected override void OnPanelOpening() {
         base.OnPanelOpening();
+        RefreshDayEvents();
         RefreshNowIndicator();
         UpdateLayout();
         if (!ScrollNowIndicatorIntoView()) {
@@ -91,6 +100,8 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
             FontWeight = FontWeights.Bold
         });
         DayNumber.Inlines.Add(new Run($" {_selectedDate.Year}"));
+
+        RefreshDayEvents();
     }
 
 
@@ -102,7 +113,7 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
 
         for (var i = 0; i < 42; i++) {
             var date = start.AddDays(i);
-            MonthGrid.Children.Add(CreateDayCell(date));
+            MonthGrid.Children.Add(CreateDayCell(date, CalendarBook.Store.HasAnyOn(date)));
         }
     }
 
@@ -130,18 +141,24 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
     }
 
 
-    private UIElement CreateDayCell(DateTime date) {
+    private UIElement CreateDayCell(DateTime date, bool hasEvents) {
         var isCurrentMonth = date.Month == _viewMonth.Month;
         var isSelected = date.Date == _selectedDate.Date;
+
+        System.Windows.Media.Brush foreground;
+        if (isSelected)
+            foreground = SelectedTextBrush;
+        else if (hasEvents)
+            foreground = isCurrentMonth ? EventDayBrush : EventDayMutedBrush;
+        else
+            foreground = isCurrentMonth ? CurrentMonthBrush : OtherMonthBrush;
 
         var label = new TextBlock {
             Text = date.Day.ToString(UiCulture),
             FontFamily = new System.Windows.Media.FontFamily("Segoe UI Variable Text, Segoe UI"),
             FontSize = 13,
             FontWeight = FontWeights.Medium,
-            Foreground = isSelected
-                ? SelectedTextBrush
-                : isCurrentMonth ? CurrentMonthBrush : OtherMonthBrush,
+            Foreground = foreground,
             HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
             IsHitTestVisible = false
@@ -287,6 +304,12 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
         if (RepeatRow.ContextMenu == null)
             return;
 
+        var current = RepeatValueText.Text;
+        foreach (var obj in RepeatMenu.Items) {
+            if (obj is System.Windows.Controls.MenuItem item)
+                item.IsChecked = item.Header as string == current;
+        }
+
         RepeatRow.ContextMenu.PlacementTarget = RepeatRow;
         RepeatRow.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
         RepeatRow.ContextMenu.IsOpen = true;
@@ -318,6 +341,26 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
             node = VisualTreeHelper.GetParent(node);
         }
         return false;
+    }
+
+
+    private void AddEventButton_Click(object sender, RoutedEventArgs e) {
+        var title = EventTitleBox.Text;
+        var repeat = RepeatValueText.Text;
+        var date = _selectedDate;
+
+        var ok = CalendarBook.Store.Add(title, date, repeat);
+        if (!ok)
+            return;
+
+        EventTitleBox.Text = "";
+        RepeatValueText.Text = "Never";
+        Keyboard.ClearFocus();
+    }
+
+
+    private void RefreshDayEvents() {
+        DayEventPills.ItemsSource = CalendarBook.Store.GetOccurringOn(_selectedDate);
     }
 
 

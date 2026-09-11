@@ -4,6 +4,7 @@ using SlashBar.Modules.Clipboard;
 using SlashBar.Modules.Color;
 using SlashBar.Modules.Memo;
 using SlashBar.Modules.Pin;
+using SlashBar.Modules.Calendar;
 
 namespace SlashBar;
 
@@ -15,6 +16,7 @@ public partial class App : System.Windows.Application {
         ClipboardHistory.Store.Flush();
         MemoBook.Store.Flush();
         ColorHistory.Store.Flush();
+        CalendarBook.Store.Flush();
         base.OnExit(e);
     }
 }

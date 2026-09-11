@@ -76,15 +76,75 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock x:Name="DayNumber"
-                                       Grid.Row="0"
-                                       Margin="0,-10,0,12"
-                                       HorizontalAlignment="Left"
-                                       VerticalAlignment="Top"
-                                       FontFamily="Segoe UI Variable Text, Segoe UI"
-                                       FontSize="23"
-                                       Foreground="#1C1C1E"
-                                       IsHitTestVisible="False"/>
+                            <Grid Grid.Row="0"
+                                  Margin="0,-10,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="DayNumber"
+                                           Grid.Column="0"
+                                           VerticalAlignment="Center"
+                                           FontFamily="Segoe UI Variable Text, Segoe UI"
+                                           FontSize="23"
+                                           Foreground="#1C1C1E"
+                                           IsHitTestVisible="False"/>
+
+                                <ItemsControl x:Name="DayEventPills"
+                                              Grid.Column="1"
+                                              Margin="14,0,0,0"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Left">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#4DAF52DE"
+                                                    CornerRadius="12"
+                                                    Padding="2,2,8,2"
+                                                    Margin="0,2,6,2"
+                                                    MaxWidth="180"
+                                                    VerticalAlignment="Center">
+                                                <StackPanel Orientation="Horizontal"
+                                                            VerticalAlignment="Center">
+                                                    <Border Width="18"
+                                                            Height="18"
+                                                            CornerRadius="9"
+                                                            Background="#CA73DF"
+                                                            VerticalAlignment="Center">
+                                                        <Viewbox Width="13"
+                                                                 Height="13"
+                                                                 HorizontalAlignment="Center"
+                                                                 VerticalAlignment="Center">
+                                                            <Canvas Width="960" Height="960">
+                                                                <Path Fill="#000006"
+                                                                      Data="m233-120 65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Z">
+                                                                    <Path.RenderTransform>
+                                                                        <TranslateTransform Y="960"/>
+                                                                    </Path.RenderTransform>
+                                                                </Path>
+                                                            </Canvas>
+                                                        </Viewbox>
+                                                    </Border>
+
+                                                    <TextBlock Text="{Binding Title}"
+                                                               Margin="6,0,2,0"
+                                                               FontFamily="Segoe UI Variable Text, Segoe UI"
+                                                               FontSize="13"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="#A84FC0"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
 
                             <ScrollViewer x:Name="DayTimelineScroll"
                                           Grid.Row="1"
@@ -271,7 +331,7 @@
                                              Height="138"/>
 
                                 <Border Margin="0,24,0,0"
-                                        Background="#F2F2F7"
+                                        Background="#EBEBF0"
                                         CornerRadius="10">
                                     <StackPanel>
                                         <Border Padding="10,9">
@@ -384,22 +444,143 @@
                                                            VerticalAlignment="Center"/>
                                             </Grid>
                                             <Button.ContextMenu>
-                                                <ContextMenu x:Name="RepeatMenu">
+                                                <ContextMenu x:Name="RepeatMenu"
+                                                             Background="Transparent"
+                                                             BorderThickness="0"
+                                                             Padding="0"
+                                                             HasDropShadow="False"
+                                                             FontFamily="Segoe UI Variable Text, Segoe UI"
+                                                             FontSize="13">
+                                                    <ContextMenu.Template>
+                                                        <ControlTemplate TargetType="ContextMenu">
+                                                            <Border Background="#FFFFFF"
+                                                                    BorderBrush="#1A000000"
+                                                                    BorderThickness="1"
+                                                                    CornerRadius="12"
+                                                                    Padding="5"
+                                                                    MinWidth="176"
+                                                                    SnapsToDevicePixels="True">
+                                                                <Border.Effect>
+                                                                    <DropShadowEffect BlurRadius="22"
+                                                                                      ShadowDepth="4"
+                                                                                      Direction="90"
+                                                                                      Opacity="0.16"
+                                                                                      Color="#000000"/>
+                                                                </Border.Effect>
+                                                                <StackPanel IsItemsHost="True"
+                                                                            KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </ContextMenu.Template>
+                                                    <ContextMenu.Resources>
+                                                        <Style TargetType="MenuItem">
+                                                            <Setter Property="Background" Value="Transparent"/>
+                                                            <Setter Property="Foreground" Value="#1C1C1E"/>
+                                                            <Setter Property="Padding" Value="0"/>
+                                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate TargetType="MenuItem">
+                                                                        <Border x:Name="Bd"
+                                                                                Background="Transparent"
+                                                                                CornerRadius="8"
+                                                                                Padding="10,8"
+                                                                                Margin="0,0.5"
+                                                                                SnapsToDevicePixels="True">
+                                                                            <Grid>
+                                                                                <Grid.ColumnDefinitions>
+                                                                                    <ColumnDefinition Width="16"/>
+                                                                                    <ColumnDefinition Width="*"/>
+                                                                                </Grid.ColumnDefinitions>
+                                                                                <TextBlock x:Name="CheckMark"
+                                                                                           Text="✓"
+                                                                                           FontSize="12"
+                                                                                           FontWeight="SemiBold"
+                                                                                           Foreground="#FF3B30"
+                                                                                           HorizontalAlignment="Left"
+                                                                                           VerticalAlignment="Center"
+                                                                                           Visibility="Hidden"/>
+                                                                                <TextBlock Grid.Column="1"
+                                                                                           Text="{TemplateBinding Header}"
+                                                                                           FontFamily="Segoe UI Variable Text, Segoe UI"
+                                                                                           FontSize="13"
+                                                                                           FontWeight="Medium"
+                                                                                           Foreground="{TemplateBinding Foreground}"
+                                                                                           VerticalAlignment="Center"
+                                                                                           Margin="6,0,0,0"/>
+                                                                            </Grid>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsHighlighted" Value="True">
+                                                                                <Setter TargetName="Bd" Property="Background" Value="#E8E8ED"/>
+                                                                            </Trigger>
+                                                                            <Trigger Property="IsChecked" Value="True">
+                                                                                <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                        <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}"
+                                                               TargetType="Separator">
+                                                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate TargetType="Separator">
+                                                                        <Border Height="1"
+                                                                                Margin="8,4"
+                                                                                Background="#1A000000"
+                                                                                SnapsToDevicePixels="True"/>
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                    </ContextMenu.Resources>
                                                     <MenuItem Header="Never" Click="RepeatMenuItem_Click"/>
+                                                    <Separator/>
                                                     <MenuItem Header="Every Day" Click="RepeatMenuItem_Click"/>
-                                                    <MenuItem Header="Weekdays" Click="RepeatMenuItem_Click"/>
-                                                    <MenuItem Header="Weekends" Click="RepeatMenuItem_Click"/>
                                                     <MenuItem Header="Every Week" Click="RepeatMenuItem_Click"/>
                                                     <MenuItem Header="Every 2 Weeks" Click="RepeatMenuItem_Click"/>
                                                     <MenuItem Header="Every Month" Click="RepeatMenuItem_Click"/>
-                                                    <MenuItem Header="Every 3 Months" Click="RepeatMenuItem_Click"/>
-                                                    <MenuItem Header="Every 6 Months" Click="RepeatMenuItem_Click"/>
                                                     <MenuItem Header="Every Year" Click="RepeatMenuItem_Click"/>
                                                 </ContextMenu>
                                             </Button.ContextMenu>
                                         </Button>
                                     </StackPanel>
                                 </Border>
+
+                                <Button x:Name="AddEventButton"
+                                        Click="AddEventButton_Click"
+                                        Margin="0,10,0,0"
+                                        Height="28"
+                                        Cursor="Hand"
+                                        FocusVisualStyle="{x:Null}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="Bg"
+                                                    Background="#FF3B30"
+                                                    CornerRadius="8"
+                                                    SnapsToDevicePixels="True">
+                                                <TextBlock Text="Add Event"
+                                                           FontFamily="Segoe UI Variable Text, Segoe UI"
+                                                           FontSize="13"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="#FFFFFF"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Bg" Property="Background" Value="#E8352B"/>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter TargetName="Bg" Property="Background" Value="#D12F26"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
                             </StackPanel>
 
                         </StackPanel>
