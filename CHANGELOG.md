@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-09-11
+
 ### Added
 
 - `calendar` module: day timeline + month grid, create events with repeat (Never / Every Day / Week / 2 Weeks / Month / Year), purple day markers and event pills, expandable events drawer with All / Past / Recurring filters and delete; persisted at `%LocalAppData%/SlashBar/calendar-events.json`
@@ -114,7 +116,8 @@ First public release.
 - Dev launcher (`run.ps1`) uses `dotnet` from PATH / `DOTNET_ROOT` instead of a machine-specific SDK path
 - Full English UI, module messages, and in-code comments
 
-[Unreleased]: https://github.com/vuillin/slash-bar/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/vuillin/slash-bar/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/vuillin/slash-bar/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/vuillin/slash-bar/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/vuillin/slash-bar/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/vuillin/slash-bar/compare/v1.1.0...v1.2.0
