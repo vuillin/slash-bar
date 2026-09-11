@@ -74,6 +74,21 @@ public sealed class CalendarStore {
     }
 
 
+    public void Remove(string id) {
+        if (string.IsNullOrEmpty(id))
+            return;
+
+        lock (_lock) {
+            var removed = _entries.RemoveAll(e => e.Id == id);
+            if (removed == 0)
+                return;
+            _saver.Schedule();
+        }
+
+        Changed?.Invoke();
+    }
+
+
     public void Flush() => _saver.Flush();
 
 
@@ -90,7 +105,7 @@ public sealed class CalendarStore {
             _entries.Clear();
             _entries.AddRange(data.Entries);
         } catch {
-            // Fichier corrompu
+            // corrupt file
         }
     }
 

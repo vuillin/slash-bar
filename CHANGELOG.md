@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `calendar` module: day timeline + month grid, create events with repeat (Never / Every Day / Week / 2 Weeks / Month / Year), purple day markers and event pills, expandable events drawer with All / Past / Recurring filters and delete; persisted at `%LocalAppData%/SlashBar/calendar-events.json`
+
 ### Changed
 
 - `f` (Firefox search) renamed to `web`: opens / searches in the default browser; `doc` uses the same helper (no Firefox PATH dependency)

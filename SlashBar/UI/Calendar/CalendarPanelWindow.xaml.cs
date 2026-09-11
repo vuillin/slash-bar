@@ -8,6 +8,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using SlashBar.Modules.Calendar;
 using SlashBar.UI.Shell;
+using System.Linq;
 
 namespace SlashBar;
 
@@ -33,6 +34,7 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
     private static readonly SolidColorBrush TimelineHourBrush = Freeze(0x8E, 0x8E, 0x93);
     private static readonly SolidColorBrush EventDayBrush = Freeze(0xCA, 0x73, 0xDF);
     private static readonly SolidColorBrush EventDayMutedBrush = Freeze(0xE5, 0xC4, 0xEF);
+    private static readonly SolidColorBrush TodayFillBrush = Freeze(0xE5, 0xE5, 0xEA);
 
     private static CalendarPanelWindow? _instance;
 
@@ -45,9 +47,15 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
     private bool _eventsDrawerOpen;
     private bool _eventsDrawerAnimating;
 
+    private string _eventsFilter = "All";
+
 
     private CalendarPanelWindow() {
         InitializeComponent();
+        SlideTransform.X = HiddenX;
+
+        SyncFilterPillStyles();
+        RefreshEventsList();
 
         var today = DateTime.Today;
         _selectedDate = today;
@@ -61,18 +69,30 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
         RefreshNowIndicator();
         _nowTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         _nowTimer.Tick += (_, _) => RefreshNowIndicator();
-        _nowTimer.Start();
 
-        CalendarBook.Store.Changed += () => Dispatcher.Invoke(() => {
+        CalendarBook.Store.Changed += () => Dispatcher.BeginInvoke(() => {
             RefreshDayEvents();
             RebuildMonthGrid();
+            RefreshEventsList();
         });
 
         Width = ShellWidth;
         PreviewMouseLeftButtonDown += CalendarPanel_PreviewMouseLeftButtonDown;
         PreviewKeyDown += (_, e) => {
-            if (e.Key == Key.Escape)
-                AnimateClose();
+            if (e.Key != Key.Escape)
+                return;
+
+            e.Handled = true;
+
+            if (_eventsDrawerAnimating)
+                return;
+
+            if (_eventsDrawerOpen) {
+                AnimateEventsDrawer(false);
+                return;
+            }
+
+            AnimateClose();
         };
     }
 
@@ -87,6 +107,7 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
         base.OnPanelOpening();
         RefreshDayEvents();
         RefreshNowIndicator();
+        _nowTimer?.Start();
         UpdateLayout();
         if (!ScrollNowIndicatorIntoView()) {
             Dispatcher.BeginInvoke(() => {
@@ -94,6 +115,12 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
                 ScrollNowIndicatorIntoView();
             }, DispatcherPriority.Loaded);
         }
+    }
+
+
+    protected override void OnPanelClosing() {
+        _nowTimer?.Stop();
+        base.OnPanelClosing();
     }
 
 
@@ -129,6 +156,10 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
         var windowAnim = new DoubleAnimation(widthFrom, widthTo, duration) { EasingFunction = ease };
 
         windowAnim.Completed += (_, _) => {
+
+            if (open)
+                RefreshEventsList();
+
             _eventsDrawerOpen = open;
             _eventsDrawerAnimating = false;
 
@@ -188,7 +219,7 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
         }
 
         var now = DateTime.Now;
-        var top = (now.Hour + now.Minute / 60.0) * HourRowHeight
+        var top = (now.Hour + now.Minute / 60.0 + now.Second / 3600.0) * HourRowHeight
                 + HourRowHeight / 2.0
                 - NowIndicator.Height / 2.0;
 
@@ -201,6 +232,7 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
     private UIElement CreateDayCell(DateTime date, bool hasEvents) {
         var isCurrentMonth = date.Month == _viewMonth.Month;
         var isSelected = date.Date == _selectedDate.Date;
+        var isToday = date.Date == DateTime.Today;
 
         System.Windows.Media.Brush foreground;
         if (isSelected)
@@ -221,11 +253,19 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
             IsHitTestVisible = false
         };
 
+        System.Windows.Media.Brush background;
+        if (isSelected)
+            background = SelectedFillBrush;
+        else if (isToday)
+            background = TodayFillBrush;
+        else
+            background = System.Windows.Media.Brushes.Transparent;
+
         var cell = new Border {
             Width = 23,
             Height = 23,
             CornerRadius = new CornerRadius(11.5),
-            Background = isSelected ? SelectedFillBrush : System.Windows.Media.Brushes.Transparent,
+            Background = background,
             Cursor = System.Windows.Input.Cursors.Hand,
             Tag = date.Date,
             Child = label,
@@ -321,7 +361,7 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
             return false;
 
         var now = DateTime.Now;
-        var indicatorY = (now.Hour + now.Minute / 60.0) * HourRowHeight
+        var indicatorY = (now.Hour + now.Minute / 60.0 + now.Second / 3600.0) * HourRowHeight
                         + HourRowHeight / 2.0;
 
         var target = indicatorY - DayTimelineScroll.ViewportHeight / 2.0;
@@ -416,8 +456,67 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
     }
 
 
+    private void EventsFilter_Click(object sender, RoutedEventArgs e) {
+        if (sender is not System.Windows.Controls.Button { Tag: string filter })
+            return;
+
+        _eventsFilter = filter;
+        SyncFilterPillStyles();
+        RefreshEventsList();
+    }
+
+
+    private void SyncFilterPillStyles() {
+        ApplyFilterPillStyle(FilterAllButton, _eventsFilter == "All");
+        ApplyFilterPillStyle(FilterPastButton, _eventsFilter == "Past");
+        ApplyFilterPillStyle(FilterRecurringButton, _eventsFilter == "Recurring");
+    }
+
+    private static void ApplyFilterPillStyle(System.Windows.Controls.Button button, bool selected) {
+        button.ApplyTemplate();
+        if (button.Template.FindName("Bg", button) is not Border bg)
+            return;
+
+        bg.Background = selected
+            ? System.Windows.Media.Brushes.White
+            : System.Windows.Media.Brushes.Transparent;
+    }
+
+
     private void RefreshDayEvents() {
         DayEventPills.ItemsSource = CalendarBook.Store.GetOccurringOn(_selectedDate);
+    }
+
+
+    private void RefreshEventsList() {
+        var today = DateTime.Today;
+
+        IEnumerable<CalendarEvent> query = CalendarBook.Store.GetAll();
+
+        query = _eventsFilter switch {
+            "Past" => query.Where(e =>
+                e.Repeat == CalendarRecurrence.Never && e.Date.Date < today),
+
+            "Recurring" => query.Where(e =>
+                e.Repeat != CalendarRecurrence.Never),
+
+            _ => query
+        };
+
+        EventsList.ItemsSource = query
+            .OrderBy(e => e.Date)
+            .ThenBy(e => e.Title)
+            .ToList();
+    }
+
+
+    private void DeleteEvent_Click(object sender, RoutedEventArgs e) {
+        e.Handled = true;
+
+        if (sender is not FrameworkElement { Tag: CalendarEvent entry })
+            return;
+
+        CalendarBook.Store.Remove(entry.Id);
     }
 
 

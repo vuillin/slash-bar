@@ -14,7 +14,7 @@
     <Border Background="Transparent"
             RenderTransformOrigin="0,0.5">
         <Border.RenderTransform>
-            <TranslateTransform x:Name="SlideTransform" X="-832"/>
+            <TranslateTransform x:Name="SlideTransform" X="0"/>
         </Border.RenderTransform>
 
         <Grid Margin="{StaticResource SidePanelShadowMargin}">
@@ -73,7 +73,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- gauche : date + journée -->
+                        <!-- day timeline -->
                         <Grid Grid.Column="0"
                               Margin="0,0,8,0"
                               HorizontalAlignment="Stretch">
@@ -161,7 +161,6 @@
                                 <Grid Margin="0,0,2,8">
                                     <StackPanel x:Name="DayTimeline"/>
 
-                                    <!-- Current time (shown only for today) -->
                                     <Grid x:Name="NowIndicator"
                                           Height="20"
                                           VerticalAlignment="Top"
@@ -203,7 +202,7 @@
                                 Background="#1A000000"
                                 VerticalAlignment="Stretch"/>
 
-                        <!-- droite : nav + calendrier -->
+                        <!-- month + event form -->
                         <StackPanel Grid.Column="2"
                                     VerticalAlignment="Top"
                                     HorizontalAlignment="Right">
@@ -603,7 +602,6 @@
                     </Grid>
                     </Grid>
 
-                    <!-- Empty drawer — content later -->
                     <Border x:Name="EventsDrawer"
                             Grid.Column="1"
                             Width="0"
@@ -611,7 +609,172 @@
                             BorderBrush="#1A000000"
                             BorderThickness="1,0,0,0"
                             ClipToBounds="True"
-                            SnapsToDevicePixels="True"/>
+                            SnapsToDevicePixels="True">
+                        <Border.Resources>
+                            <ControlTemplate x:Key="EventsFilterPillTemplate" TargetType="Button">
+                                <Border x:Name="Bg"
+                                        Background="Transparent"
+                                        CornerRadius="7"
+                                        Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Border.Resources>
+                        <Grid Margin="14,14,12,12">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0"
+                                       Text="Events"
+                                       FontFamily="Segoe UI Variable Text, Segoe UI"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       Foreground="#1C1C1E"
+                                       Margin="2,2,0,12"/>
+
+                            <!-- All | Past | Recurring -->
+                            <Border Grid.Row="1"
+                                    Background="#EBEBF0"
+                                    CornerRadius="9"
+                                    Padding="2"
+                                    Margin="0,0,0,12">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button x:Name="FilterAllButton"
+                                            Grid.Column="0"
+                                            Content="All"
+                                            Tag="All"
+                                            Click="EventsFilter_Click"
+                                            Cursor="Hand"
+                                            FocusVisualStyle="{x:Null}"
+                                            FontFamily="Segoe UI Variable Text, Segoe UI"
+                                            FontSize="11"
+                                            FontWeight="SemiBold"
+                                            Foreground="#1C1C1E"
+                                            Padding="0,6"
+                                            Template="{StaticResource EventsFilterPillTemplate}"/>
+
+                                    <Button x:Name="FilterPastButton"
+                                            Grid.Column="1"
+                                            Content="Past"
+                                            Tag="Past"
+                                            Click="EventsFilter_Click"
+                                            Cursor="Hand"
+                                            FocusVisualStyle="{x:Null}"
+                                            FontFamily="Segoe UI Variable Text, Segoe UI"
+                                            FontSize="11"
+                                            FontWeight="SemiBold"
+                                            Foreground="#1C1C1E"
+                                            Padding="0,6"
+                                            Template="{StaticResource EventsFilterPillTemplate}"/>
+
+                                    <Button x:Name="FilterRecurringButton"
+                                            Grid.Column="2"
+                                            Content="Recurring"
+                                            Tag="Recurring"
+                                            Click="EventsFilter_Click"
+                                            Cursor="Hand"
+                                            FocusVisualStyle="{x:Null}"
+                                            FontFamily="Segoe UI Variable Text, Segoe UI"
+                                            FontSize="11"
+                                            FontWeight="SemiBold"
+                                            Foreground="#1C1C1E"
+                                            Padding="0,6"
+                                            Template="{StaticResource EventsFilterPillTemplate}"/>
+                                </Grid>
+                            </Border>
+
+                            <ScrollViewer Grid.Row="2"
+                                          VerticalScrollBarVisibility="Auto"
+                                          HorizontalScrollBarVisibility="Disabled"
+                                          Template="{StaticResource SidePanelOverlayScrollViewerTemplate}">
+                                <ItemsControl x:Name="EventsList">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#F2F2F7"
+                                                    CornerRadius="10"
+                                                    Padding="10,8"
+                                                    Margin="0,0,0,6">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <StackPanel Grid.Column="0"
+                                                                VerticalAlignment="Center"
+                                                                Margin="0,0,6,0">
+                                                        <TextBlock Text="{Binding Title}"
+                                                                   FontFamily="Segoe UI Variable Text, Segoe UI"
+                                                                   FontSize="13"
+                                                                   FontWeight="SemiBold"
+                                                                   Foreground="#1C1C1E"
+                                                                   TextTrimming="CharacterEllipsis"/>
+                                                        <TextBlock Text="{Binding DetailLine}"
+                                                                   FontFamily="Segoe UI Variable Text, Segoe UI"
+                                                                   FontSize="11"
+                                                                   Foreground="#8E8E93"
+                                                                   Margin="0,2,0,0"
+                                                                   TextTrimming="CharacterEllipsis"/>
+                                                    </StackPanel>
+
+                                                    <Button Grid.Column="1"
+                                                            Click="DeleteEvent_Click"
+                                                            Tag="{Binding}"
+                                                            Width="28"
+                                                            Height="28"
+                                                            Cursor="Hand"
+                                                            ToolTip="Delete"
+                                                            VerticalAlignment="Center"
+                                                            FocusVisualStyle="{x:Null}">
+                                                        <Button.Template>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border x:Name="Bg"
+                                                                        Background="Transparent"
+                                                                        CornerRadius="8"
+                                                                        Width="28"
+                                                                        Height="28">
+                                                                    <Viewbox Width="12"
+                                                                             Height="15"
+                                                                             Stretch="Uniform"
+                                                                             HorizontalAlignment="Center"
+                                                                             VerticalAlignment="Center">
+                                                                        <Canvas Width="24" Height="28">
+                                                                            <Path x:Name="Icon"
+                                                                                  Fill="#8E8E93"
+                                                                                  Data="M9,2 L15,2 L16.5,5 L21,5 L21,7.5 L3,7.5 L3,5 L7.5,5 Z M5,10 L7.2,10 L7.2,22 L5,22 Z M10.9,10 L13.1,10 L13.1,22 L10.9,22 Z M16.8,10 L19,10 L19,22 L16.8,22 Z M4,26 L20,26 C21.1,26 22,25.1 22,24 L22,10 L2,10 L2,24 C2,25.1 2.9,26 4,26 Z"/>
+                                                                        </Canvas>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="Bg" Property="Background" Value="#1AFF3B30"/>
+                                                                        <Setter TargetName="Icon" Property="Fill" Value="#FF3B30"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsPressed" Value="True">
+                                                                        <Setter TargetName="Bg" Property="Background" Value="#33FF3B30"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                    </Button>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
                 </Grid>
             </Border>
         </Grid>
