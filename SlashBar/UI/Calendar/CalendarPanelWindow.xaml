@@ -20,7 +20,7 @@
         <Grid Margin="{StaticResource SidePanelShadowMargin}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="14"/>
-                <ColumnDefinition Width="818"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <Border x:Name="RootBorder"
@@ -38,29 +38,35 @@
                 </Border.Effect>
 
                 <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="818"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                    <shell:SidePanelHeader x:Name="PanelHeader"
-                                           Grid.Row="0"
-                                           MinimizeClick="MinimizeButton_Click"
-                                           CloseClick="CloseButton_Click"
-                                           HeaderDrag="HeaderBar_MouseLeftButtonDown">
-                        <shell:SidePanelHeader.LeadingContent>
-                            <TextBlock Margin="4,4,0,0"
-                                       FontFamily="Segoe UI Variable Text, Segoe UI"
-                                       FontSize="14"
-                                       FontWeight="SemiBold"
-                                       Foreground="#FF3B30"
-                                       VerticalAlignment="Center"
-                                       IsHitTestVisible="False"/>
-                        </shell:SidePanelHeader.LeadingContent>
-                    </shell:SidePanelHeader>
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="1"
-                        Margin="18,10,14,12">
+                        <shell:SidePanelHeader x:Name="PanelHeader"
+                                               Grid.Row="0"
+                                               MinimizeClick="MinimizeButton_Click"
+                                               CloseClick="CloseButton_Click"
+                                               HeaderDrag="HeaderBar_MouseLeftButtonDown">
+                            <shell:SidePanelHeader.LeadingContent>
+                                <TextBlock Margin="4,4,0,0"
+                                           FontFamily="Segoe UI Variable Text, Segoe UI"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="#FF3B30"
+                                           VerticalAlignment="Center"
+                                           IsHitTestVisible="False"/>
+                            </shell:SidePanelHeader.LeadingContent>
+                        </shell:SidePanelHeader>
+
+                        <Grid Grid.Row="1"
+                            Margin="18,10,14,12">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" MaxWidth="540"/>
                             <ColumnDefinition Width="Auto"/>
@@ -202,7 +208,7 @@
                                     VerticalAlignment="Top"
                                     HorizontalAlignment="Right">
                             <StackPanel.RenderTransform>
-                                <TranslateTransform X="0" Y="18"/>
+                                <TranslateTransform X="0" Y="8"/>
                             </StackPanel.RenderTransform>
                             <StackPanel.Resources>
                                 <Style x:Key="MonthDayHeader" TargetType="TextBlock">
@@ -581,10 +587,31 @@
                                         </ControlTemplate>
                                     </Button.Template>
                                 </Button>
+
+                                <TextBlock x:Name="ViewEventsLabel"
+                                           Text="View events"
+                                           Margin="0,8,0,0"
+                                           HorizontalAlignment="Center"
+                                           FontFamily="Segoe UI Variable Text, Segoe UI"
+                                           FontSize="12"
+                                           Foreground="#8E8E93"
+                                           Cursor="Hand"
+                                           MouseLeftButtonUp="ViewEventsLabel_MouseLeftButtonUp"/>
                             </StackPanel>
 
                         </StackPanel>
                     </Grid>
+                    </Grid>
+
+                    <!-- Empty drawer — content later -->
+                    <Border x:Name="EventsDrawer"
+                            Grid.Column="1"
+                            Width="0"
+                            Background="#FFFFFF"
+                            BorderBrush="#1A000000"
+                            BorderThickness="1,0,0,0"
+                            ClipToBounds="True"
+                            SnapsToDevicePixels="True"/>
                 </Grid>
             </Border>
         </Grid>

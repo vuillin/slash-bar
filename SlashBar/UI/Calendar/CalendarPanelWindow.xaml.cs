@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using SlashBar.Modules.Calendar;
 using SlashBar.UI.Shell;
@@ -12,7 +13,12 @@ namespace SlashBar;
 
 public partial class CalendarPanelWindow : DockedSidePanelWindow {
 
-    protected override double PanelContentWidth => 818;
+    private const double BaseContentWidth = 818;
+    private const double EventsDrawerExpandedWidth = 280;
+
+    protected override double PanelContentWidth =>
+        BaseContentWidth + (_eventsDrawerOpen ? EventsDrawerExpandedWidth : 0);
+
     public override string DockShelfKey => "calendar";
 
     protected override double DockedHeight(double workAreaHeight) => workAreaHeight * 0.416;
@@ -35,6 +41,9 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
 
     private DateTime _viewMonth;
     private DateTime _selectedDate;
+
+    private bool _eventsDrawerOpen;
+    private bool _eventsDrawerAnimating;
 
 
     private CalendarPanelWindow() {
@@ -80,12 +89,60 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
         RefreshNowIndicator();
         UpdateLayout();
         if (!ScrollNowIndicatorIntoView()) {
-            // First open: viewport is ready only after Show() — still off-screen during slide-in
             Dispatcher.BeginInvoke(() => {
                 UpdateLayout();
                 ScrollNowIndicatorIntoView();
             }, DispatcherPriority.Loaded);
         }
+    }
+
+
+    private void ViewEventsLabel_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
+        e.Handled = true;
+        ToggleEventsDrawer();
+    }
+
+
+    private void ToggleEventsDrawer() {
+        if (_eventsDrawerAnimating || IsAnimating)
+            return;
+
+        AnimateEventsDrawer(!_eventsDrawerOpen);
+    }
+
+
+    private void AnimateEventsDrawer(bool open) {
+        _eventsDrawerAnimating = true;
+
+        var from = EventsDrawer.ActualWidth > 0 ? EventsDrawer.ActualWidth : EventsDrawer.Width;
+        var to = open ? EventsDrawerExpandedWidth : 0;
+        var duration = TimeSpan.FromMilliseconds(280);
+        var ease = new QuadraticEase {
+            EasingMode = open ? EasingMode.EaseOut : EasingMode.EaseIn
+        };
+
+        var drawerAnim = new DoubleAnimation(from, to, duration) { EasingFunction = ease };
+
+        var widthFrom = ActualWidth > 0 ? ActualWidth : Width;
+        var widthTo = LeftMargin + BaseContentWidth + to
+                      + ((Thickness)System.Windows.Application.Current.FindResource("SidePanelShadowMargin")).Right;
+        var windowAnim = new DoubleAnimation(widthFrom, widthTo, duration) { EasingFunction = ease };
+
+        windowAnim.Completed += (_, _) => {
+            _eventsDrawerOpen = open;
+            _eventsDrawerAnimating = false;
+
+            EventsDrawer.BeginAnimation(WidthProperty, null);
+            EventsDrawer.Width = to;
+
+            BeginAnimation(WidthProperty, null);
+            Width = ShellWidth;
+
+            ViewEventsLabel.Text = open ? "Hide events" : "View events";
+        };
+
+        EventsDrawer.BeginAnimation(WidthProperty, drawerAnim);
+        BeginAnimation(WidthProperty, windowAnim);
     }
 
 
