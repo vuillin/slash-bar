@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-09-11
+
+### Added
+
+- Calendar in-panel toasts (same style as Memo/Clip): Added, Deleted, Title required
+
+### Changed
+
+- Calendar: Esc closes the events drawer first, then the panel
+- Calendar “now” indicator timer runs only while the panel is open
+
 ## [1.5.0] - 2026-09-11
 
 ### Added
@@ -116,7 +127,8 @@ First public release.
 - Dev launcher (`run.ps1`) uses `dotnet` from PATH / `DOTNET_ROOT` instead of a machine-specific SDK path
 - Full English UI, module messages, and in-code comments
 
-[Unreleased]: https://github.com/vuillin/slash-bar/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/vuillin/slash-bar/compare/v1.5.1...HEAD
+[1.5.1]: https://github.com/vuillin/slash-bar/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/vuillin/slash-bar/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/vuillin/slash-bar/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/vuillin/slash-bar/compare/v1.2.0...v1.3.0
