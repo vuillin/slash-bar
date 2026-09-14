@@ -41,6 +41,11 @@ public partial class MainWindow {
         ExecuteShortcut(prefix);
     }
 
+    private void SettingsButton_Click(object sender, MouseButtonEventArgs e) {
+        e.Handled = true;
+        ExecuteShortcut("settings");
+    }
+
     private static bool TryGetShortcutLift(object sender, out TranslateTransform lift) {
         lift = null!;
         if (sender is not FrameworkElement { DataContext: ShortcutSlot { Prefix: not null } } fe)

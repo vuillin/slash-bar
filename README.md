@@ -20,7 +20,9 @@ Press `Ctrl+Space` to show the bar at the bottom of the screen.
 - left: Color Picker, Weather, Calendar
 - right: Memo, Clipboard
 
-**Panels** — Memo, Color, Clip, Weather, and Calendar open as docked side panels (several can stay open). Drag the header to detach. The yellow traffic-light minimizes a panel to a bottom-left icon shelf (click to restore); red closes. They also open via command (`memo`, `color`, `clip`, `weather`, `calendar`).
+**Panels** — Memo, Color, Clip, Weather, Calendar, and Settings open as docked side panels (several can stay open). Drag the header to detach. The yellow traffic-light minimizes a panel to a bottom-left icon shelf (click to restore); red closes. They also open via command (`memo`, `color`, `clip`, `weather`, `calendar`, `settings`). The Settings gear sits to the right of the `esc` badge on the bar.
+
+**Tray** — SlashBar stays in the notification area. Left-click shows the bar. Right-click: Show bar, Calendar, Quit.
 
 **History** — clipboard and picked colors keep a history in their panels (clipboard entries show a content-type icon). Bar commands can be replayed with the arrow keys.
 

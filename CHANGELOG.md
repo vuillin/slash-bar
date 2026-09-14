@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Settings panel (empty shell for now): gear icon on the bar, `settings` command; minimize-to-shelf supported
+- System tray icon (Show bar, Calendar, Quit); left-click shows the bar
+
 ## [1.5.1] - 2026-09-11
 
 ### Added

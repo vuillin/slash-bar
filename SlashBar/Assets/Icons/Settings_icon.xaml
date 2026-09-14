@@ -39,4 +39,22 @@
         </DrawingImage.Drawing>
     </DrawingImage>
 
+    <!-- White variant for dock shelf tile -->
+    <DrawingImage x:Key="IconSettingsTile">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Geometry="{StaticResource SettingsGearSoftGeometry}">
+                    <GeometryDrawing.Brush>
+                        <SolidColorBrush Color="#FFFFFF" Opacity="0.2"/>
+                    </GeometryDrawing.Brush>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="{StaticResource SettingsGearHardGeometry}">
+                    <GeometryDrawing.Brush>
+                        <SolidColorBrush Color="#FFFFFF"/>
+                    </GeometryDrawing.Brush>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
 </ResourceDictionary>

@@ -201,7 +201,8 @@
                           Margin="10,0,0,0"
                           VerticalAlignment="Center"
                           Background="Transparent"
-                          Cursor="Hand">
+                          Cursor="Hand"
+                          MouseLeftButtonUp="SettingsButton_Click">
                         <Image x:Name="SettingsIconIdle"
                                Source="{StaticResource IconSettings}"
                                Width="18" Height="18"

@@ -33,6 +33,11 @@ internal static class ShortcutTileBackgrounds {
         (0x58, 0x56, 0xD6),
         (0x36, 0x34, 0xA3));
 
+    private static readonly WpfBrush Settings = CreateLinear(
+        (0xAE, 0xAE, 0xB2),
+        (0x8E, 0x8E, 0x93),
+        (0x63, 0x63, 0x66));
+
     private static WpfBrush CreateLinear(
         (byte r, byte g, byte b) light,
         (byte r, byte g, byte b) mid,
@@ -56,6 +61,7 @@ internal static class ShortcutTileBackgrounds {
         "color" => Color,
         "calendar" => Calendar,
         "clip" => Clip,
+        "settings" => Settings,
         _ => null,
     };
 
@@ -94,6 +100,7 @@ public static class ShortcutCatalog {
         ["clip"] = "IconClip",
         ["weather"] = "IconWeather",
         ["calendar"] = "IconCalendar",
+        ["settings"] = "IconSettingsTile",
     };
 
     private static readonly Dictionary<string, string> Labels = new(StringComparer.OrdinalIgnoreCase) {
@@ -102,6 +109,7 @@ public static class ShortcutCatalog {
         ["color"] = "Color Picker",
         ["weather"] = "Weather",
         ["calendar"] = "Calendar",
+        ["settings"] = "Settings",
     };
 
     public static IReadOnlyList<ShortcutSlot> CreateLeftRail() =>

@@ -11,6 +11,7 @@
 | `clip` | Clipboard | [clip.md](modules/clip.md) |
 | `memo` | Memo | [memo.md](modules/memo.md) |
 | `calendar` | Calendar | [calendar.md](modules/calendar.md) |
+| `settings` | Settings | [settings.md](modules/settings.md) |
 | `calc` | Calculator | [calc.md](modules/calc.md) |
 | `weather` | Weather | [weather.md](modules/weather.md) |
 | `awake` | Keep awake | [awake.md](modules/awake.md) |
