@@ -181,19 +181,70 @@
                     </TextBlock>
                 </Grid>
 
-                <Border Grid.Column="2"
-                        Background="#E5E5EA"
-                        CornerRadius="8"
-                        Padding="8,3"
-                        VerticalAlignment="Center"
-                        Margin="12,0,0,0">
-                    <TextBlock Text="esc"
-                               FontFamily="Segoe UI Variable Text, Segoe UI"
-                               FontSize="11"
-                               FontWeight="SemiBold"
-                               Foreground="#8E8E93"
-                               VerticalAlignment="Center"/>
-                </Border>
+                <StackPanel Grid.Column="2"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Margin="12,0,0,0">
+                    <Border Background="#E5E5EA"
+                            CornerRadius="8"
+                            Padding="8,3"
+                            VerticalAlignment="Center">
+                        <TextBlock Text="esc"
+                                   FontFamily="Segoe UI Variable Text, Segoe UI"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="#8E8E93"
+                                   VerticalAlignment="Center"/>
+                    </Border>
+
+                    <Grid Width="18" Height="18"
+                          Margin="10,0,0,0"
+                          VerticalAlignment="Center"
+                          Background="Transparent"
+                          Cursor="Hand">
+                        <Image x:Name="SettingsIconIdle"
+                               Source="{StaticResource IconSettings}"
+                               Width="18" Height="18"
+                               SnapsToDevicePixels="True"
+                               IsHitTestVisible="False"/>
+                        <Image x:Name="SettingsIconHover"
+                               Source="{StaticResource IconSettingsHover}"
+                               Width="18" Height="18"
+                               Opacity="0"
+                               SnapsToDevicePixels="True"
+                               IsHitTestVisible="False"/>
+                        <Grid.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="SettingsIconIdle"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0"
+                                                         Duration="0:0:0.15"/>
+                                        <DoubleAnimation Storyboard.TargetName="SettingsIconHover"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0:0:0.15"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="SettingsIconIdle"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0:0:0.15"/>
+                                        <DoubleAnimation Storyboard.TargetName="SettingsIconHover"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0"
+                                                         Duration="0:0:0.15"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Grid.Triggers>
+                    </Grid>
+                </StackPanel>
 
                 <Popup x:Name="SuggestionsPopup"
                        PlacementTarget="{Binding ElementName=RootBorder}"
