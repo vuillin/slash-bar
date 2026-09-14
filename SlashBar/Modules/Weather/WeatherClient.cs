@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using SlashBar.Modules.Settings;
 
 namespace SlashBar.Modules.Weather;
 
@@ -15,22 +16,26 @@ public static class WeatherClient {
 
 
     public static async Task<string> BuildLocationKeyAsync() {
-        var city = WeatherLocationStore.ReadCity();
+        var weather = SettingsBook.Store.Get().Weather;
+        var unit = weather.Unit;
+        var city = PreferredCity(weather);
+
         if (city is not null)
-            return "city:" + NormalizeLocationToken(city);
+            return $"city:{NormalizeLocationToken(city)}|{unit}";
 
         var gps = await WeatherGeolocator.TryGetPositionAsync();
         if (gps is not null)
-            return $"gps:{gps.Value.Lat:F2},{gps.Value.Lon:F2}";
+            return $"gps:{gps.Value.Lat:F2},{gps.Value.Lon:F2}|{unit}";
 
-        return "ip";
+        return $"ip|{unit}";
     }
 
 
     public static async Task<WeatherSnapshot> FetchFreshAsync(string locationKey) {
+        var weather = SettingsBook.Store.Get().Weather;
         var place = await ResolvePlaceAsync(locationKey);
-        var forecast = await FetchForecastAsync(place.Latitude, place.Longitude);
-        var snapshot = BuildSnapshot(place, forecast);
+        var forecast = await FetchForecastAsync(place.Latitude, place.Longitude, weather.Unit);
+        var snapshot = BuildSnapshot(place, forecast, weather);
         WeatherCacheStore.Write(locationKey, ToResolvedPlace(place), snapshot);
         return snapshot;
     }
@@ -47,8 +52,18 @@ public static class WeatherClient {
         value.Trim().ToLowerInvariant();
 
 
+    private static string? PreferredCity(WeatherSettings weather) {
+        var city = weather.City.Trim();
+        return city.Length == 0 ? null : city;
+    }
+
+
+    private static string TemperatureSuffix(string unit) =>
+        unit == WeatherUnits.Fahrenheit ? "°F" : "°C";
+
+
     private static async Task<PlaceDto> ResolvePlaceAsync(string locationKey) {
-        var city = WeatherLocationStore.ReadCity();
+        var city = PreferredCity(SettingsBook.Store.Get().Weather);
         if (city is not null) {
             var stored = WeatherLocationStore.ReadGeocode(city);
             if (stored is not null)
@@ -77,9 +92,13 @@ public static class WeatherClient {
     }
 
 
-    private static WeatherSnapshot BuildSnapshot(PlaceDto place, ForecastDto forecast) {
+    private static WeatherSnapshot BuildSnapshot(
+        PlaceDto place,
+        ForecastDto forecast,
+        WeatherSettings weather) {
         var current = forecast.Current!;
         var label = FormatPlaceLabel(place.City, place.Country);
+        var suffix = TemperatureSuffix(weather.Unit);
 
         var high = "";
         var low = "";
@@ -91,13 +110,13 @@ public static class WeatherClient {
 
         return new WeatherSnapshot {
             Place = label,
-            Temperature = $"{Math.Round(current.Temperature2m)}°C",
+            Temperature = $"{Math.Round(current.Temperature2m)}{suffix}",
             Condition = WeatherCodes.Label(current.WeatherCode),
             High = high,
             Low = low,
             WeatherCode = current.WeatherCode,
             IsDay = current.IsDay == 1,
-            Hours = TakeUpcomingHours(forecast.Hourly, forecast.Daily)
+            Hours = TakeUpcomingHours(forecast.Hourly, forecast.Daily, weather.ShowSunEvents)
         };
     }
 
@@ -224,7 +243,8 @@ public static class WeatherClient {
     }
 
 
-    private static async Task<ForecastDto> FetchForecastAsync(double lat, double lon) {
+    private static async Task<ForecastDto> FetchForecastAsync(double lat, double lon, string unit) {
+        var temperatureUnit = unit == WeatherUnits.Fahrenheit ? "fahrenheit" : "celsius";
         var url =
             "https://api.open-meteo.com/v1/forecast" +
             $"?latitude={lat.ToString(CultureInfo.InvariantCulture)}" +
@@ -234,6 +254,7 @@ public static class WeatherClient {
             "&hourly=temperature_2m,weather_code,is_day" +
             "&forecast_days=1" +
             "&forecast_hours=12" +
+            $"&temperature_unit={temperatureUnit}" +
             "&timezone=auto";
 
         var json = await Http.GetStringAsync(url);
@@ -249,7 +270,10 @@ public static class WeatherClient {
     private sealed record HourSlot(DateTime At, WeatherHour Hour);
 
 
-    private static IReadOnlyList<WeatherHour> TakeUpcomingHours(HourlyDto? hourly, DailyDto? daily) {
+    private static IReadOnlyList<WeatherHour> TakeUpcomingHours(
+        HourlyDto? hourly,
+        DailyDto? daily,
+        bool showSunEvents) {
         if (hourly?.Time is null
             || hourly.Temperature2m is null
             || hourly.WeatherCode is null)
@@ -286,6 +310,9 @@ public static class WeatherClient {
 
         if (slots.Count == 0)
             return [];
+
+        if (!showSunEvents)
+            return slots.Select(slot => slot.Hour).ToList();
 
         var windowEnd = slots[^1].At;
         var sunEvents = CollectSunEvents(hourly, daily, now, windowEnd);
@@ -389,8 +416,8 @@ public static class WeatherClient {
     }
 
 
-    private static string FormatTemperature(double? celsius) =>
-        celsius is null ? "" : $"{Math.Round(celsius.Value)}°";
+    private static string FormatTemperature(double? temperature) =>
+        temperature is null ? "" : $"{Math.Round(temperature.Value)}°";
 
 
     private static bool TryParseSunEvent(string raw, out DateTime at) {

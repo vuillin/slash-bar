@@ -9,8 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Settings panel (empty shell for now): gear icon on the bar, `settings` command; minimize-to-shelf supported
+- Settings panel: Weather (city, °C/°F, sunrise/sunset), Hotkeys (read-only), Display theme; gear icon on the bar, `settings` command; prefs in `%LocalAppData%\SlashBar\settings.json`
 - System tray icon (Show bar, Calendar, Quit); left-click shows the bar
+
+### Changed
+
+- Weather reads city, unit, and sunrise/sunset from Settings; `weather.json` keeps geocode cache only
 
 ## [1.5.1] - 2026-09-11
 

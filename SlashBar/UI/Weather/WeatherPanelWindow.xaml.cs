@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using SlashBar.Modules.Settings;
 using SlashBar.Modules.Weather;
 using SlashBar.UI.Shell;
 
@@ -66,12 +67,19 @@ public partial class WeatherPanelWindow : DockedSidePanelWindow {
 
     protected override void OnPanelOpened() {
         _refreshTimer.Start();
+        SettingsBook.Store.Changed += OnSettingsChanged;
     }
 
 
     protected override void OnPanelClosing() {
+        SettingsBook.Store.Changed -= OnSettingsChanged;
         _refreshTimer.Stop();
         _loadId++;
+    }
+
+
+    private void OnSettingsChanged() {
+        Dispatcher.BeginInvoke(() => LoadWeather(showLoadingOnFailure: false));
     }
 
 

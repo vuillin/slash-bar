@@ -19,13 +19,6 @@ public static class WeatherLocationStore {
         "weather.json");
 
 
-    public static string? ReadCity() {
-        var file = ReadFile();
-        var city = file?.City?.Trim() ?? "";
-        return city.Length == 0 ? null : city;
-    }
-
-
     public static StoredGeocode? ReadGeocode(string cityQuery) {
         var file = ReadFile();
         var geocode = file?.Geocode;
@@ -48,8 +41,7 @@ public static class WeatherLocationStore {
 
 
     public static void SaveGeocode(string cityQuery, double latitude, double longitude, string label) {
-        var file = ReadFile() ?? new FileModel { City = cityQuery.Trim() };
-        file.City = cityQuery.Trim();
+        var file = ReadFile() ?? new FileModel();
         file.Geocode = new GeocodeModel {
             CityQuery = cityQuery.Trim(),
             Latitude = latitude,
@@ -85,7 +77,7 @@ public static class WeatherLocationStore {
         if (File.Exists(Path))
             return;
 
-        var json = JsonSerializer.Serialize(new FileModel { City = "" }, JsonOptions);
+        var json = JsonSerializer.Serialize(new FileModel(), JsonOptions);
         File.WriteAllText(Path, json + "\r\n");
     }
 
@@ -97,7 +89,6 @@ public static class WeatherLocationStore {
 
 
     private sealed class FileModel {
-        public string City { get; set; } = "";
         public GeocodeModel? Geocode { get; set; }
     }
 
