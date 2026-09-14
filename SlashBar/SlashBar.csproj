@@ -9,10 +9,12 @@
     <UseWindowsForms>true</UseWindowsForms>
     <Version>1.5.1</Version>
     <AssemblyName>SlashBar</AssemblyName>
+    <ApplicationIcon>Assets\App\slashbar.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <Resource Include="Assets\Icons\Weather\*.png" />
+    <Resource Include="Assets\App\slashbar.ico" />
   </ItemGroup>
 
 </Project>

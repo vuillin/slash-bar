@@ -22,6 +22,19 @@ public partial class MainWindow {
         Top = work.Bottom - Math.Max(ActualHeight, 48) - bottomMargin;
     }
 
+    public void ShowBar() {
+        if (_isAnimating)
+            return;
+
+        if (_isOpen || IsVisible) {
+            Activate();
+            SearchBox.Focus();
+            return;
+        }
+
+        AnimateOpen();
+    }
+
     private void ToggleBar() {
         if (_isAnimating)
             return;

@@ -10,7 +10,16 @@ namespace SlashBar;
 
 public partial class App : System.Windows.Application {
 
+    private TrayIcon? _tray;
+
+    protected override void OnStartup(StartupEventArgs e) {
+        base.OnStartup(e);
+        _tray = new TrayIcon();
+    }
+
     protected override void OnExit(ExitEventArgs e) {
+        _tray?.Dispose();
+        
         AwakeSession.Disable();
         PinSession.UnpinAll();
         ClipboardHistory.Store.Flush();

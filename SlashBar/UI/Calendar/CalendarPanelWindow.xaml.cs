@@ -105,6 +105,18 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
     }
 
 
+    public static void ShowPanel() {
+        _instance ??= new CalendarPanelWindow();
+
+        if (_instance.IsVisible) {
+            _instance.Activate();
+            return;
+        }
+
+        _instance.ToggleVisibility();
+    }
+
+
     protected override void OnPanelOpening() {
         base.OnPanelOpening();
         RefreshDayEvents();
