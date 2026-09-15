@@ -38,6 +38,18 @@ public partial class SettingsPanelWindow : DockedSidePanelWindow {
     }
 
 
+    public static void ShowPanel() {
+        _instance ??= new SettingsPanelWindow();
+
+        if (_instance.IsVisible) {
+            _instance.Activate();
+            return;
+        }
+
+        _instance.ToggleVisibility();
+    }
+
+
     protected override void OnPanelOpening() {
         base.OnPanelOpening();
         LoadSettingsIntoUi();

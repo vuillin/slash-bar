@@ -16,6 +16,7 @@ public sealed class TrayIcon : IDisposable {
         _menu = new WinForms.ContextMenuStrip();
         _menu.Items.Add("Show bar", null, (_, _) => RunOnUi(OnShowBar));
         _menu.Items.Add("Calendar", null, (_, _) => RunOnUi(OnCalendar));
+        _menu.Items.Add("Settings", null, (_, _) => RunOnUi(OnSettings));
         _menu.Items.Add(new WinForms.ToolStripSeparator());
         _menu.Items.Add("Quit", null, (_, _) => RunOnUi(OnQuit));
 
@@ -62,6 +63,9 @@ public sealed class TrayIcon : IDisposable {
 
     private static void OnCalendar() =>
         CalendarPanelWindow.ShowPanel();
+
+    private static void OnSettings() =>
+        SettingsPanelWindow.ShowPanel();
 
     private static void OnQuit() =>
         System.Windows.Application.Current.Shutdown();

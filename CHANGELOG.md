@@ -9,8 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Settings panel: Weather (city, °C/°F, sunrise/sunset), Hotkeys (read-only), Display theme; gear icon on the bar, `settings` command; prefs in `%LocalAppData%\SlashBar\settings.json`
-- System tray icon (Show bar, Calendar, Quit); left-click shows the bar
+- Settings panel (`settings` / gear on the bar): Weather prefs (default city, °C/°F, sunrise/sunset), Hotkeys (read-only display), Display theme (Light / Dark); prefs in `%LocalAppData%\SlashBar\settings.json`
+- Light / Dark theme across the bar, side panels (Memo, Clip, Calendar, Color, Settings), and toasts; live switch from Settings
+- System tray icon (Show bar, Calendar, Settings, Quit); left-click shows the bar
 
 ### Changed
 
