@@ -18,7 +18,7 @@ public partial class SettingsPanelWindow : DockedSidePanelWindow {
 
     private static SettingsPanelWindow? _instance;
 
-    private bool _loading;
+    private bool _loading = true;
     private string _weatherUnit = WeatherUnits.Celsius;
     private string _displayTheme = DisplayThemes.Light;
 
