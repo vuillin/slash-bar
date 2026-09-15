@@ -23,7 +23,7 @@
                            FontFamily="Segoe UI Variable Text, Segoe UI"
                            FontSize="17"
                            FontWeight="Bold"
-                           Foreground="{Binding TitleBrush, ElementName=Root}"
+                           Foreground="{DynamicResource Brush.TextPrimary}"
                            VerticalAlignment="Center"
                            IsHitTestVisible="False"
                            Visibility="{Binding TitleVisibility, ElementName=Root}"/>

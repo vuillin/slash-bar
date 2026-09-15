@@ -22,15 +22,6 @@ public partial class SettingsPanelWindow : DockedSidePanelWindow {
     private string _weatherUnit = WeatherUnits.Celsius;
     private string _displayTheme = DisplayThemes.Light;
 
-    private static readonly SolidColorBrush SelectedFg = CreateBrush(0x1C, 0x1C, 0x1E);
-    private static readonly SolidColorBrush UnselectedFg = CreateBrush(0x8E, 0x8E, 0x93);
-
-    private static SolidColorBrush CreateBrush(byte r, byte g, byte b) {
-        var brush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
-        brush.Freeze();
-        return brush;
-    }
-
 
     private SettingsPanelWindow() {
         InitializeComponent();
@@ -51,6 +42,24 @@ public partial class SettingsPanelWindow : DockedSidePanelWindow {
     protected override void OnPanelOpening() {
         base.OnPanelOpening();
         LoadSettingsIntoUi();
+    }
+
+
+    protected override void OnPanelOpened() {
+        SettingsBook.Store.Changed += OnSettingsChanged;
+    }
+
+
+    protected override void OnPanelClosing() {
+        SettingsBook.Store.Changed -= OnSettingsChanged;
+    }
+
+
+    private void OnSettingsChanged() {
+        Dispatcher.BeginInvoke(() => {
+            ApplyUnitButtons(_weatherUnit);
+            ApplyThemeButtons(_displayTheme);
+        });
     }
 
 
@@ -129,7 +138,7 @@ public partial class SettingsPanelWindow : DockedSidePanelWindow {
             return;
 
         bg.Background = selected
-            ? System.Windows.Media.Brushes.White
+            ? ThemeBrush("Brush.SegmentFill")
             : System.Windows.Media.Brushes.Transparent;
         bg.Effect = selected
             ? new DropShadowEffect {
@@ -140,6 +149,12 @@ public partial class SettingsPanelWindow : DockedSidePanelWindow {
             }
             : null;
 
-        button.Foreground = selected ? SelectedFg : UnselectedFg;
+        button.Foreground = selected
+            ? ThemeBrush("Brush.TextPrimary")
+            : ThemeBrush("Brush.TextSecondary");
     }
+
+
+    private static System.Windows.Media.Brush ThemeBrush(string key) =>
+        (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource(key);
 }

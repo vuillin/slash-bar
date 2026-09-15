@@ -27,7 +27,8 @@
             <Border x:Name="RootBorder"
                     Grid.Column="1"
                     CornerRadius="24"
-                    BorderBrush="#1A000000"
+                    Background="{DynamicResource Brush.PanelGradient}"
+                    BorderBrush="{DynamicResource Brush.Border}"
                     BorderThickness="1">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="24"
@@ -36,12 +37,6 @@
                                       Color="#000000"
                                       RenderingBias="Quality"/>
                 </Border.Effect>
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                        <GradientStop Color="#FFFFFF" Offset="0"/>
-                        <GradientStop Color="#E8E8ED" Offset="1"/>
-                    </LinearGradientBrush>
-                </Border.Background>
 
                 <Grid>
                     <Grid.RowDefinitions>
@@ -81,20 +76,20 @@
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="#14000000"/>
+                                                <Setter Property="Background" Value="{DynamicResource Brush.RowHover}"/>
                                             </Trigger>
                                             <Trigger Property="IsChecked" Value="True">
-                                                <Setter Property="Background" Value="#E8E8ED"/>
+                                                <Setter Property="Background" Value="{DynamicResource Brush.ControlFillHover}"/>
                                             </Trigger>
                                             <MultiTrigger>
                                                 <MultiTrigger.Conditions>
                                                     <Condition Property="IsChecked" Value="True"/>
                                                     <Condition Property="IsMouseOver" Value="True"/>
                                                 </MultiTrigger.Conditions>
-                                                <Setter Property="Background" Value="#DDDDE2"/>
+                                                <Setter Property="Background" Value="{DynamicResource Brush.ControlFillPressed}"/>
                                             </MultiTrigger>
                                             <Trigger Property="IsPressed" Value="True">
-                                                <Setter Property="Background" Value="#DDDDE2"/>
+                                                <Setter Property="Background" Value="{DynamicResource Brush.ControlFillPressed}"/>
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
@@ -130,7 +125,7 @@
                                                 Height="168"
                                                 VerticalAlignment="Top"
                                                 CornerRadius="14"
-                                                Background="White">
+                                                Background="{DynamicResource Brush.SegmentFill}">
                                             <Border.Effect>
                                                 <DropShadowEffect BlurRadius="24"
                                                                   ShadowDepth="6"
@@ -202,7 +197,7 @@
                                                 CornerRadius="8"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
-                                                BorderBrush="#1A000000"
+                                                BorderBrush="{DynamicResource Brush.Border}"
                                                 BorderThickness="1"
                                                 ClipToBounds="True"
                                                 Cursor="Hand"
@@ -241,7 +236,7 @@
                                     <Border Height="168"
                                             VerticalAlignment="Top"
                                             CornerRadius="14"
-                                            Background="White">
+                                            Background="{DynamicResource Brush.SegmentFill}">
                                         <Border.Effect>
                                             <DropShadowEffect BlurRadius="24"
                                                               ShadowDepth="6"
@@ -317,7 +312,7 @@
                                         Visibility="Collapsed">
 
                                 <Border Height="1"
-                                        Background="#12000000"
+                                        Background="{DynamicResource Brush.Separator}"
                                         Margin="0,0,0,14"/>
 
                                 <ItemsControl x:Name="HistoryList">
@@ -386,7 +381,7 @@
                                        FontFamily="Segoe UI Variable Text, Segoe UI"
                                        FontSize="13"
                                        FontWeight="Medium"
-                                       Foreground="#3C3C43"
+                                       Foreground="{DynamicResource Brush.TextPrimary}"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>

@@ -106,8 +106,8 @@
         <Border x:Name="RootBorder"
                 Grid.Column="1"
                 VerticalAlignment="Center"
-                Background="#F2F2F7"
-                BorderBrush="#1A000000"
+                Background="{DynamicResource Brush.BarBackground}"
+                BorderBrush="{DynamicResource Brush.Border}"
                 BorderThickness="1"
                 CornerRadius="18"
                 Padding="4,0"
@@ -134,7 +134,7 @@
                 <TextBlock Grid.Column="0"
                            Text="⌕"
                            FontSize="16"
-                           Foreground="#8E8E93"
+                           Foreground="{DynamicResource Brush.TextSecondary}"
                            VerticalAlignment="Center"
                            Margin="0,0,10,0"/>
 
@@ -143,7 +143,7 @@
                                FontFamily="Segoe UI Variable Text, Segoe UI"
                                FontSize="15"
                                FontWeight="Medium"
-                               Foreground="#C7C7CC"
+                               Foreground="{DynamicResource Brush.TextMuted}"
                                HorizontalAlignment="Left"
                                VerticalAlignment="Center"
                                IsHitTestVisible="False"/>
@@ -152,8 +152,8 @@
                              FontFamily="Segoe UI Variable Text, Segoe UI"
                              FontSize="15"
                              FontWeight="Medium"
-                             CaretBrush="#1C1C1E"
-                             Foreground="#1C1C1E"
+                             CaretBrush="{DynamicResource Brush.TextPrimary}"
+                             Foreground="{DynamicResource Brush.TextPrimary}"
                              Background="Transparent"
                              BorderThickness="0"
                              Padding="0"
@@ -165,7 +165,7 @@
                                FontFamily="Segoe UI Variable Text, Segoe UI"
                                FontSize="15"
                                FontWeight="Medium"
-                               Foreground="#8E8E93"
+                               Foreground="{DynamicResource Brush.TextSecondary}"
                                VerticalAlignment="Center"
                                IsHitTestVisible="False">
                         <TextBlock.Style>
@@ -185,7 +185,7 @@
                             Orientation="Horizontal"
                             VerticalAlignment="Center"
                             Margin="12,0,0,0">
-                    <Border Background="#E5E5EA"
+                    <Border Background="{DynamicResource Brush.ControlFill}"
                             CornerRadius="8"
                             Padding="8,3"
                             VerticalAlignment="Center">
@@ -193,7 +193,7 @@
                                    FontFamily="Segoe UI Variable Text, Segoe UI"
                                    FontSize="11"
                                    FontWeight="SemiBold"
-                                   Foreground="#8E8E93"
+                                   Foreground="{DynamicResource Brush.TextSecondary}"
                                    VerticalAlignment="Center"/>
                     </Border>
 
@@ -204,12 +204,12 @@
                           Cursor="Hand"
                           MouseLeftButtonUp="SettingsButton_Click">
                         <Image x:Name="SettingsIconIdle"
-                               Source="{StaticResource IconSettings}"
+                               Source="{DynamicResource IconSettings}"
                                Width="18" Height="18"
                                SnapsToDevicePixels="True"
                                IsHitTestVisible="False"/>
                         <Image x:Name="SettingsIconHover"
-                               Source="{StaticResource IconSettingsHover}"
+                               Source="{DynamicResource IconSettingsHover}"
                                Width="18" Height="18"
                                Opacity="0"
                                SnapsToDevicePixels="True"
@@ -256,8 +256,8 @@
                        Focusable="False"
                        PopupAnimation="None">
                     <Border x:Name="SuggestionsCard"
-                            Background="#F2F2F7"
-                            BorderBrush="#1A000000"
+                            Background="{DynamicResource Brush.BarBackground}"
+                            BorderBrush="{DynamicResource Brush.Border}"
                             BorderThickness="1"
                             CornerRadius="16"
                             Opacity="0"
@@ -290,7 +290,7 @@
                                                         <Setter Property="Background" Value="Transparent"/>
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                                                <Setter Property="Background" Value="#E5E5EA"/>
+                                                                <Setter Property="Background" Value="{DynamicResource Brush.ControlFill}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -302,7 +302,7 @@
                                                                Text="{Binding Prefix}">
                                                         <TextBlock.Style>
                                                             <Style TargetType="TextBlock">
-                                                                <Setter Property="Foreground" Value="#8E8E93"/>
+                                                                <Setter Property="Foreground" Value="{DynamicResource Brush.TextSecondary}"/>
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding IsSelected}" Value="True">
                                                                         <Setter Property="Foreground" Value="#007AFF"/>
@@ -313,20 +313,20 @@
                                                     </TextBlock>
                                                     <TextBlock FontFamily="Segoe UI Variable Text, Segoe UI"
                                                                FontSize="13"
-                                                               Foreground="#C7C7CC"
+                                                               Foreground="{DynamicResource Brush.TextMuted}"
                                                                Text="  ·  "/>
                                                     <TextBlock FontFamily="Segoe UI Variable Text, Segoe UI"
                                                                FontSize="13"
                                                                FontWeight="Medium"
-                                                               Foreground="#1C1C1E"
+                                                               Foreground="{DynamicResource Brush.TextPrimary}"
                                                                Text="{Binding Name}"/>
                                                     <TextBlock FontFamily="Segoe UI Variable Text, Segoe UI"
                                                                FontSize="13"
-                                                               Foreground="#C7C7CC"
+                                                               Foreground="{DynamicResource Brush.TextMuted}"
                                                                Text="  ·  "/>
                                                     <TextBlock FontFamily="Segoe UI Variable Text, Segoe UI"
                                                                FontSize="12"
-                                                               Foreground="#8E8E93"
+                                                               Foreground="{DynamicResource Brush.TextSecondary}"
                                                                VerticalAlignment="Center"
                                                                Text="{Binding Description}"/>
                                                 </StackPanel>
@@ -349,7 +349,7 @@
                                                         <Setter Property="Background" Value="Transparent"/>
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                                                <Setter Property="Background" Value="#E5E5EA"/>
+                                                                <Setter Property="Background" Value="{DynamicResource Brush.ControlFill}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -361,7 +361,7 @@
                                                                Text="{Binding Value}">
                                                         <TextBlock.Style>
                                                             <Style TargetType="TextBlock">
-                                                                <Setter Property="Foreground" Value="#8E8E93"/>
+                                                                <Setter Property="Foreground" Value="{DynamicResource Brush.TextSecondary}"/>
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding IsSelected}" Value="True">
                                                                         <Setter Property="Foreground" Value="#007AFF"/>
@@ -372,11 +372,11 @@
                                                     </TextBlock>
                                                     <TextBlock FontFamily="Segoe UI Variable Text, Segoe UI"
                                                                FontSize="13"
-                                                               Foreground="#C7C7CC"
+                                                               Foreground="{DynamicResource Brush.TextMuted}"
                                                                Text="  ·  "/>
                                                     <TextBlock FontFamily="Segoe UI Variable Text, Segoe UI"
                                                                FontSize="12"
-                                                               Foreground="#8E8E93"
+                                                               Foreground="{DynamicResource Brush.TextSecondary}"
                                                                VerticalAlignment="Center"
                                                                Text="{Binding Description}"/>
                                                 </StackPanel>

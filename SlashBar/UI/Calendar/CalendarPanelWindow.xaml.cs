@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using SlashBar.Modules.Calendar;
+using SlashBar.Modules.Settings;
 using SlashBar.UI.Shell;
 using System.Linq;
 
@@ -25,16 +26,11 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
     protected override double DockedHeight(double workAreaHeight) => workAreaHeight * 0.416;
 
     private static readonly CultureInfo UiCulture = new("en-US");
-    private static readonly SolidColorBrush CurrentMonthBrush = Freeze(0x1C, 0x1C, 0x1E);
-    private static readonly SolidColorBrush OtherMonthBrush = Freeze(0xC7, 0xC7, 0xCC);
+
     private static readonly SolidColorBrush SelectedFillBrush = Freeze(0xFF, 0x3B, 0x30);
     private static readonly SolidColorBrush SelectedTextBrush = Freeze(0xFF, 0xFF, 0xFF);
-
-    private static readonly SolidColorBrush TimelineLineBrush = Freeze(0xE5, 0xE5, 0xEA);
-    private static readonly SolidColorBrush TimelineHourBrush = Freeze(0x8E, 0x8E, 0x93);
     private static readonly SolidColorBrush EventDayBrush = Freeze(0xCA, 0x73, 0xDF);
     private static readonly SolidColorBrush EventDayMutedBrush = Freeze(0xE5, 0xC4, 0xEF);
-    private static readonly SolidColorBrush TodayFillBrush = Freeze(0xE5, 0xE5, 0xEA);
     private static readonly SolidColorBrush ToastSuccessBrush = Freeze(0x34, 0xC7, 0x59);
     private static readonly SolidColorBrush ToastErrorBrush = Freeze(0xFF, 0x3B, 0x30);
 
@@ -132,9 +128,25 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
     }
 
 
+    protected override void OnPanelOpened() {
+        SettingsBook.Store.Changed += OnSettingsChanged;
+    }
+
+
     protected override void OnPanelClosing() {
+        SettingsBook.Store.Changed -= OnSettingsChanged;
         _nowTimer?.Stop();
         base.OnPanelClosing();
+    }
+
+
+    private void OnSettingsChanged() {
+        Dispatcher.BeginInvoke(() => {
+            RebuildMonthGrid();
+            BuildDayTimeline();
+            SyncFilterPillStyles();
+            RefreshNowIndicator();
+        });
     }
 
 
@@ -254,7 +266,7 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
         else if (hasEvents)
             foreground = isCurrentMonth ? EventDayBrush : EventDayMutedBrush;
         else
-            foreground = isCurrentMonth ? CurrentMonthBrush : OtherMonthBrush;
+            foreground = isCurrentMonth ? ThemeBrush("Brush.TextPrimary") : ThemeBrush("Brush.TextMuted");
 
         var label = new TextBlock {
             Text = date.Day.ToString(UiCulture),
@@ -271,7 +283,7 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
         if (isSelected)
             background = SelectedFillBrush;
         else if (isToday)
-            background = TodayFillBrush;
+            background = ThemeBrush("Brush.ControlFill");
         else
             background = System.Windows.Media.Brushes.Transparent;
 
@@ -325,7 +337,7 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
 
             var hourText = new TextBlock {
                 FontFamily = new System.Windows.Media.FontFamily("Segoe UI Variable Text, Segoe UI"),
-                Foreground = TimelineHourBrush,
+                Foreground = ThemeBrush("Brush.TextSecondary"),
                 HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center,
                 Margin = new Thickness(0, 0, 8, 0),
@@ -354,7 +366,7 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
 
             var line = new Border {
                 Height = 1,
-                Background = TimelineLineBrush,
+                Background = ThemeBrush("Brush.ControlFill"),
                 VerticalAlignment = VerticalAlignment.Center,
                 Margin = new Thickness(0, 0, 4, 0)
             };
@@ -499,7 +511,7 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
             return;
 
         bg.Background = selected
-            ? System.Windows.Media.Brushes.White
+            ? ThemeBrush("Brush.SegmentFill")
             : System.Windows.Media.Brushes.Transparent;
     }
 
@@ -556,6 +568,10 @@ public partial class CalendarPanelWindow : DockedSidePanelWindow {
         ToastText.Text = message;
         CopiedToastAnimator.Show(PanelToast, PanelToastSlide);
     }
+
+
+    private static System.Windows.Media.Brush ThemeBrush(string key) =>
+        (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource(key);
 
 
     private static SolidColorBrush Freeze(byte r, byte g, byte b) {

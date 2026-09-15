@@ -14,6 +14,8 @@ public partial class App : System.Windows.Application {
     private TrayIcon? _tray;
 
     protected override void OnStartup(StartupEventArgs e) {
+        ThemeBook.Apply();
+        ThemeBook.StartWatching();
         base.OnStartup(e);
         _tray = new TrayIcon();
     }

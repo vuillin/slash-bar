@@ -26,8 +26,8 @@
             <Border x:Name="RootBorder"
                     Grid.Column="1"
                     CornerRadius="24"
-                    Background="#FFFFFF"
-                    BorderBrush="#1A000000"
+                    Background="{DynamicResource Brush.PanelBackground}"
+                    BorderBrush="{DynamicResource Brush.Border}"
                     BorderThickness="1">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="24"
@@ -99,7 +99,7 @@
                                            FontFamily="Segoe UI Variable Text, Segoe UI"
                                            FontSize="30"
                                            FontWeight="Bold"
-                                           Foreground="#1C1C1E"
+                                           Foreground="{DynamicResource Brush.TextPrimary}"
                                            IsHitTestVisible="False"/>
                             </Grid>
 
@@ -121,7 +121,7 @@
                                                     Margin="0,0,10,0"
                                                     Cursor="Hand"
                                                     Background="Transparent"
-                                                    BorderBrush="#1C000000"
+                                                    BorderBrush="{DynamicResource Brush.Separator}"
                                                     BorderThickness="0,0,0,1"
                                                     MouseLeftButtonUp="HistoryItem_Click"
                                                     Tag="{Binding Entry}">
@@ -130,7 +130,7 @@
                                                         <Setter Property="Background" Value="Transparent"/>
                                                         <Style.Triggers>
                                                             <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter Property="Background" Value="#08000000"/>
+                                                                <Setter Property="Background" Value="{DynamicResource Brush.RowHover}"/>
                                                             </Trigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -159,7 +159,7 @@
                                                                Margin="0,0,10,0"
                                                                FontFamily="Segoe UI Variable Text, Segoe UI"
                                                                FontSize="13"
-                                                               Foreground="#3C3C43"/>
+                                                               Foreground="{DynamicResource Brush.TextPrimary}"/>
 
                                                     <!-- trash -->
                                                     <Button Grid.Column="2"
@@ -213,7 +213,7 @@
                                                                              VerticalAlignment="Center">
                                                                         <Canvas Width="24" Height="28">
                                                                             <Path x:Name="Icon"
-                                                                                  Fill="#8E8E93"
+                                                                                  Fill="{DynamicResource Brush.TextSecondary}"
                                                                                   Data="M9,2 L15,2 L16.5,5 L21,5 L21,7.5 L3,7.5 L3,5 L7.5,5 Z M5,10 L7.2,10 L7.2,22 L5,22 Z M10.9,10 L13.1,10 L13.1,22 L10.9,22 Z M16.8,10 L19,10 L19,22 L16.8,22 Z M4,26 L20,26 C21.1,26 22,25.1 22,24 L22,10 L2,10 L2,24 C2,25.1 2.9,26 4,26 Z"/>
                                                                         </Canvas>
                                                                     </Viewbox>
@@ -258,7 +258,7 @@
                                        FontFamily="Segoe UI Variable Text, Segoe UI"
                                        FontSize="13"
                                        FontWeight="Medium"
-                                       Foreground="#3C3C43"
+                                       Foreground="{DynamicResource Brush.TextPrimary}"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>

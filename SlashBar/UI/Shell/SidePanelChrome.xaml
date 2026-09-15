@@ -65,8 +65,8 @@
         <Setter Property="Margin" Value="0,0,0,24"/>
         <Setter Property="Padding" Value="16,10"/>
         <Setter Property="CornerRadius" Value="20"/>
-        <Setter Property="Background" Value="#F2FFFFFF"/>
-        <Setter Property="BorderBrush" Value="#1A000000"/>
+        <Setter Property="Background" Value="{DynamicResource Brush.ToastBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Opacity" Value="0"/>
         <Setter Property="IsHitTestVisible" Value="False"/>

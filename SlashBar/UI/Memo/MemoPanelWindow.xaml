@@ -26,8 +26,8 @@
             <Border x:Name="RootBorder"
                     Grid.Column="1"
                     CornerRadius="24"
-                    Background="#FFFFFF"
-                    BorderBrush="#1A000000"
+                    Background="{DynamicResource Brush.PanelBackground}"
+                    BorderBrush="{DynamicResource Brush.Border}"
                     BorderThickness="1">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="24"
@@ -68,7 +68,7 @@
                                     </Grid.ColumnDefinitions>
 
                                     <Border Grid.Column="0"
-                                            Background="#F2F2F7"
+                                            Background="{DynamicResource Brush.BarBackground}"
                                             CornerRadius="10"
                                             Padding="10,8"
                                             VerticalAlignment="Center">
@@ -76,7 +76,7 @@
                                                  FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
                                                  FontSize="14"
                                                  FontWeight="SemiBold"
-                                                 Foreground="#1C1C1E"
+                                                 Foreground="{DynamicResource Brush.TextPrimary}"
                                                  Background="Transparent"
                                                  BorderThickness="0"
                                                  CaretBrush="#007AFF"
@@ -93,7 +93,7 @@
                                                                                FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
                                                                                FontSize="14"
                                                                                FontWeight="Medium"
-                                                                               Foreground="#8E8E93"
+                                                                               Foreground="{DynamicResource Brush.TextSecondary}"
                                                                                VerticalAlignment="Center"
                                                                                IsHitTestVisible="False"
                                                                                Visibility="Collapsed"/>
@@ -118,7 +118,7 @@
                                     </Border>
 
                                     <Border Grid.Column="2"
-                                            Background="#F2F2F7"
+                                            Background="{DynamicResource Brush.BarBackground}"
                                             CornerRadius="10"
                                             Padding="10,8"
                                             VerticalAlignment="Center">
@@ -126,7 +126,7 @@
                                                  FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
                                                  FontSize="14"
                                                  FontWeight="SemiBold"
-                                                 Foreground="#1C1C1E"
+                                                 Foreground="{DynamicResource Brush.TextPrimary}"
                                                  Background="Transparent"
                                                  BorderThickness="0"
                                                  CaretBrush="#007AFF">
@@ -141,7 +141,7 @@
                                                                                FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
                                                                                FontSize="14"
                                                                                FontWeight="Medium"
-                                                                               Foreground="#8E8E93"
+                                                                               Foreground="{DynamicResource Brush.TextSecondary}"
                                                                                VerticalAlignment="Center"
                                                                                IsHitTestVisible="False"
                                                                                Visibility="Collapsed"/>
@@ -229,7 +229,7 @@
                                     Grid.Column="0"
                                     Grid.ColumnSpan="3"
                                     Margin="0,12,0,0"
-                                    Background="#F2F2F7"
+                                    Background="{DynamicResource Brush.BarBackground}"
                                     CornerRadius="12"
                                     BorderThickness="0"
                                     Padding="12,7">
@@ -238,7 +238,7 @@
                                                Text="&#xE721;"
                                                FontFamily="Segoe MDL2 Assets"
                                                FontSize="14"
-                                               Foreground="#636366"
+                                               Foreground="{DynamicResource Brush.TextMuted}"
                                                VerticalAlignment="Center"
                                                Margin="0,0,8,0"
                                                IsHitTestVisible="False"/>
@@ -246,7 +246,7 @@
                                              FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
                                              FontSize="14"
                                              FontWeight="Medium"
-                                             Foreground="#1C1C1E"
+                                             Foreground="{DynamicResource Brush.TextPrimary}"
                                              Background="Transparent"
                                              BorderThickness="0"
                                              CaretBrush="#007AFF"
@@ -263,7 +263,7 @@
                                                                            FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
                                                                            FontSize="14"
                                                                            FontWeight="Medium"
-                                                                           Foreground="#8E8E93"
+                                                                           Foreground="{DynamicResource Brush.TextSecondary}"
                                                                            VerticalAlignment="Center"
                                                                            IsHitTestVisible="False"
                                                                            Visibility="Collapsed"/>
@@ -315,7 +315,7 @@
                                                         <Setter Property="Background" Value="Transparent"/>
                                                         <Style.Triggers>
                                                             <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter Property="Background" Value="#08000000"/>
+                                                                <Setter Property="Background" Value="{DynamicResource Brush.RowHover}"/>
                                                             </Trigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -338,12 +338,12 @@
                                                                 FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
                                                                 FontSize="12"
                                                                 FontWeight="Bold"
-                                                                Foreground="#1C1C1E"/>
+                                                                Foreground="{DynamicResource Brush.TextPrimary}"/>
                                                         <TextBlock Text="{Binding Value}"
                                                                 FontFamily="SF Pro Text, Segoe UI Variable Text, Segoe UI"
                                                                 FontSize="13"
                                                                 FontWeight="Medium"
-                                                                Foreground="#8E8E93"
+                                                                Foreground="{DynamicResource Brush.TextSecondary}"
                                                                 TextTrimming="CharacterEllipsis"
                                                                 Margin="0,2,0,0"/>
                                                     </StackPanel>
@@ -436,7 +436,7 @@
                                                                                  VerticalAlignment="Center">
                                                                             <Canvas Width="24" Height="28">
                                                                                 <Path x:Name="Icon"
-                                                                                      Fill="#8E8E93"
+                                                                                      Fill="{DynamicResource Brush.TextSecondary}"
                                                                                       Data="M9,2 L15,2 L16.5,5 L21,5 L21,7.5 L3,7.5 L3,5 L7.5,5 Z M5,10 L7.2,10 L7.2,22 L5,22 Z M10.9,10 L13.1,10 L13.1,22 L10.9,22 Z M16.8,10 L19,10 L19,22 L16.8,22 Z M4,26 L20,26 C21.1,26 22,25.1 22,24 L22,10 L2,10 L2,24 C2,25.1 2.9,26 4,26 Z"/>
                                                                             </Canvas>
                                                                         </Viewbox>
@@ -482,7 +482,7 @@
                                        FontFamily="Segoe UI Variable Text, Segoe UI"
                                        FontSize="13"
                                        FontWeight="Medium"
-                                       Foreground="#3C3C43"
+                                       Foreground="{DynamicResource Brush.TextPrimary}"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>
