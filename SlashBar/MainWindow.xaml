@@ -11,6 +11,9 @@
         ShowInTaskbar="False"
         ResizeMode="NoResize"
         Opacity="0"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        TextOptions.TextFormattingMode="Display"
         Deactivated="Window_Deactivated">
 
     <Window.Resources>
@@ -103,26 +106,34 @@
             </ItemsControl.ItemsPanel>
         </ItemsControl>
 
-        <Border x:Name="RootBorder"
-                Grid.Column="1"
-                VerticalAlignment="Center"
-                Background="{DynamicResource Brush.BarBackground}"
-                BorderBrush="{DynamicResource Brush.Border}"
-                BorderThickness="1"
-                CornerRadius="18"
-                Padding="4,0"
-                Opacity="0"
-                RenderTransformOrigin="0.5,1">
-            <Border.RenderTransform>
+        <Grid x:Name="RootBorder"
+              Grid.Column="1"
+              VerticalAlignment="Center"
+              Opacity="0"
+              RenderTransformOrigin="0.5,1"
+              UseLayoutRounding="True"
+              SnapsToDevicePixels="True">
+            <Grid.RenderTransform>
                 <TranslateTransform x:Name="BarSlideTransform" Y="16"/>
-            </Border.RenderTransform>
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="32"
-                                  ShadowDepth="8"
-                                  Direction="90"
-                                  Opacity="0.22"
-                                  Color="#000000"/>
-            </Border.Effect>
+            </Grid.RenderTransform>
+
+            <Border CornerRadius="18"
+                    Background="{DynamicResource Brush.BarBackground}"
+                    IsHitTestVisible="False">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="32"
+                                      ShadowDepth="8"
+                                      Direction="90"
+                                      Opacity="0.22"
+                                      Color="#000000"/>
+                </Border.Effect>
+            </Border>
+
+            <Border Background="{DynamicResource Brush.BarBackground}"
+                    BorderBrush="{DynamicResource Brush.Border}"
+                    BorderThickness="1"
+                    CornerRadius="18"
+                    Padding="4,0">
 
             <Grid Height="44" Margin="14,0">
                 <Grid.ColumnDefinitions>
@@ -255,24 +266,29 @@
                        StaysOpen="True"
                        Focusable="False"
                        PopupAnimation="None">
-                    <Border x:Name="SuggestionsCard"
-                            Background="{DynamicResource Brush.BarBackground}"
-                            BorderBrush="{DynamicResource Brush.Border}"
-                            BorderThickness="1"
-                            CornerRadius="16"
-                            Opacity="0"
-                            SnapsToDevicePixels="True"
-                            RenderTransformOrigin="0.5,1">
-                        <Border.RenderTransform>
+                    <Grid x:Name="SuggestionsCard"
+                          Opacity="0"
+                          SnapsToDevicePixels="True"
+                          UseLayoutRounding="True"
+                          RenderTransformOrigin="0.5,1">
+                        <Grid.RenderTransform>
                             <TranslateTransform x:Name="SuggestionsSlide" Y="10"/>
-                        </Border.RenderTransform>
-                        <Border.Effect>
-                            <DropShadowEffect BlurRadius="28"
-                                              ShadowDepth="6"
-                                              Direction="90"
-                                              Opacity="0.18"
-                                              Color="#000000"/>
-                        </Border.Effect>
+                        </Grid.RenderTransform>
+                        <Border CornerRadius="16"
+                                Background="{DynamicResource Brush.BarBackground}"
+                                IsHitTestVisible="False">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="28"
+                                                  ShadowDepth="6"
+                                                  Direction="90"
+                                                  Opacity="0.18"
+                                                  Color="#000000"/>
+                            </Border.Effect>
+                        </Border>
+                        <Border Background="{DynamicResource Brush.BarBackground}"
+                                BorderBrush="{DynamicResource Brush.Border}"
+                                BorderThickness="1"
+                                CornerRadius="16">
                         <Border x:Name="SuggestionsHost"
                                 Height="0"
                                 ClipToBounds="True">
@@ -386,10 +402,12 @@
                                 </ItemsControl>
                             </StackPanel>
                         </Border>
-                    </Border>
+                        </Border>
+                    </Grid>
                 </Popup>
             </Grid>
-        </Border>
+            </Border>
+        </Grid>
 
         <ItemsControl x:Name="RightShortcutSlots"
                       Grid.Column="2"

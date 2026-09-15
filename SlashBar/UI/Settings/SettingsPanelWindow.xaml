@@ -9,7 +9,10 @@
         Topmost="True"
         ShowInTaskbar="False"
         ResizeMode="NoResize"
-        ShowActivated="True">
+        ShowActivated="True"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        TextOptions.TextFormattingMode="Display">
 
     <Border Background="Transparent"
             RenderTransformOrigin="0,0.5">

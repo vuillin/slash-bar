@@ -2,7 +2,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Effects;
 using SlashBar.Modules.Settings;
 using SlashBar.UI.Shell;
 
@@ -140,14 +139,6 @@ public partial class SettingsPanelWindow : DockedSidePanelWindow {
         bg.Background = selected
             ? ThemeBrush("Brush.SegmentFill")
             : System.Windows.Media.Brushes.Transparent;
-        bg.Effect = selected
-            ? new DropShadowEffect {
-                BlurRadius = 4,
-                ShadowDepth = 0,
-                Opacity = 0.05,
-                Color = System.Windows.Media.Colors.Black
-            }
-            : null;
 
         button.Foreground = selected
             ? ThemeBrush("Brush.TextPrimary")
