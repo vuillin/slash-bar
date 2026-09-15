@@ -12,7 +12,7 @@ No .NET install required (self-contained build).
 
 ## Interface
 
-Press `Ctrl+Space` to show the bar at the bottom of the screen.
+Press `Ctrl+Space` to show the bar at the bottom of the screen (the monitor under the mouse cursor).
 
 **Bar** — type a command (e.g. `calc 2+2`, `web docs`); suggestions appear below. `Tab` completes, `Enter` runs. `↑` / `↓` cycle suggestions / parameters first, then **command history**.
 

@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using SlashBar.Modules.Native;
 
 namespace SlashBar;
 
@@ -11,7 +12,7 @@ public partial class MainWindow {
     private bool _isOpen;
 
     private void PositionAtBottom() {
-        var work = SystemParameters.WorkArea;
+        var work = ScreenNative.GetWorkingAreaDip(this, ScreenNative.GetCursorScreen());
         RootBorder.Width = Math.Min(520, work.Width * 0.38);
 
         if (ActualHeight <= 0 || ActualWidth <= 0)

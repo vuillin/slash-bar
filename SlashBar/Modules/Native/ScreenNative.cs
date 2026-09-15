@@ -13,6 +13,35 @@ public static class ScreenNative {
     }
 
 
+    public static System.Windows.Forms.Screen GetCursorScreen() =>
+        System.Windows.Forms.Screen.FromPoint(System.Windows.Forms.Cursor.Position);
+
+
+    /// <summary>Monitor working area in WPF DIP units.</summary>
+    public static System.Windows.Rect GetWorkingAreaDip(Visual? visual, System.Windows.Forms.Screen screen) {
+        var area = screen.WorkingArea;
+
+        if (visual is not null) {
+            var source = PresentationSource.FromVisual(visual);
+            if (source?.CompositionTarget is { } target) {
+                var fromDevice = target.TransformFromDevice;
+                var topLeft = fromDevice.Transform(new System.Windows.Point(area.Left, area.Top));
+                var bottomRight = fromDevice.Transform(new System.Windows.Point(area.Right, area.Bottom));
+                return new System.Windows.Rect(topLeft, bottomRight);
+            }
+
+            var dpi = VisualTreeHelper.GetDpi(visual);
+            return new System.Windows.Rect(
+                area.Left / dpi.DpiScaleX,
+                area.Top / dpi.DpiScaleY,
+                area.Width / dpi.DpiScaleX,
+                area.Height / dpi.DpiScaleY);
+        }
+
+        return new System.Windows.Rect(area.Left, area.Top, area.Width, area.Height);
+    }
+
+
     /// <summary>Screen that contains the SlashBar main window (device pixels).</summary>
     public static System.Windows.Forms.Screen GetBarScreen() {
         var app = System.Windows.Application.Current;

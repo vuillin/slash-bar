@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Weather reads city, unit, and sunrise/sunset from Settings; `weather.json` keeps geocode cache only
+- Bar opens on the monitor under the mouse cursor
 
 ## [1.5.1] - 2026-09-11
 
