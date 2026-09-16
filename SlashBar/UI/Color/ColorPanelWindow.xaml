@@ -12,6 +12,50 @@
         ShowActivated="True"
         Loaded="Window_Loaded">
 
+    <shell:DockedSidePanelWindow.Resources>
+        <Style x:Key="EyedropperToggleStyle" TargetType="ToggleButton">
+            <Setter Property="Width" Value="28"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Width="28"
+                                Height="28">
+                            <Image Source="{StaticResource IconEyedropper}"
+                                   Width="15"
+                                   Height="15"
+                                   Stretch="Uniform"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource Brush.RowHover}"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource Brush.ControlFill}"/>
+                </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsChecked" Value="True"/>
+                        <Condition Property="IsMouseOver" Value="True"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background" Value="{DynamicResource Brush.ControlFillHover}"/>
+                </MultiTrigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource Brush.ControlFillPressed}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </shell:DockedSidePanelWindow.Resources>
+
     <Border Background="Transparent"
             RenderTransformOrigin="0,0.5">
         <Border.RenderTransform>
@@ -51,50 +95,13 @@
                                            HeaderDrag="HeaderBar_MouseLeftButtonDown">
                         <shell:SidePanelHeader.LeadingContent>
                             <ToggleButton IsChecked="True"
-                                          Width="28"
-                                          Height="28"
-                                          Cursor="Hand"
+                                          Style="{StaticResource EyedropperToggleStyle}"
                                           ToolTip="Eyedropper"
                                           HorizontalAlignment="Left"
                                           VerticalAlignment="Center"
                                           Margin="4,0,0,0"
-                                          Background="Transparent"
                                           Checked="EyedropperToggle_Changed"
-                                          Unchecked="EyedropperToggle_Changed">
-                                <ToggleButton.Template>
-                                    <ControlTemplate TargetType="ToggleButton">
-                                        <Border Background="{TemplateBinding Background}"
-                                                CornerRadius="8"
-                                                Width="28"
-                                                Height="28">
-                                            <Image Source="{StaticResource IconEyedropper}"
-                                                   Width="15"
-                                                   Height="15"
-                                                   Stretch="Uniform"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center"/>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="{DynamicResource Brush.RowHover}"/>
-                                            </Trigger>
-                                            <Trigger Property="IsChecked" Value="True">
-                                                <Setter Property="Background" Value="{DynamicResource Brush.ControlFillHover}"/>
-                                            </Trigger>
-                                            <MultiTrigger>
-                                                <MultiTrigger.Conditions>
-                                                    <Condition Property="IsChecked" Value="True"/>
-                                                    <Condition Property="IsMouseOver" Value="True"/>
-                                                </MultiTrigger.Conditions>
-                                                <Setter Property="Background" Value="{DynamicResource Brush.ControlFillPressed}"/>
-                                            </MultiTrigger>
-                                            <Trigger Property="IsPressed" Value="True">
-                                                <Setter Property="Background" Value="{DynamicResource Brush.ControlFillPressed}"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </ToggleButton.Template>
-                            </ToggleButton>
+                                          Unchecked="EyedropperToggle_Changed"/>
                         </shell:SidePanelHeader.LeadingContent>
                     </shell:SidePanelHeader>
 
