@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-09-16
+
 ### Added
 
 - Settings panel (`settings` / gear on the bar): Weather prefs (default city, °C/°F, sunrise/sunset), remappable Hotkeys (Open bar, Quit, Pin), Display theme (Light / Dark); prefs in `%LocalAppData%\SlashBar\settings.json`
@@ -140,7 +142,8 @@ First public release.
 - Dev launcher (`run.ps1`) uses `dotnet` from PATH / `DOTNET_ROOT` instead of a machine-specific SDK path
 - Full English UI, module messages, and in-code comments
 
-[Unreleased]: https://github.com/vuillin/slash-bar/compare/v1.5.1...HEAD
+[Unreleased]: https://github.com/vuillin/slash-bar/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/vuillin/slash-bar/compare/v1.5.1...v1.6.0
 [1.5.1]: https://github.com/vuillin/slash-bar/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/vuillin/slash-bar/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/vuillin/slash-bar/compare/v1.3.0...v1.4.0
