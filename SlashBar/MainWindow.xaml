@@ -300,7 +300,10 @@
                                         <DataTemplate>
                                             <Border CornerRadius="10"
                                                     Padding="10,8"
-                                                    Margin="0,0,0,2">
+                                                    Margin="0,0,0,2"
+                                                    Cursor="Hand"
+                                                    Tag="{Binding Index}"
+                                                    MouseLeftButtonUp="SuggestionItem_Click">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
                                                         <Setter Property="Background" Value="Transparent"/>
@@ -359,7 +362,10 @@
                                         <DataTemplate>
                                             <Border CornerRadius="10"
                                                     Padding="10,8"
-                                                    Margin="0,0,0,2">
+                                                    Margin="0,0,0,2"
+                                                    Cursor="Hand"
+                                                    Tag="{Binding Index}"
+                                                    MouseLeftButtonUp="SuggestionItem_Click">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
                                                         <Setter Property="Background" Value="Transparent"/>

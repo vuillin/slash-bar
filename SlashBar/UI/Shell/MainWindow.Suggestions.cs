@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using SlashBar.Modules;
@@ -7,8 +8,8 @@ namespace SlashBar;
 
 public partial class MainWindow {
 
-    private sealed record ArgSuggestion(string Value, string Description, bool IsSelected);
-    private sealed record ModuleSuggestion(string Prefix, string Name, string Description, bool IsSelected);
+    private sealed record ArgSuggestion(string Value, string Description, bool IsSelected, int Index);
+    private sealed record ModuleSuggestion(string Prefix, string Name, string Description, bool IsSelected, int Index);
 
     private bool _applyingCompletion;
     private IReadOnlyList<ArgCompletion> _argCompletions = Array.Empty<ArgCompletion>();
@@ -72,15 +73,30 @@ public partial class MainWindow {
 
     private void RefreshArgSuggestionsList() {
         ArgSuggestionsList.ItemsSource = _argCompletions
-            .Select((c, i) => new ArgSuggestion(c.Value, c.Description, i == _completionIndex))
+            .Select((c, i) => new ArgSuggestion(c.Value, c.Description, i == _completionIndex, i))
             .ToList();
     }
 
     private void RefreshModuleSuggestionsList() {
         ModuleSuggestionsList.ItemsSource = _moduleCompletions
-            .Select((m, i) => new ModuleSuggestion(m.Prefix, m.Name, m.Description, i == _completionIndex))
+            .Select((m, i) => new ModuleSuggestion(m.Prefix, m.Name, m.Description, i == _completionIndex, i))
             .ToList();
     }
+
+
+    private void SuggestionItem_Click(object sender, MouseButtonEventArgs e) {
+        if (sender is not FrameworkElement { Tag: int index })
+            return;
+
+        e.Handled = true;
+        _completionIndex = index;
+
+        if (!AcceptCompletion())
+            return;
+
+        SearchBox.Focus();
+    }
+
 
     private void ShowSuggestionsPanel() {
         SuggestionsCard.Width = RootBorder.ActualWidth > 0 ? RootBorder.ActualWidth : RootBorder.Width;

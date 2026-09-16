@@ -14,7 +14,7 @@ No .NET install required (self-contained build).
 
 Press `Ctrl+Space` to show the bar at the bottom of the screen (the monitor under the mouse cursor).
 
-**Bar** — type a command (e.g. `calc 2+2`, `web docs`); suggestions appear below. `Tab` completes, `Enter` runs. `↑` / `↓` cycle suggestions / parameters first, then **command history**.
+**Bar** — type a command (e.g. `calc 2+2`, `web docs`); suggestions appear below. `Tab` or a **click** completes, `Enter` runs. `↑` / `↓` cycle suggestions / parameters first, then **command history**.
 
 **Rails** — icons on each side of the bar open common tools:
 - left: Color Picker, Weather, Calendar
@@ -35,6 +35,7 @@ Press `Ctrl+Space` to show the bar at the bottom of the screen (the monitor unde
 | `Ctrl+Shift+Q` | Quit |
 | `Esc` | Close |
 | `Tab` | Complete the selected command or parameter |
+| Click suggestion | Same as `Tab` |
 | `↑` / `↓` | Cycle suggestions / parameters, then command history |
 | `Enter` | Run |
 
