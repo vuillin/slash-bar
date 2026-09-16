@@ -4,7 +4,7 @@ Keep one or more windows always on top.
 
 ## Hotkey
 
-`Ctrl+Shift+A` — toggle pin on the foreground window (works without opening the bar).
+Default: `Ctrl+Shift+A` — toggle pin on the foreground window (works without opening the bar). Remap under Settings → Hotkeys.
 
 ## Syntax
 
@@ -17,8 +17,8 @@ pin off    → unpin all
 
 | Action | Effect |
 |--------|--------|
-| `Ctrl+Shift+A` on an unpinned window | Pin it (always on top) + accent border + toast |
-| `Ctrl+Shift+A` on a pinned window | Unpin it (border removed) + toast |
+| Pin hotkey on an unpinned window | Pin it (always on top) + accent border + toast |
+| Pin hotkey on a pinned window | Unpin it (border removed) + toast |
 | Several windows | Each can be pinned independently |
 | Drag / resize a pinned window | Border hides while moving, then snaps back |
 | Minimize a pinned window | Border hides until restored |

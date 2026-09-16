@@ -4,6 +4,7 @@ using SlashBar.Modules;
 using SlashBar.Modules.Clipboard;
 using SlashBar.Modules.Native;
 using SlashBar.Modules.Pin;
+using SlashBar.Modules.Settings;
 
 namespace SlashBar;
 
@@ -14,6 +15,7 @@ public partial class MainWindow {
     private const int PinHotkeyId = 9002;
 
     private bool _hotkeysRegistered;
+    private bool _hotkeyHookAdded;
 
     private void OnLoaded(object sender, RoutedEventArgs e) {
         if (_hotkeysRegistered)
@@ -22,57 +24,78 @@ public partial class MainWindow {
         try {
             PositionAtBottom();
             RegisterGlobalHotkeys();
+            SettingsBook.Store.Changed += OnSettingsChangedForHotkeys;
             _hotkeysRegistered = true;
 
             ClipboardHistory.Watcher.Start();
 
-            Hide(); // Ctrl+Space to reopen
+            Hide(); // global hotkey to reopen
         }
         catch (Exception ex) {
             System.Windows.MessageBox.Show(this, "Startup error:\n" + ex.Message, "SlashBar");
         }
     }
 
+    private void OnSettingsChangedForHotkeys() {
+        Dispatcher.BeginInvoke(ReregisterGlobalHotkeys);
+    }
+
     private void RegisterGlobalHotkeys() {
         var helper = new WindowInteropHelper(this);
         helper.EnsureHandle();
 
-        bool okSearch = HotkeyNative.Register(
-            helper.Handle,
-            HotkeyId,
-            HotkeyNative.ModControl,
-            HotkeyNative.VkSpace);
+        RegisterHotkeysFromSettings(helper.Handle, showErrors: true);
 
-        bool okQuit = HotkeyNative.Register(
-            helper.Handle,
-            QuitHotkeyId,
-            HotkeyNative.ModControl | HotkeyNative.ModShift,
-            HotkeyNative.VkQ);
-
-        bool okPin = HotkeyNative.Register(
-            helper.Handle,
-            PinHotkeyId,
-            HotkeyNative.ModControl | HotkeyNative.ModShift,
-            HotkeyNative.VkA);
-
-        var failed = new List<string>();
-        if (!okSearch)
-            failed.Add("Ctrl+Space");
-        if (!okQuit)
-            failed.Add("Ctrl+Shift+Q");
-        if (!okPin)
-            failed.Add("Ctrl+Shift+A");
-
-        if (failed.Count > 0) {
-            System.Windows.MessageBox.Show(
-                this,
-                "Could not register " + string.Join(", ", failed) + ".\n" +
-                "Another app may already use this shortcut.",
-                "SlashBar");
-        }
+        if (_hotkeyHookAdded)
+            return;
 
         var source = HwndSource.FromHwnd(helper.Handle);
         source?.AddHook(HwndHook);
+        _hotkeyHookAdded = true;
+    }
+
+    private void ReregisterGlobalHotkeys() {
+        var helper = new WindowInteropHelper(this);
+        if (helper.Handle == IntPtr.Zero)
+            return;
+
+        UnregisterAllHotkeys(helper.Handle);
+        RegisterHotkeysFromSettings(helper.Handle, showErrors: true);
+    }
+
+    private void RegisterHotkeysFromSettings(IntPtr hwnd, bool showErrors) {
+        var hotkeys = SettingsBook.Store.Get().Hotkeys;
+        var failed = new List<string>();
+
+        if (!TryRegisterChord(hwnd, HotkeyId, hotkeys.OpenBar, out var openLabel))
+            failed.Add(openLabel);
+        if (!TryRegisterChord(hwnd, QuitHotkeyId, hotkeys.Quit, out var quitLabel))
+            failed.Add(quitLabel);
+        if (!TryRegisterChord(hwnd, PinHotkeyId, hotkeys.Pin, out var pinLabel))
+            failed.Add(pinLabel);
+
+        if (!showErrors || failed.Count == 0)
+            return;
+
+        System.Windows.MessageBox.Show(
+            this,
+            "Could not register " + string.Join(", ", failed) + ".\n" +
+            "Another app may already use this shortcut.",
+            "SlashBar");
+    }
+
+    private static bool TryRegisterChord(IntPtr hwnd, int id, HotkeyChord chord, out string label) {
+        label = HotkeyChordMapper.ToLabel(chord);
+        if (!HotkeyChordMapper.TryToNative(chord, out var modifiers, out var vk))
+            return false;
+
+        return HotkeyNative.Register(hwnd, id, modifiers, vk);
+    }
+
+    private static void UnregisterAllHotkeys(IntPtr hwnd) {
+        HotkeyNative.Unregister(hwnd, HotkeyId);
+        HotkeyNative.Unregister(hwnd, QuitHotkeyId);
+        HotkeyNative.Unregister(hwnd, PinHotkeyId);
     }
 
     private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) {
@@ -110,12 +133,11 @@ public partial class MainWindow {
     }
 
     protected override void OnClosed(EventArgs e) {
+        SettingsBook.Store.Changed -= OnSettingsChangedForHotkeys;
+
         var helper = new WindowInteropHelper(this);
-        if (helper.Handle != IntPtr.Zero) {
-            HotkeyNative.Unregister(helper.Handle, HotkeyId);
-            HotkeyNative.Unregister(helper.Handle, QuitHotkeyId);
-            HotkeyNative.Unregister(helper.Handle, PinHotkeyId);
-        }
+        if (helper.Handle != IntPtr.Zero)
+            UnregisterAllHotkeys(helper.Handle);
 
         System.Windows.Application.Current.Shutdown();
         base.OnClosed(e);

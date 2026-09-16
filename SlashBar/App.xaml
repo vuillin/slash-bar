@@ -17,6 +17,7 @@
                 <ResourceDictionary Source="Assets/Icons/Settings_icon.xaml"/>
                 <ResourceDictionary Source="Assets/Icons/Hotkeys_icon.xaml"/>
                 <ResourceDictionary Source="Assets/Icons/Display_icon.xaml"/>
+                <ResourceDictionary Source="Assets/Icons/Reset_icon.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

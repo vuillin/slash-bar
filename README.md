@@ -12,7 +12,7 @@ No .NET install required (self-contained build).
 
 ## Interface
 
-Press `Ctrl+Space` to show the bar at the bottom of the screen (the monitor under the mouse cursor).
+Press `Ctrl+Space` (default; remappable in Settings) to show the bar at the bottom of the screen (the monitor under the mouse cursor).
 
 **Bar** — type a command (e.g. `calc 2+2`, `web docs`); suggestions appear below. `Tab` or a **click** completes, `Enter` runs. `↑` / `↓` cycle suggestions / parameters first, then **command history**.
 
@@ -20,13 +20,15 @@ Press `Ctrl+Space` to show the bar at the bottom of the screen (the monitor unde
 - left: Color Picker, Weather, Calendar
 - right: Memo, Clipboard
 
-**Panels** — Memo, Color, Clip, Weather, Calendar, and Settings open as docked side panels (several can stay open). Drag the header to detach. The yellow traffic-light minimizes a panel to a bottom-left icon shelf (click to restore); red closes. They also open via command (`memo`, `color`, `clip`, `weather`, `calendar`, `settings`). The Settings gear sits to the right of the `esc` badge on the bar. In Settings you can set the weather defaults, view hotkeys, and switch **Light / Dark** theme.
+**Panels** — Memo, Color, Clip, Weather, Calendar, and Settings open as docked side panels (several can stay open). Drag the header to detach. The yellow traffic-light minimizes a panel to a bottom-left icon shelf (click to restore); red closes. They also open via command (`memo`, `color`, `clip`, `weather`, `calendar`, `settings`). The Settings gear sits to the right of the `esc` badge on the bar. In Settings you can set weather defaults, **remap hotkeys**, and switch **Light / Dark** theme.
 
 **Tray** — SlashBar stays in the notification area. Left-click shows the bar. Right-click: Show bar, Calendar, Settings, Quit.
 
 **History** — clipboard and picked colors keep a history in their panels (clipboard entries show a content-type icon). Bar commands can be replayed with the arrow keys.
 
 ## Shortcuts
+
+Defaults (change under Settings → Hotkeys; click a shortcut, press a new combo, or reset):
 
 | Key | Action |
 |-----|--------|

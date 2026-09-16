@@ -8,6 +8,7 @@
     <SolidColorBrush x:Key="Brush.BarBackground" Color="#F2F2F7"/>
     <SolidColorBrush x:Key="Brush.PanelBackground" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="Brush.CardBackground" Color="#F5F5F7"/>
+    <SolidColorBrush x:Key="Brush.FieldBackground" Color="#F2F2F7"/>
     <SolidColorBrush x:Key="Brush.SegmentFill" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="Brush.TextPrimary" Color="#1C1C1E"/>
     <SolidColorBrush x:Key="Brush.TextSecondary" Color="#8E8E93"/>

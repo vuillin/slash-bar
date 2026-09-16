@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Settings panel (`settings` / gear on the bar): Weather prefs (default city, °C/°F, sunrise/sunset), Hotkeys (read-only display), Display theme (Light / Dark); prefs in `%LocalAppData%\SlashBar\settings.json`
+- Settings panel (`settings` / gear on the bar): Weather prefs (default city, °C/°F, sunrise/sunset), remappable Hotkeys (Open bar, Quit, Pin), Display theme (Light / Dark); prefs in `%LocalAppData%\SlashBar\settings.json`
 - Light / Dark theme across the bar, side panels (Memo, Clip, Calendar, Color, Settings), and toasts; live switch from Settings
 - System tray icon (Show bar, Calendar, Settings, Quit); left-click shows the bar
 - Clickable bar suggestions (same as Tab: fill the selected command or argument)
@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Weather reads city, unit, and sunrise/sunset from Settings; `weather.json` keeps geocode cache only
 - Bar opens on the monitor under the mouse cursor
+- Global hotkeys load from Settings and re-register live when changed (defaults: `Ctrl+Space`, `Ctrl+Shift+Q`, `Ctrl+Shift+A`)
 
 ## [1.5.1] - 2026-09-11
 

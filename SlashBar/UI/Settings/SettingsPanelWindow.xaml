@@ -274,6 +274,21 @@
                             <!-- Hotkeys -->
                             <Border Style="{StaticResource SettingsCategoryCard}">
                                 <StackPanel>
+                                    <StackPanel.Resources>
+                                        <DataTemplate x:Key="HotkeyChipTemplate">
+                                            <Border Background="{DynamicResource Brush.ControlFill}"
+                                                    CornerRadius="5"
+                                                    Padding="7,3"
+                                                    Margin="0,0,4,0">
+                                                <TextBlock Text="{Binding}"
+                                                           FontFamily="Segoe UI Variable Text, Segoe UI"
+                                                           FontSize="11"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource Brush.TextPrimary}"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </StackPanel.Resources>
+
                                     <StackPanel Orientation="Horizontal"
                                                 VerticalAlignment="Center"
                                                 Margin="0,0,0,12">
@@ -291,6 +306,7 @@
                                                    VerticalAlignment="Center"/>
                                     </StackPanel>
 
+                                    <!-- Open bar -->
                                     <Grid MinHeight="34"
                                           Margin="0,0,0,6">
                                         <Grid.ColumnDefinitions>
@@ -306,25 +322,65 @@
                                         <StackPanel Grid.Column="1"
                                                     Orientation="Horizontal"
                                                     VerticalAlignment="Center">
-                                            <Border Background="{DynamicResource Brush.ControlFill}"
-                                                    CornerRadius="5"
-                                                    Padding="7,3"
-                                                    Margin="0,0,4,0">
-                                                <TextBlock Text="Ctrl"
-                                                           FontFamily="Segoe UI Variable Text, Segoe UI"
-                                                           FontSize="11"
-                                                           FontWeight="SemiBold"
-                                                           Foreground="{DynamicResource Brush.TextPrimary}"/>
+                                            <Border x:Name="OpenBarHotkeyHit"
+                                                    Background="{DynamicResource Brush.FieldBackground}"
+                                                    BorderBrush="{DynamicResource Brush.Border}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="8"
+                                                    Padding="6,4"
+                                                    MinWidth="120"
+                                                    Cursor="Hand"
+                                                    ToolTip="Click, then press a shortcut"
+                                                    MouseLeftButtonUp="OpenBarHotkey_Click">
+                                                <Grid>
+                                                    <ItemsControl x:Name="OpenBarHotkeyChips"
+                                                                  ItemTemplate="{StaticResource HotkeyChipTemplate}"
+                                                                  IsHitTestVisible="False">
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <StackPanel Orientation="Horizontal"/>
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                    </ItemsControl>
+                                                    <TextBlock x:Name="OpenBarHotkeyPrompt"
+                                                               Text="Press keys…"
+                                                               FontFamily="Segoe UI Variable Text, Segoe UI"
+                                                               FontSize="11"
+                                                               FontWeight="Medium"
+                                                               Foreground="{DynamicResource Brush.TextSecondary}"
+                                                               VerticalAlignment="Center"
+                                                               Visibility="Collapsed"
+                                                               IsHitTestVisible="False"/>
+                                                </Grid>
                                             </Border>
-                                            <Border Background="{DynamicResource Brush.ControlFill}"
-                                                    CornerRadius="5"
-                                                    Padding="7,3">
-                                                <TextBlock Text="Space"
-                                                           FontFamily="Segoe UI Variable Text, Segoe UI"
-                                                           FontSize="11"
-                                                           FontWeight="SemiBold"
-                                                           Foreground="{DynamicResource Brush.TextPrimary}"/>
-                                            </Border>
+                                            <Button x:Name="OpenBarHotkeyReset"
+                                                    Margin="8,0,0,0"
+                                                    Width="28"
+                                                    Height="28"
+                                                    Cursor="Hand"
+                                                    ToolTip="Reset to default"
+                                                    FocusVisualStyle="{x:Null}"
+                                                    Click="OpenBarHotkeyReset_Click">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border x:Name="Bg"
+                                                                Background="Transparent"
+                                                                CornerRadius="6">
+                                                            <Image Source="{StaticResource IconHotkeyReset}"
+                                                                   Width="14"
+                                                                   Height="14"
+                                                                   Stretch="Uniform"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="Bg" Property="Background" Value="{DynamicResource Brush.RowHover}"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
                                         </StackPanel>
                                     </Grid>
 
@@ -332,6 +388,7 @@
                                             Background="{DynamicResource Brush.Separator}"
                                             Margin="0,0,0,6"/>
 
+                                    <!-- Quit -->
                                     <Grid MinHeight="34"
                                           Margin="0,0,0,6">
                                         <Grid.ColumnDefinitions>
@@ -347,35 +404,65 @@
                                         <StackPanel Grid.Column="1"
                                                     Orientation="Horizontal"
                                                     VerticalAlignment="Center">
-                                            <Border Background="{DynamicResource Brush.ControlFill}"
-                                                    CornerRadius="5"
-                                                    Padding="7,3"
-                                                    Margin="0,0,4,0">
-                                                <TextBlock Text="Ctrl"
-                                                           FontFamily="Segoe UI Variable Text, Segoe UI"
-                                                           FontSize="11"
-                                                           FontWeight="SemiBold"
-                                                           Foreground="{DynamicResource Brush.TextPrimary}"/>
+                                            <Border x:Name="QuitHotkeyHit"
+                                                    Background="{DynamicResource Brush.FieldBackground}"
+                                                    BorderBrush="{DynamicResource Brush.Border}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="8"
+                                                    Padding="6,4"
+                                                    MinWidth="120"
+                                                    Cursor="Hand"
+                                                    ToolTip="Click, then press a shortcut"
+                                                    MouseLeftButtonUp="QuitHotkey_Click">
+                                                <Grid>
+                                                    <ItemsControl x:Name="QuitHotkeyChips"
+                                                                  ItemTemplate="{StaticResource HotkeyChipTemplate}"
+                                                                  IsHitTestVisible="False">
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <StackPanel Orientation="Horizontal"/>
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                    </ItemsControl>
+                                                    <TextBlock x:Name="QuitHotkeyPrompt"
+                                                               Text="Press keys…"
+                                                               FontFamily="Segoe UI Variable Text, Segoe UI"
+                                                               FontSize="11"
+                                                               FontWeight="Medium"
+                                                               Foreground="{DynamicResource Brush.TextSecondary}"
+                                                               VerticalAlignment="Center"
+                                                               Visibility="Collapsed"
+                                                               IsHitTestVisible="False"/>
+                                                </Grid>
                                             </Border>
-                                            <Border Background="{DynamicResource Brush.ControlFill}"
-                                                    CornerRadius="5"
-                                                    Padding="7,3"
-                                                    Margin="0,0,4,0">
-                                                <TextBlock Text="Shift"
-                                                           FontFamily="Segoe UI Variable Text, Segoe UI"
-                                                           FontSize="11"
-                                                           FontWeight="SemiBold"
-                                                           Foreground="{DynamicResource Brush.TextPrimary}"/>
-                                            </Border>
-                                            <Border Background="{DynamicResource Brush.ControlFill}"
-                                                    CornerRadius="5"
-                                                    Padding="7,3">
-                                                <TextBlock Text="Q"
-                                                           FontFamily="Segoe UI Variable Text, Segoe UI"
-                                                           FontSize="11"
-                                                           FontWeight="SemiBold"
-                                                           Foreground="{DynamicResource Brush.TextPrimary}"/>
-                                            </Border>
+                                            <Button x:Name="QuitHotkeyReset"
+                                                    Margin="8,0,0,0"
+                                                    Width="28"
+                                                    Height="28"
+                                                    Cursor="Hand"
+                                                    ToolTip="Reset to default"
+                                                    FocusVisualStyle="{x:Null}"
+                                                    Click="QuitHotkeyReset_Click">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border x:Name="Bg"
+                                                                Background="Transparent"
+                                                                CornerRadius="6">
+                                                            <Image Source="{StaticResource IconHotkeyReset}"
+                                                                   Width="14"
+                                                                   Height="14"
+                                                                   Stretch="Uniform"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="Bg" Property="Background" Value="{DynamicResource Brush.RowHover}"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
                                         </StackPanel>
                                     </Grid>
 
@@ -383,6 +470,7 @@
                                             Background="{DynamicResource Brush.Separator}"
                                             Margin="0,0,0,6"/>
 
+                                    <!-- Pin window -->
                                     <Grid MinHeight="34">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
@@ -397,35 +485,65 @@
                                         <StackPanel Grid.Column="1"
                                                     Orientation="Horizontal"
                                                     VerticalAlignment="Center">
-                                            <Border Background="{DynamicResource Brush.ControlFill}"
-                                                    CornerRadius="5"
-                                                    Padding="7,3"
-                                                    Margin="0,0,4,0">
-                                                <TextBlock Text="Ctrl"
-                                                           FontFamily="Segoe UI Variable Text, Segoe UI"
-                                                           FontSize="11"
-                                                           FontWeight="SemiBold"
-                                                           Foreground="{DynamicResource Brush.TextPrimary}"/>
+                                            <Border x:Name="PinHotkeyHit"
+                                                    Background="{DynamicResource Brush.FieldBackground}"
+                                                    BorderBrush="{DynamicResource Brush.Border}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="8"
+                                                    Padding="6,4"
+                                                    MinWidth="120"
+                                                    Cursor="Hand"
+                                                    ToolTip="Click, then press a shortcut"
+                                                    MouseLeftButtonUp="PinHotkey_Click">
+                                                <Grid>
+                                                    <ItemsControl x:Name="PinHotkeyChips"
+                                                                  ItemTemplate="{StaticResource HotkeyChipTemplate}"
+                                                                  IsHitTestVisible="False">
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <StackPanel Orientation="Horizontal"/>
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                    </ItemsControl>
+                                                    <TextBlock x:Name="PinHotkeyPrompt"
+                                                               Text="Press keys…"
+                                                               FontFamily="Segoe UI Variable Text, Segoe UI"
+                                                               FontSize="11"
+                                                               FontWeight="Medium"
+                                                               Foreground="{DynamicResource Brush.TextSecondary}"
+                                                               VerticalAlignment="Center"
+                                                               Visibility="Collapsed"
+                                                               IsHitTestVisible="False"/>
+                                                </Grid>
                                             </Border>
-                                            <Border Background="{DynamicResource Brush.ControlFill}"
-                                                    CornerRadius="5"
-                                                    Padding="7,3"
-                                                    Margin="0,0,4,0">
-                                                <TextBlock Text="Shift"
-                                                           FontFamily="Segoe UI Variable Text, Segoe UI"
-                                                           FontSize="11"
-                                                           FontWeight="SemiBold"
-                                                           Foreground="{DynamicResource Brush.TextPrimary}"/>
-                                            </Border>
-                                            <Border Background="{DynamicResource Brush.ControlFill}"
-                                                    CornerRadius="5"
-                                                    Padding="7,3">
-                                                <TextBlock Text="A"
-                                                           FontFamily="Segoe UI Variable Text, Segoe UI"
-                                                           FontSize="11"
-                                                           FontWeight="SemiBold"
-                                                           Foreground="{DynamicResource Brush.TextPrimary}"/>
-                                            </Border>
+                                            <Button x:Name="PinHotkeyReset"
+                                                    Margin="8,0,0,0"
+                                                    Width="28"
+                                                    Height="28"
+                                                    Cursor="Hand"
+                                                    ToolTip="Reset to default"
+                                                    FocusVisualStyle="{x:Null}"
+                                                    Click="PinHotkeyReset_Click">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border x:Name="Bg"
+                                                                Background="Transparent"
+                                                                CornerRadius="6">
+                                                            <Image Source="{StaticResource IconHotkeyReset}"
+                                                                   Width="14"
+                                                                   Height="14"
+                                                                   Stretch="Uniform"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="Bg" Property="Background" Value="{DynamicResource Brush.RowHover}"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
                                         </StackPanel>
                                     </Grid>
                                 </StackPanel>

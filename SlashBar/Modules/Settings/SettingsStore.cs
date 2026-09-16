@@ -92,6 +92,11 @@ public sealed class SettingsStore {
     private static void Normalize(AppSettings s) {
         s.Weather ??= new WeatherSettings();
         s.Display ??= new DisplaySettings();
+        s.Hotkeys ??= new HotkeySettings();
+
+        s.Hotkeys.OpenBar = NormalizeChord(s.Hotkeys.OpenBar, HotkeyDefaults.OpenBar());
+        s.Hotkeys.Quit = NormalizeChord(s.Hotkeys.Quit, HotkeyDefaults.Quit());
+        s.Hotkeys.Pin = NormalizeChord(s.Hotkeys.Pin, HotkeyDefaults.Pin());
 
         s.Weather.City = (s.Weather.City ?? "").Trim();
 
@@ -105,14 +110,41 @@ public sealed class SettingsStore {
     }
 
 
-    private static AppSettings Clone(AppSettings source) => new() {
-        Weather = new WeatherSettings {
-            City = source.Weather.City,
-            Unit = source.Weather.Unit,
-            ShowSunEvents = source.Weather.ShowSunEvents
-        },
-        Display = new DisplaySettings {
-            Theme = source.Display.Theme
-        }
+    private static HotkeyChord NormalizeChord(HotkeyChord? chord, HotkeyChord fallback) {
+        if (chord is null || string.IsNullOrWhiteSpace(chord.Key))
+            return CloneChord(fallback);
+
+        chord.Key = chord.Key.Trim();
+        return chord;
+    }
+
+    private static HotkeyChord CloneChord(HotkeyChord c) => new() {
+        Control = c.Control,
+        Shift = c.Shift,
+        Alt = c.Alt,
+        Key = c.Key
     };
+
+
+    private static AppSettings Clone(AppSettings source) {
+        var weather = source.Weather ?? new WeatherSettings();
+        var display = source.Display ?? new DisplaySettings();
+        var hotkeys = source.Hotkeys ?? new HotkeySettings();
+
+        return new AppSettings {
+            Weather = new WeatherSettings {
+                City = weather.City,
+                Unit = weather.Unit,
+                ShowSunEvents = weather.ShowSunEvents
+            },
+            Display = new DisplaySettings {
+                Theme = display.Theme
+            },
+            Hotkeys = new HotkeySettings {
+                OpenBar = CloneChord(hotkeys.OpenBar ?? HotkeyDefaults.OpenBar()),
+                Quit = CloneChord(hotkeys.Quit ?? HotkeyDefaults.Quit()),
+                Pin = CloneChord(hotkeys.Pin ?? HotkeyDefaults.Pin())
+            }
+        };
+    }
 }
