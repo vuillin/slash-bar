@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -22,16 +23,18 @@ public partial class WeatherPanelWindow : DockedSidePanelWindow {
     private readonly DispatcherTimer _refreshTimer;
     private int _loadId;
 
-    private System.Windows.Controls.TextBlock PlaceText =>
-        (System.Windows.Controls.TextBlock)((System.Windows.Controls.StackPanel)PanelHeader.LeadingContent!).Children[0];
-
-    private System.Windows.Controls.Image ConditionIcon =>
-        (System.Windows.Controls.Image)((System.Windows.Controls.StackPanel)PanelHeader.LeadingContent!).Children[1];
+    private readonly TextBlock _placeText;
+    private readonly System.Windows.Controls.Image _conditionIcon;
 
 
     private WeatherPanelWindow() {
         InitializeComponent();
         Width = ShellWidth;
+
+        var leading = (StackPanel)PanelHeader.LeadingContent!;
+        _placeText = (TextBlock)leading.Children[0];
+        _conditionIcon = (System.Windows.Controls.Image)leading.Children[1];
+
         _refreshTimer = new DispatcherTimer {
             Interval = WeatherCacheStore.ForecastTtl
         };
@@ -120,14 +123,14 @@ public partial class WeatherPanelWindow : DockedSidePanelWindow {
         StatusText.Text = message;
         StatusText.Visibility = Visibility.Visible;
         ContentCard.Visibility = Visibility.Collapsed;
-        PlaceText.Text = "";
-        ConditionIcon.Source = null;
+        _placeText.Text = "";
+        _conditionIcon.Source = null;
     }
 
 
     private void ShowSnapshot(WeatherSnapshot snapshot) {
-        PlaceText.Text = snapshot.Place;
-        ConditionIcon.Source = LoadIcon(snapshot.WeatherCode, snapshot.IsDay);
+        _placeText.Text = snapshot.Place;
+        _conditionIcon.Source = LoadIcon(snapshot.WeatherCode, snapshot.IsDay);
         TempText.Text = snapshot.Temperature;
         ConditionText.Text = snapshot.Condition;
         HighText.Text = snapshot.High;

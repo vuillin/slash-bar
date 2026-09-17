@@ -43,7 +43,7 @@ public static class WeatherClient {
 
     private static HttpClient CreateHttpClient() {
         var http = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
-        http.DefaultRequestHeaders.UserAgent.ParseAdd("SlashBar/1.0");
+        http.DefaultRequestHeaders.UserAgent.ParseAdd("SlashBar/1.6");
         return http;
     }
 
