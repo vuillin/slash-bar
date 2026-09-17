@@ -1,6 +1,5 @@
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace SlashBar.UI.Shell;
 
@@ -12,13 +11,6 @@ public partial class SidePanelHeader : System.Windows.Controls.UserControl {
             typeof(string),
             typeof(SidePanelHeader),
             new PropertyMetadata(null, OnTitleChanged));
-
-    public static readonly DependencyProperty TitleBrushProperty =
-        DependencyProperty.Register(
-            nameof(TitleBrush),
-            typeof(System.Windows.Media.Brush),
-            typeof(SidePanelHeader),
-            new PropertyMetadata(new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x1C, 0x1C, 0x1E))));
 
     public static readonly DependencyProperty TitleVisibilityProperty =
         DependencyProperty.Register(
@@ -55,12 +47,6 @@ public partial class SidePanelHeader : System.Windows.Controls.UserControl {
         get => (string?)GetValue(TitleProperty);
         set => SetValue(TitleProperty, value);
     }
-
-    public System.Windows.Media.Brush TitleBrush {
-        get => (System.Windows.Media.Brush)GetValue(TitleBrushProperty);
-        set => SetValue(TitleBrushProperty, value);
-    }
-
 
     public Visibility TitleVisibility {
         get => (Visibility)GetValue(TitleVisibilityProperty);
