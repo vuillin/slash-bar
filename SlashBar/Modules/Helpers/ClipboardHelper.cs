@@ -10,7 +10,7 @@ namespace SlashBar.Modules;
 public static class ClipboardHelper {
 
     public static void SetText(string text) {
-        ClipboardHistory.Watcher.IgnoreNext();
+        ClipboardHistory.Watcher.IgnoreNext(text);
         System.Windows.Clipboard.SetText(text);
     }
 }

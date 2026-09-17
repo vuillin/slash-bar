@@ -9,8 +9,10 @@ public sealed class ClipboardWatcher {
 
     private readonly ClipboardHistoryStore _store;
     private HwndSource? _source;
+
     private string _lastSeen = "";
-    private bool _ignoreNext;
+    private string? _suppressText;
+    private DateTime _suppressUntilUtc;
 
 
     public ClipboardWatcher(ClipboardHistoryStore store) {
@@ -49,7 +51,10 @@ public sealed class ClipboardWatcher {
     }
 
 
-    public void IgnoreNext() => _ignoreNext = true;
+    public void IgnoreNext(string text) {
+        _suppressText = text;
+        _suppressUntilUtc = DateTime.UtcNow.AddMilliseconds(500);
+    }
 
 
     private IntPtr WndProc(
@@ -79,16 +84,23 @@ public sealed class ClipboardWatcher {
             if (string.IsNullOrWhiteSpace(text))
                 return;
 
+            if (_suppressText != null) {
+                var stillValid = DateTime.UtcNow <= _suppressUntilUtc;
+
+                if (stillValid && text == _suppressText) {
+                    _lastSeen = text;
+                    _suppressText = null;
+                    return;
+                }
+
+                _suppressText = null;
+            }
+
             // same content as last time → skip.
             if (text == _lastSeen)
                 return;
+
             _lastSeen = text;
-
-            if (_ignoreNext) {
-                _ignoreNext = false;
-                return;
-            }
-
             _store.Add(text);
         }
         catch {

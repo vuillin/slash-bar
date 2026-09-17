@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Global hotkeys: register with `MOD_NOREPEAT` so holding Ctrl+Space / Ctrl+Shift+A no longer spams `WM_HOTKEY` (bar flicker, pin toggle loop)
+- Clipboard: `IgnoreNext` matches the suppressed text (with a short time window) so re-copying the same content no longer leaves a stuck flag that swallows the user's next paste
+
 ## [1.6.0] - 2026-09-16
 
 ### Added
