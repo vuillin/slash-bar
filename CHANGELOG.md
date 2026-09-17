@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.1] - 2026-09-17
+
 ### Fixed
 
 - Holding Open bar or Pin shortcuts no longer flickers the bar or toggles pin repeatedly
@@ -154,7 +156,8 @@ First public release.
 - Dev launcher (`run.ps1`) uses `dotnet` from PATH / `DOTNET_ROOT` instead of a machine-specific SDK path
 - Full English UI, module messages, and in-code comments
 
-[Unreleased]: https://github.com/vuillin/slash-bar/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/vuillin/slash-bar/compare/v1.6.1...HEAD
+[1.6.1]: https://github.com/vuillin/slash-bar/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/vuillin/slash-bar/compare/v1.5.1...v1.6.0
 [1.5.1]: https://github.com/vuillin/slash-bar/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/vuillin/slash-bar/compare/v1.4.0...v1.5.0
