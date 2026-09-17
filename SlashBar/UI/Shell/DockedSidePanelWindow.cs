@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using SlashBar.Modules.Native;
 
 namespace SlashBar.UI.Shell;
 
@@ -75,8 +76,7 @@ public abstract class DockedSidePanelWindow : Window {
 
 
     protected void PositionLeft() {
-        var screen = System.Windows.Forms.Screen.PrimaryScreen
-            ?? System.Windows.Forms.Screen.AllScreens[0];
+        var screen = ScreenNative.GetBarScreen();
         var area = screen.WorkingArea;
 
         var height = DockedHeight(area.Height);

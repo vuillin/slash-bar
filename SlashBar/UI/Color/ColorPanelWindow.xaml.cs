@@ -54,6 +54,10 @@ public partial class ColorPanelWindow : DockedSidePanelWindow {
         _instance.ToggleVisibility();
     }
 
+    public static void Shutdown() {
+        _instance?.DisposeEyedropper();
+        _instance = null;
+    }
 
     protected override void OnPanelOpening() {
         _colorLocked = false;

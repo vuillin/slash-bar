@@ -25,6 +25,8 @@ public partial class App : System.Windows.Application {
         
         AwakeSession.Disable();
         PinSession.UnpinAll();
+        ClipboardHistory.Watcher.Stop();
+        ColorPanelWindow.Shutdown();
         ClipboardHistory.Store.Flush();
         MemoBook.Store.Flush();
         ColorHistory.Store.Flush();

@@ -245,6 +245,28 @@ public partial class ColorPanelWindow {
         _magnifier?.Hide();
     }
 
+    private void DisposeEyedropper() {
+        DisablePickMode();
+
+        _magnifierThrottle?.Stop();
+        _magnifierThrottle = null;
+
+        _sampler?.Dispose();
+        _sampler = null;
+        _sampleBuffer = null;
+        _magnifierBitmap = null;
+        _magnifierImage = null;
+
+        if (_magnifier != null) {
+            _magnifier.Close();
+            _magnifier = null;
+        }
+
+        if (_overlay != null) {
+            _overlay.Close();
+            _overlay = null;
+        }
+    }
 
     private void NudgeCursor(int dx, int dy) {
         if (!_pickModeActive)
