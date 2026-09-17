@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Shutdown: stop the clipboard watcher and dispose the color eyedropper (GDI bitmap + overlay/magnifier windows) on exit
 - Multi-monitor: side panels and dock shelf position on the same screen as the bar (`GetBarScreen`) instead of always the primary
 - Weather: bump `_loadId` at the start of `OnPanelOpening` and bail after awaits so a close mid-geoloc does not trigger a useless fetch / off-screen `ShowSnapshot`
+- Persist stores through shared `JsonFileStore<T>` (atomic tmp+copy + `DebouncedSaver`), including weather cache/geocode and command history
 
 ## [1.6.0] - 2026-09-16
 

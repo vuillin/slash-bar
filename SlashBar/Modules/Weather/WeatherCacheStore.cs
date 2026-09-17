@@ -1,5 +1,5 @@
-using System.IO;
 using System.Text.Json;
+using SlashBar.Modules;
 
 namespace SlashBar.Modules.Weather;
 
@@ -15,35 +15,25 @@ public static class WeatherCacheStore {
         AllowTrailingCommas = true
     };
 
-    private static readonly string Path = System.IO.Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "SlashBar",
-        "weather-cache.json");
+    private static readonly JsonFileStore<FileModel> Store =
+        new("weather-cache.json", JsonOptions);
 
 
     public static bool TryRead(string locationKey, out WeatherCacheEntry entry) {
         entry = null!;
-        EnsureDirectory();
 
-        if (!File.Exists(Path))
-            return false;
-
-        try {
-            var json = File.ReadAllText(Path);
-            var file = JsonSerializer.Deserialize<FileModel>(json, JsonOptions);
-            if (file?.LocationKey != locationKey || file.Snapshot is null)
+        lock (Store.SyncRoot) {
+            var data = Store.Data;
+            if (data.LocationKey != locationKey || data.Snapshot is null)
                 return false;
 
             entry = new WeatherCacheEntry {
-                LocationKey = file.LocationKey,
-                FetchedAt = file.FetchedAt,
-                ResolvedPlace = file.ResolvedPlace,
-                Snapshot = ToSnapshot(file.Snapshot)
+                LocationKey = data.LocationKey,
+                FetchedAt = data.FetchedAt,
+                ResolvedPlace = data.ResolvedPlace,
+                Snapshot = ToSnapshot(data.Snapshot)
             };
             return true;
-        }
-        catch {
-            return false;
         }
     }
 
@@ -56,24 +46,17 @@ public static class WeatherCacheStore {
         string locationKey,
         ResolvedPlace place,
         WeatherSnapshot snapshot) {
-        EnsureDirectory();
-
-        var file = new FileModel {
-            LocationKey = locationKey,
-            FetchedAt = DateTime.Now,
-            ResolvedPlace = place,
-            Snapshot = FromSnapshot(snapshot)
-        };
-
-        var json = JsonSerializer.Serialize(file, JsonOptions);
-        File.WriteAllText(Path, json + "\r\n");
+        lock (Store.SyncRoot) {
+            Store.Data.LocationKey = locationKey;
+            Store.Data.FetchedAt = DateTime.Now;
+            Store.Data.ResolvedPlace = place;
+            Store.Data.Snapshot = FromSnapshot(snapshot);
+            Store.ScheduleSave();
+        }
     }
 
 
-    private static void EnsureDirectory() {
-        var dir = System.IO.Path.GetDirectoryName(Path)!;
-        Directory.CreateDirectory(dir);
-    }
+    public static void Flush() => Store.Flush();
 
 
     private static WeatherSnapshot ToSnapshot(SnapshotModel model) => new() {

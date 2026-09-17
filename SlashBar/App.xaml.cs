@@ -6,6 +6,7 @@ using SlashBar.Modules.Memo;
 using SlashBar.Modules.Pin;
 using SlashBar.Modules.Calendar;
 using SlashBar.Modules.Settings;
+using SlashBar.Modules.Weather;
 
 namespace SlashBar;
 
@@ -32,6 +33,8 @@ public partial class App : System.Windows.Application {
         ColorHistory.Store.Flush();
         CalendarBook.Store.Flush();
         SettingsBook.Store.Flush();
+        WeatherCacheStore.Flush();
+        WeatherLocationStore.Flush();
         base.OnExit(e);
     }
 }

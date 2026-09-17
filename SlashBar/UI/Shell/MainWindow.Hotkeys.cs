@@ -136,6 +136,7 @@ public partial class MainWindow {
 
     protected override void OnClosed(EventArgs e) {
         SettingsBook.Store.Changed -= OnSettingsChangedForHotkeys;
+        _commandHistory.Flush();
 
         var helper = new WindowInteropHelper(this);
         if (helper.Handle != IntPtr.Zero)

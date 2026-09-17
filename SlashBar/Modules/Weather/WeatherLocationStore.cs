@@ -1,5 +1,5 @@
-using System.IO;
 using System.Text.Json;
+using SlashBar.Modules;
 
 namespace SlashBar.Modules.Weather;
 
@@ -13,79 +13,46 @@ public static class WeatherLocationStore {
         AllowTrailingCommas = true
     };
 
-    private static readonly string Path = System.IO.Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "SlashBar",
-        "weather.json");
+    private static readonly JsonFileStore<FileModel> Store =
+        new("weather.json", JsonOptions);
 
 
     public static StoredGeocode? ReadGeocode(string cityQuery) {
-        var file = ReadFile();
-        var geocode = file?.Geocode;
-        if (geocode is null)
-            return null;
+        lock (Store.SyncRoot) {
+            var geocode = Store.Data.Geocode;
+            if (geocode is null)
+                return null;
 
-        if (!string.Equals(geocode.CityQuery?.Trim(), cityQuery.Trim(), StringComparison.OrdinalIgnoreCase))
-            return null;
+            if (!string.Equals(geocode.CityQuery?.Trim(), cityQuery.Trim(), StringComparison.OrdinalIgnoreCase))
+                return null;
 
-        if (geocode.Latitude == 0 && geocode.Longitude == 0)
-            return null;
+            if (geocode.Latitude == 0 && geocode.Longitude == 0)
+                return null;
 
-        return new StoredGeocode {
-            CityQuery = geocode.CityQuery?.Trim() ?? "",
-            Latitude = geocode.Latitude,
-            Longitude = geocode.Longitude,
-            Label = geocode.Label?.Trim() ?? ""
-        };
+            return new StoredGeocode {
+                CityQuery = geocode.CityQuery?.Trim() ?? "",
+                Latitude = geocode.Latitude,
+                Longitude = geocode.Longitude,
+                Label = geocode.Label?.Trim() ?? ""
+            };
+        }
     }
 
 
     public static void SaveGeocode(string cityQuery, double latitude, double longitude, string label) {
-        var file = ReadFile() ?? new FileModel();
-        file.Geocode = new GeocodeModel {
-            CityQuery = cityQuery.Trim(),
-            Latitude = latitude,
-            Longitude = longitude,
-            Label = label
-        };
-
-        WriteFile(file);
-    }
-
-
-    private static FileModel? ReadFile() {
-        EnsureFile();
-        try {
-            var json = File.ReadAllText(Path);
-            return JsonSerializer.Deserialize<FileModel>(json, JsonOptions);
-        }
-        catch {
-            return null;
+        lock (Store.SyncRoot) {
+            Store.Data.Geocode = new GeocodeModel {
+                CityQuery = cityQuery.Trim(),
+                Latitude = latitude,
+                Longitude = longitude,
+                Label = label
+            };
+            Store.ScheduleSave();
         }
     }
 
 
-    private static void WriteFile(FileModel file) {
-        EnsureDirectory();
-        var json = JsonSerializer.Serialize(file, JsonOptions);
-        File.WriteAllText(Path, json + "\r\n");
-    }
-
-
-    private static void EnsureFile() {
-        EnsureDirectory();
-        if (File.Exists(Path))
-            return;
-
-        var json = JsonSerializer.Serialize(new FileModel(), JsonOptions);
-        File.WriteAllText(Path, json + "\r\n");
-    }
-
-
-    private static void EnsureDirectory() {
-        var dir = System.IO.Path.GetDirectoryName(Path)!;
-        Directory.CreateDirectory(dir);
-    }
+    public static void Flush() => Store.Flush();
 
 
     private sealed class FileModel {

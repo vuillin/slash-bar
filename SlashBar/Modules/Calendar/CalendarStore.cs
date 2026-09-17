@@ -1,52 +1,36 @@
-using System.IO;
-using System.Linq;
-using System.Text.Json;
+using SlashBar.Modules;
 
 namespace SlashBar.Modules.Calendar;
 
 public sealed class CalendarStore {
 
-    private static readonly JsonSerializerOptions JsonOptions = new() {
-        WriteIndented = true
-    };
-
-    private readonly string _path;
-    private readonly List<CalendarEvent> _entries = [];
-    private readonly object _lock = new();
-    private readonly DebouncedSaver _saver;
+    private readonly JsonFileStore<FileModel> _file;
 
     public event Action? Changed;
 
 
     public CalendarStore() {
-
-        var dir = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "SlashBar");
-
-        Directory.CreateDirectory(dir);
-        _path = Path.Combine(dir, "calendar-events.json");
-
-        _saver = new DebouncedSaver(WriteToDisk);
-        Load();
+        _file = new JsonFileStore<FileModel>("calendar-events.json");
+        lock (_file.SyncRoot)
+            _file.Data.Entries ??= [];
     }
 
 
     public IReadOnlyList<CalendarEvent> GetAll() {
-        lock (_lock)
-            return _entries.ToList();
+        lock (_file.SyncRoot)
+            return _file.Data.Entries.ToList();
     }
 
 
     public IReadOnlyList<CalendarEvent> GetOccurringOn(DateTime day) {
-        lock (_lock)
-            return _entries.Where(e => CalendarRecurrence.OccursOn(e, day)).ToList();
+        lock (_file.SyncRoot)
+            return _file.Data.Entries.Where(e => CalendarRecurrence.OccursOn(e, day)).ToList();
     }
 
 
     public bool HasAnyOn(DateTime day) {
-        lock (_lock)
-            return _entries.Exists(e => CalendarRecurrence.OccursOn(e, day));
+        lock (_file.SyncRoot)
+            return _file.Data.Entries.Exists(e => CalendarRecurrence.OccursOn(e, day));
     }
 
 
@@ -57,8 +41,8 @@ public sealed class CalendarStore {
         if (title.Length == 0)
             return false;
 
-        lock (_lock) {
-            _entries.Insert(0, new CalendarEvent {
+        lock (_file.SyncRoot) {
+            _file.Data.Entries.Insert(0, new CalendarEvent {
                 Id = Guid.NewGuid().ToString("N"),
                 Title = title,
                 Date = date.Date,
@@ -66,7 +50,7 @@ public sealed class CalendarStore {
                 CreatedAt = DateTimeOffset.UtcNow
             });
 
-            _saver.Schedule();
+            _file.ScheduleSave();
         }
 
         Changed?.Invoke();
@@ -78,52 +62,21 @@ public sealed class CalendarStore {
         if (string.IsNullOrEmpty(id))
             return;
 
-        lock (_lock) {
-            var removed = _entries.RemoveAll(e => e.Id == id);
+        lock (_file.SyncRoot) {
+            var removed = _file.Data.Entries.RemoveAll(e => e.Id == id);
             if (removed == 0)
                 return;
-            _saver.Schedule();
+            _file.ScheduleSave();
         }
 
         Changed?.Invoke();
     }
 
 
-    public void Flush() => _saver.Flush();
-
-
-    private void Load() {
-        if (!File.Exists(_path))
-            return;
-
-        try {
-            var json = File.ReadAllText(_path);
-            var data = JsonSerializer.Deserialize<FileModel>(json, JsonOptions);
-            if (data?.Entries == null)
-                return;
-
-            _entries.Clear();
-            _entries.AddRange(data.Entries);
-        } catch {
-            // corrupt file
-        }
-    }
-
-
-    private void WriteToDisk() {
-        string json;
-        lock (_lock)
-            json = JsonSerializer.Serialize(new FileModel { Entries = _entries }, JsonOptions);
-
-        var tmp = _path + ".tmp";
-        File.WriteAllText(tmp, json);
-        File.Copy(tmp, _path, overwrite: true);
-        File.Delete(tmp);
-    }
+    public void Flush() => _file.Flush();
 
 
     private sealed class FileModel {
         public List<CalendarEvent> Entries { get; set; } = [];
     }
-
 }

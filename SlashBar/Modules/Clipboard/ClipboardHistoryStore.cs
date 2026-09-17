@@ -1,5 +1,4 @@
-using System.IO;
-using System.Text.Json;
+using SlashBar.Modules;
 
 namespace SlashBar.Modules.Clipboard;
 
@@ -7,60 +6,47 @@ public sealed class ClipboardHistoryStore {
 
     private const int MaxEntries = 50;
 
-    private static readonly JsonSerializerOptions JsonOptions = new() {
-        WriteIndented = true
-    };
-
-    private readonly string _path;
-    private readonly List<ClipboardHistoryEntry> _entries = [];
-    private readonly object _lock = new();
-    private readonly DebouncedSaver _saver;
+    private readonly JsonFileStore<FileModel> _file;
 
     public event Action? Changed;
 
 
     public ClipboardHistoryStore() {
-
-        var dir = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "SlashBar");
-
-        Directory.CreateDirectory(dir);
-        _path = Path.Combine(dir, "clipboard-history.json");
-        _saver = new DebouncedSaver(WriteToDisk);
-        Load();
+        _file = new JsonFileStore<FileModel>("clipboard-history.json");
+        lock (_file.SyncRoot)
+            _file.Data.Entries ??= [];
     }
 
 
     public IReadOnlyList<ClipboardHistoryEntry> GetAll() {
-        lock (_lock)
-            return _entries.ToList();
+        lock (_file.SyncRoot)
+            return _file.Data.Entries.ToList();
     }
 
 
     public void Add(string text) {
-
         text = text.Trim();
         if (text.Length == 0)
             return;
 
-        lock (_lock) {
+        lock (_file.SyncRoot) {
+            var entries = _file.Data.Entries;
 
             // same as most recent entry → skip
-            if (_entries.Count > 0
-                && _entries[0].Text.Equals(text, StringComparison.Ordinal))
+            if (entries.Count > 0
+                && entries[0].Text.Equals(text, StringComparison.Ordinal))
                 return;
 
-            _entries.Insert(0, new ClipboardHistoryEntry {
+            entries.Insert(0, new ClipboardHistoryEntry {
                 Id = Guid.NewGuid().ToString("N"),
                 Text = text,
                 CreatedAt = DateTimeOffset.UtcNow
             });
 
-            while (_entries.Count > MaxEntries)
-                _entries.RemoveAt(_entries.Count - 1);
+            while (entries.Count > MaxEntries)
+                entries.RemoveAt(entries.Count - 1);
 
-            _saver.Schedule();
+            _file.ScheduleSave();
         }
 
         Changed?.Invoke();
@@ -68,15 +54,14 @@ public sealed class ClipboardHistoryStore {
 
 
     public void Remove(string id) {
-
         if (string.IsNullOrEmpty(id))
             return;
 
-        lock (_lock) {
-            var removed = _entries.RemoveAll(e => e.Id == id);
+        lock (_file.SyncRoot) {
+            var removed = _file.Data.Entries.RemoveAll(e => e.Id == id);
             if (removed == 0)
                 return;
-            _saver.Schedule();
+            _file.ScheduleSave();
         }
 
         Changed?.Invoke();
@@ -84,53 +69,19 @@ public sealed class ClipboardHistoryStore {
 
 
     public void ClearAll() {
-
-        lock (_lock) {
-
-            if (_entries.Count == 0)
+        lock (_file.SyncRoot) {
+            if (_file.Data.Entries.Count == 0)
                 return;
 
-            _entries.Clear();
-            _saver.Schedule();
+            _file.Data.Entries.Clear();
+            _file.ScheduleSave();
         }
 
         Changed?.Invoke();
     }
 
 
-    public void Flush() => _saver.Flush();
-
-
-    private void Load() {
-
-        if (!File.Exists(_path))
-            return;
-
-        try {
-            var json = File.ReadAllText(_path);
-            var data = JsonSerializer.Deserialize<FileModel>(json, JsonOptions);
-            if (data?.Entries == null)
-                return;
-
-            _entries.Clear();
-            _entries.AddRange(data.Entries);
-
-        } catch {
-            // corrupt file → start empty
-        }
-    }
-
-
-    private void WriteToDisk() {
-        string json;
-        lock (_lock)
-            json = JsonSerializer.Serialize(new FileModel { Entries = _entries }, JsonOptions);
-
-        var tmp = _path + ".tmp";
-        File.WriteAllText(tmp, json);
-        File.Copy(tmp, _path, overwrite: true);
-        File.Delete(tmp);
-    }
+    public void Flush() => _file.Flush();
 
 
     private sealed class FileModel {

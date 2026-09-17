@@ -1,35 +1,28 @@
-using System.IO;
-using System.Text.Json;
-
 namespace SlashBar.Modules;
 
 public sealed class CommandHistoryStore {
 
     private const int MaxEntries = 50;
 
-    private static readonly JsonSerializerOptions JsonOptions = new() {
-        WriteIndented = true
-    };
-
-    private readonly string _path;
-    private readonly List<string> _entries = [];
-    private readonly object _lock = new();
+    private readonly JsonFileStore<FileModel> _file;
 
 
     public CommandHistoryStore() {
-        var dir = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "SlashBar");
-
-        Directory.CreateDirectory(dir);
-        _path = Path.Combine(dir, "command-history.json");
-        Load();
+        _file = new JsonFileStore<FileModel>("command-history.json");
+        lock (_file.SyncRoot) {
+            _file.Data.Entries ??= [];
+            _file.Data.Entries = _file.Data.Entries
+                .Where(e => !string.IsNullOrWhiteSpace(e))
+                .Select(e => e.Trim())
+                .Take(MaxEntries)
+                .ToList();
+        }
     }
 
 
     public IReadOnlyList<string> GetAll() {
-        lock (_lock)
-            return _entries.ToList();
+        lock (_file.SyncRoot)
+            return _file.Data.Entries.ToList();
     }
 
 
@@ -38,48 +31,20 @@ public sealed class CommandHistoryStore {
         if (command.Length == 0)
             return;
 
-        lock (_lock) {
-            _entries.RemoveAll(c => c.Equals(command, StringComparison.OrdinalIgnoreCase));
-            _entries.Insert(0, command);
+        lock (_file.SyncRoot) {
+            var entries = _file.Data.Entries;
+            entries.RemoveAll(c => c.Equals(command, StringComparison.OrdinalIgnoreCase));
+            entries.Insert(0, command);
 
-            while (_entries.Count > MaxEntries)
-                _entries.RemoveAt(_entries.Count - 1);
+            while (entries.Count > MaxEntries)
+                entries.RemoveAt(entries.Count - 1);
 
-            Save();
+            _file.ScheduleSave();
         }
     }
 
 
-    private void Load() {
-        if (!File.Exists(_path))
-            return;
-
-        try {
-            var json = File.ReadAllText(_path);
-            var data = JsonSerializer.Deserialize<FileModel>(json, JsonOptions);
-            if (data?.Entries == null)
-                return;
-
-            _entries.Clear();
-            _entries.AddRange(
-                data.Entries
-                    .Where(e => !string.IsNullOrWhiteSpace(e))
-                    .Select(e => e.Trim())
-                    .Take(MaxEntries));
-        }
-        catch {
-            // corrupt → empty
-        }
-    }
-
-
-    private void Save() {
-        var json = JsonSerializer.Serialize(new FileModel { Entries = _entries }, JsonOptions);
-        var tmp = _path + ".tmp";
-        File.WriteAllText(tmp, json);
-        File.Copy(tmp, _path, overwrite: true);
-        File.Delete(tmp);
-    }
+    public void Flush() => _file.Flush();
 
 
     private sealed class FileModel {

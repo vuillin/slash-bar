@@ -1,4 +1,3 @@
-using System.IO;
 using System.Text.Json;
 using SlashBar.Modules;
 
@@ -8,35 +7,25 @@ public sealed class SettingsStore {
 
     private static readonly JsonSerializerOptions JsonOptions = new() {
         WriteIndented = true,
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase, // city, showSunEvents...
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         PropertyNameCaseInsensitive = true
     };
 
-    private readonly string _path;
-    private readonly object _lock = new();
-    private readonly DebouncedSaver _saver;
-
-    private AppSettings _settings;
+    private readonly JsonFileStore<AppSettings> _file;
 
     public event Action? Changed;
 
 
     public SettingsStore() {
-        var dir = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "SlashBar");
-
-        Directory.CreateDirectory(dir);
-        _path = Path.Combine(dir, "settings.json");
-
-        _saver = new DebouncedSaver(WriteToDisk);
-        _settings = Load();
+        _file = new JsonFileStore<AppSettings>("settings.json", JsonOptions);
+        lock (_file.SyncRoot)
+            Normalize(_file.Data);
     }
 
 
     public AppSettings Get() {
-        lock (_lock)
-            return Clone(_settings);
+        lock (_file.SyncRoot)
+            return Clone(_file.Data);
     }
 
 
@@ -44,49 +33,12 @@ public sealed class SettingsStore {
         ArgumentNullException.ThrowIfNull(next);
 
         Normalize(next);
-
-        lock (_lock) {
-            _settings = Clone(next);
-            _saver.Schedule();
-        }
-
+        _file.Replace(Clone(next));
         Changed?.Invoke();
     }
 
 
-    public void Flush() => _saver.Flush();
-
-
-    private AppSettings Load() {
-        if (!File.Exists(_path))
-            return new AppSettings();
-
-        try {
-            var json = File.ReadAllText(_path);
-            var data = JsonSerializer.Deserialize<AppSettings>(json, JsonOptions);
-            if (data is null)
-                return new AppSettings();
-
-            Normalize(data);
-            return data;
-        } catch {
-            // corrupt file → fresh defaults
-            return new AppSettings();
-        }
-    }
-
-
-    private void WriteToDisk() {
-        AppSettings snapshot;
-        lock (_lock)
-            snapshot = Clone(_settings);
-
-        var json = JsonSerializer.Serialize(snapshot, JsonOptions);
-        var tmp = _path + ".tmp";
-        File.WriteAllText(tmp, json);
-        File.Copy(tmp, _path, overwrite: true);
-        File.Delete(tmp);
-    }
+    public void Flush() => _file.Flush();
 
 
     private static void Normalize(AppSettings s) {
