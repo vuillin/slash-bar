@@ -9,7 +9,10 @@ public sealed class MemoModule : IModule {
     public string Description => "Text shortcuts to copy";
 
 
-    public ModuleResult Execute(string argument) {
+    public Task<ModuleResult> ExecuteAsync(string argument) =>
+        Task.FromResult(Run(argument));
+
+    private ModuleResult Run(string argument) {
         argument = argument.Trim().ToLowerInvariant();
 
         if (argument.Length == 0) {

@@ -8,7 +8,7 @@ public sealed class SetupModule : IModule {
     public string Name => "Setup";
     public string Description => "Launch an application profile";
 
-    public ModuleResult Execute(string argument) {
+    public async Task<ModuleResult> ExecuteAsync(string argument) {
         argument = argument.Trim();
         if (argument.Length == 0)
             return ModuleResult.Error("Profile required");
@@ -21,16 +21,12 @@ public sealed class SetupModule : IModule {
         if (profile.Steps.Count == 0)
             return ModuleResult.Error("Profile has no steps");
 
-        _ = RunInBackground(profile);
-        return ModuleResult.Ok("Setup launched");
-    }
-
-    private static async Task RunInBackground(SetupProfile profile) {
         try {
             await SetupRunner.RunAsync(profile);
+            return ModuleResult.Ok("Setup complete");
         }
         catch {
-            AppToast.ShowError("Setup failed");
+            return ModuleResult.Error("Setup failed");
         }
     }
 

@@ -15,7 +15,10 @@ public sealed class CalcModule : IModule {
     public string Description => "Evaluate an expression";
 
 
-    public ModuleResult Execute(string argument) {
+    public Task<ModuleResult> ExecuteAsync(string argument) =>
+        Task.FromResult(Run(argument));
+
+    private ModuleResult Run(string argument) {
 
         if (!TryEvaluate(argument, out var text, out var error))
             return ModuleResult.Error(error);

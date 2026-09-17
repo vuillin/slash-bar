@@ -9,12 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Global hotkeys: register with `MOD_NOREPEAT` so holding Ctrl+Space / Ctrl+Shift+A no longer spams `WM_HOTKEY` (bar flicker, pin toggle loop)
-- Clipboard: `IgnoreNext` matches the suppressed text (with a short time window) so re-copying the same content no longer leaves a stuck flag that swallows the user's next paste
-- Shutdown: stop the clipboard watcher and dispose the color eyedropper (GDI bitmap + overlay/magnifier windows) on exit
-- Multi-monitor: side panels and dock shelf position on the same screen as the bar (`GetBarScreen`) instead of always the primary
-- Weather: bump `_loadId` at the start of `OnPanelOpening` and bail after awaits so a close mid-geoloc does not trigger a useless fetch / off-screen `ShowSnapshot`
-- Persist stores through shared `JsonFileStore<T>` (atomic tmp+copy + `DebouncedSaver`), including weather cache/geocode and command history
+- Holding Open bar or Pin shortcuts no longer flickers the bar or toggles pin repeatedly
+- Copying from SlashBar (calc, clip, memo, …) no longer makes your next clipboard copy disappear from history
+- Side panels and the minimize shelf open on the same monitor as the bar (not always the primary screen)
+- Closing the weather panel mid-load no longer refreshes it in the background
+- `setup` waits until the profile finishes and reports success or failure (instead of “launched” and failing silently)
+
+### Changed
+
+- Quitting SlashBar fully stops clipboard watching and releases the color picker’s screen tools
 
 ## [1.6.0] - 2026-09-16
 

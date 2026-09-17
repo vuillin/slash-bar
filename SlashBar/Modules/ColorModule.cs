@@ -6,8 +6,8 @@ public sealed class ColorModule : IModule {
     public string Name => "Color Picker";
     public string Description => "Open the color picker";
 
-    public ModuleResult Execute(string argument) {
+    public Task<ModuleResult> ExecuteAsync(string argument) {
         SlashBar.ColorPanelWindow.Toggle();
-        return ModuleResult.None;
+        return Task.FromResult(ModuleResult.None);
     }
 }

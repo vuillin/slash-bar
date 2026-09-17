@@ -13,7 +13,10 @@ public sealed class WebSearchModule : IModule {
     public string Name => "Web search";
     public string Description => "Web search in the default browser";
 
-    public ModuleResult Execute(string argument) {
+    public Task<ModuleResult> ExecuteAsync(string argument) =>
+        Task.FromResult(Run(argument));
+
+    private ModuleResult Run(string argument) {
         argument = argument.Trim();
         if (argument.Length == 0) {
             BrowserHelper.Start();

@@ -16,7 +16,10 @@ public sealed class PinModule : IModule {
     public string Description => "Keep windows always on top (Ctrl+Shift+A)";
 
 
-    public ModuleResult Execute(string argument) {
+    public Task<ModuleResult> ExecuteAsync(string argument) =>
+        Task.FromResult(Run(argument));
+
+    private ModuleResult Run(string argument) {
         var arg = argument.Trim();
 
         if (arg.Equals("off", StringComparison.OrdinalIgnoreCase)) {

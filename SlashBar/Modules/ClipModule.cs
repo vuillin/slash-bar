@@ -6,8 +6,8 @@ public sealed class ClipModule : IModule {
     public string Name => "Clipboard";
     public string Description => "Clipboard history";
 
-    public ModuleResult Execute(string argument) {
+    public Task<ModuleResult> ExecuteAsync(string argument) {
         SlashBar.ClipPanelWindow.Toggle();
-        return ModuleResult.None;
+        return Task.FromResult(ModuleResult.None);
     }
 }

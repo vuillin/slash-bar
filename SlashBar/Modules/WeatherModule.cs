@@ -6,8 +6,8 @@ public sealed class WeatherModule : IModule {
     public string Name => "Weather";
     public string Description => "Current weather";
 
-    public ModuleResult Execute(string argument) {
+    public Task<ModuleResult> ExecuteAsync(string argument) {
         SlashBar.WeatherPanelWindow.Toggle();
-        return ModuleResult.None;
+        return Task.FromResult(ModuleResult.None);
     }
 }

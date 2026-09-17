@@ -16,7 +16,10 @@ public sealed class AwakeModule : IModule {
     public string Description => "Keep the computer awake";
 
 
-    public ModuleResult Execute(string argument) {
+    public Task<ModuleResult> ExecuteAsync(string argument) =>
+        Task.FromResult(Run(argument));
+
+    private ModuleResult Run(string argument) {
         if (!TryParseArgs(argument, out var mode, out var duration, out var error))
             return ModuleResult.Error(error);
 

@@ -106,16 +106,6 @@ public sealed class ModuleRegistry
         return false;
     }
 
-    public bool TryExecute(string input, out ModuleResult result) {
-        result = ModuleResult.None;
-
-        if (!TryResolve(input, out var module, out var argument))
-            return false;
-
-        result = module.Execute(argument);
-        return true;
-    }
-
     public async Task<(bool ok, ModuleResult result)> TryExecuteAsync(string input) {
         if (!TryResolve(input, out var module, out var argument))
             return (false, ModuleResult.None);

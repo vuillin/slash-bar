@@ -6,8 +6,8 @@ public sealed class SettingsModule : IModule {
     public string Name => "Settings";
     public string Description => "Open settings";
 
-    public ModuleResult Execute(string argument) {
+    public Task<ModuleResult> ExecuteAsync(string argument) {
         SlashBar.SettingsPanelWindow.Toggle();
-        return ModuleResult.None;
+        return Task.FromResult(ModuleResult.None);
     }
 }

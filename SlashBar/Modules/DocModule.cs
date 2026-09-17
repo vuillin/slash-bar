@@ -10,7 +10,10 @@ public sealed class DocModule : IModule {
     public string Description => "Open documentation";
 
 
-    public ModuleResult Execute(string argument) {
+    public Task<ModuleResult> ExecuteAsync(string argument) =>
+        Task.FromResult(Run(argument));
+
+    private ModuleResult Run(string argument) {
         argument = argument.Trim();
         if (argument.Length == 0)
             return ModuleResult.Error("Language required");

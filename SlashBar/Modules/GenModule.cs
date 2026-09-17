@@ -31,7 +31,10 @@ public sealed class GenModule : IModule {
     public string Description => "Generate a value (clipboard)";
 
 
-    public ModuleResult Execute(string argument) {
+    public Task<ModuleResult> ExecuteAsync(string argument) =>
+        Task.FromResult(Run(argument));
+
+    private ModuleResult Run(string argument) {
         argument = argument.Trim();
         if (argument.Length == 0)
             return ModuleResult.Error("Argument required");
