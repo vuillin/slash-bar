@@ -50,9 +50,17 @@ public partial class WeatherPanelWindow : DockedSidePanelWindow {
 
 
     protected override async void OnPanelOpening() {
+
+        var id = ++_loadId;
+
         await WeatherGeolocator.RequestAccessAsync();
+        if (id != _loadId)
+            return;
 
         var locationKey = await WeatherClient.BuildLocationKeyAsync();
+        if (id != _loadId)
+            return;
+
         var hasCache = WeatherCacheStore.TryRead(locationKey, out var cached);
 
         if (hasCache) {
@@ -60,6 +68,9 @@ public partial class WeatherPanelWindow : DockedSidePanelWindow {
             if (WeatherCacheStore.IsFresh(cached))
                 return;
         }
+
+        if (id != _loadId)
+            return;
 
         LoadWeather(showLoadingOnFailure: !hasCache);
     }

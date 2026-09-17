@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Clipboard: `IgnoreNext` matches the suppressed text (with a short time window) so re-copying the same content no longer leaves a stuck flag that swallows the user's next paste
 - Shutdown: stop the clipboard watcher and dispose the color eyedropper (GDI bitmap + overlay/magnifier windows) on exit
 - Multi-monitor: side panels and dock shelf position on the same screen as the bar (`GetBarScreen`) instead of always the primary
+- Weather: bump `_loadId` at the start of `OnPanelOpening` and bail after awaits so a close mid-geoloc does not trigger a useless fetch / off-screen `ShowSnapshot`
 
 ## [1.6.0] - 2026-09-16
 
