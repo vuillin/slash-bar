@@ -89,6 +89,8 @@ public partial class MainWindow {
         if (!HotkeyChordMapper.TryToNative(chord, out var modifiers, out var vk))
             return false;
 
+        modifiers |= HotkeyNative.ModNoRepeat;
+
         return HotkeyNative.Register(hwnd, id, modifiers, vk);
     }
 
